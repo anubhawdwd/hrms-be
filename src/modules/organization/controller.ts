@@ -1,0 +1,174 @@
+import type { Request, Response } from "express";
+import { OrganizationService } from "./service.js";
+
+const service = new OrganizationService();
+
+// ---------- Departments ----------
+
+export async function createDepartment(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { name } = req.body;
+
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    const department = await service.createDepartment({
+      name,
+      companyId,
+    });
+
+    res.status(201).json(department);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function listDepartments(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    const departments = await service.listDepartments(companyId);
+    res.json(departments);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+// ---------- Teams ----------
+
+export async function createTeam(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { name, departmentId } = req.body;
+
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    if (!departmentId) {
+      return res.status(400).json({ message: "departmentId is required" });
+    }
+
+    const team = await service.createTeam({
+      name,
+      departmentId,
+      companyId,
+    });
+
+    res.status(201).json(team);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function listTeams(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { departmentId } = req.query;
+
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    if (!departmentId || typeof departmentId !== "string") {
+      return res.status(400).json({ message: "departmentId is required" });
+    }
+
+    const teams = await service.listTeams(departmentId, companyId);
+    res.json(teams);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+// ---------- Designations ----------
+
+export async function createDesignation(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { name } = req.body;
+
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    const designation = await service.createDesignation({
+      name,
+      companyId,
+    });
+
+    res.status(201).json(designation);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function listDesignations(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    res.json(await service.listDesignations(companyId));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+
+// ---------- EmployeeProfile ----------
+export async function createEmployee(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const {
+      userId,
+      teamId,
+      designationId,
+      managerId,
+      joiningDate,
+    } = req.body;
+
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    if (!userId || !teamId || !designationId || !joiningDate) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const employee = await service.createEmployeeProfile({
+      userId,
+      companyId,
+      teamId,
+      designationId,
+      managerId,
+      joiningDate,
+    });
+
+    res.status(201).json(employee);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function listEmployees(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+
+    if (!companyId) {
+      return res.status(400).json({ message: "x-company-id header missing" });
+    }
+
+    const employees = await service.listEmployees(companyId);
+    res.json(employees);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
