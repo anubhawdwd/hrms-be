@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import organizationRoutes from "./modules/organization/routes.js";
+import attendanceRoutes from "./modules/attendance/routes.js";
 
 const app = express();
 
@@ -17,5 +18,7 @@ app.get("/health", (_, res) => {
  * In Phase 2 this will come from JWT.
  */
 app.use("/api/organization", organizationRoutes);
+
+app.use("/api/attendance", attendanceRoutes);
 
 export default app;

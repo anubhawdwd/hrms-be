@@ -127,19 +127,24 @@ export async function listDesignations(req: Request, res: Response) {
 export async function createEmployee(req: Request, res: Response) {
   try {
     const companyId = req.header("x-company-id");
-    const {
-      userId,
-      teamId,
-      designationId,
-      managerId,
-      joiningDate,
-    } = req.body;
 
     if (!companyId) {
       return res.status(400).json({ message: "x-company-id header missing" });
     }
 
-    if (!userId || !teamId || !designationId || !joiningDate) {
+    const {
+      userId,
+      teamId,
+      designationId,
+      firstName,
+      middleName,
+      lastName,
+      displayName,
+      managerId,
+      joiningDate,
+    } = req.body;
+
+    if (!userId || !teamId || !designationId || !firstName || !lastName || !joiningDate) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -148,6 +153,10 @@ export async function createEmployee(req: Request, res: Response) {
       companyId,
       teamId,
       designationId,
+      firstName,
+      middleName,
+      lastName,
+      displayName,
       managerId,
       joiningDate,
     });
@@ -157,6 +166,7 @@ export async function createEmployee(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
+
 
 export async function listEmployees(req: Request, res: Response) {
   try {

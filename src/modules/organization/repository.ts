@@ -83,37 +83,39 @@ export class OrganizationRepository {
 
   // ---------- EmployeeProfile ----------
   async createEmployeeProfile(data: {
-  userId: string;
-  companyId: string;
-  teamId: string;
-  designationId: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  displayName: string;
-  managerId?: string;
-  joiningDate: Date;
-}) {
-  return prisma.employeeProfile.create({
-    data: {
-      user: { connect: { id: data.userId } },
-      company: { connect: { id: data.companyId } },
-      team: { connect: { id: data.teamId } },
-      designation: { connect: { id: data.designationId } },
+    userId: string;
+    companyId: string;
+    teamId: string;
+    designationId: string;
+    employeeCode: number;
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    displayName: string;
+    managerId?: string;
+    joiningDate: Date;
+  }) {
+    return prisma.employeeProfile.create({
+      data: {
+        employeeCode: data.employeeCode,
+        user: { connect: { id: data.userId } },
+        company: { connect: { id: data.companyId } },
+        team: { connect: { id: data.teamId } },
+        designation: { connect: { id: data.designationId } },
 
-      firstName: data.firstName,
-      ...(data.middleName && { middleName: data.middleName }),
-      lastName: data.lastName,
-      displayName: data.displayName,
+        firstName: data.firstName,
+        ...(data.middleName && { middleName: data.middleName }),
+        lastName: data.lastName,
+        displayName: data.displayName,
 
-      ...(data.managerId && {
-        manager: { connect: { id: data.managerId } },
-      }),
+        ...(data.managerId && {
+          manager: { connect: { id: data.managerId } },
+        }),
 
-      joiningDate: data.joiningDate,
-    },
-  });
-}
+        joiningDate: data.joiningDate,
+      },
+    });
+  }
 
 
   async listEmployees(companyId: string) {
@@ -133,14 +135,14 @@ export class OrganizationRepository {
       orderBy: { createdAt: "asc" },
     });
   }
-  
+
   async getLastEmployeeCode(companyId: string) {
-  return prisma.employeeProfile.findFirst({
-    where: { companyId },
-    orderBy: { employeeCode: "desc" },
-    select: { employeeCode: true },
-  });
-}
+    return prisma.employeeProfile.findFirst({
+      where: { companyId },
+      orderBy: { employeeCode: "desc" },
+      select: { employeeCode: true },
+    });
+  }
 
 }
 

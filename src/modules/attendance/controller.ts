@@ -1,0 +1,115 @@
+import type { Request, Response } from "express";
+import { AttendanceService } from "./service.js";
+
+const service = new AttendanceService();
+
+export async function checkIn(req: Request, res: Response) {
+    try {
+        const companyId = req.header("x-company-id");
+        const { employeeId, source, location } = req.body;
+
+        if (
+            !companyId ||
+            !employeeId ||
+            !source ||
+            !location ||
+            typeof location.latitude !== "number" ||
+            typeof location.longitude !== "number"
+        ) {
+            return res.status(400).json({ message: "Invalid input" });
+        }
+
+        const result = await service.checkIn({
+            employeeId,
+            companyId,
+            source,
+            location
+        });
+
+        res.json(result);
+    } catch (err: any) {
+        res.status(400).json({ message: err.message });
+    }
+}
+
+export async function checkOut(req: Request, res: Response) {
+    try {
+        const companyId = req.header("x-company-id");
+        const { employeeId, source, location } = req.body;
+
+        if (
+            !companyId ||
+            !employeeId ||
+            !source ||
+            !location ||
+            typeof location.latitude !== "number" ||
+            typeof location.longitude !== "number"
+        ) {
+            return res.status(400).json({ message: "Invalid input" });
+        }
+
+        const result = await service.checkOut({
+            employeeId,
+            companyId,
+            source,
+            location
+        });
+
+        res.json(result);
+    } catch (err: any) {
+        res.status(400).json({ message: err.message });
+    }
+}
+
+export async function getAttendanceDay(req: Request, res: Response) {
+    try {
+        const companyId = req.header("x-company-id");
+        const { employeeId, date } = req.query;
+
+        if (
+            !companyId ||
+            typeof employeeId !== "string" ||
+            typeof date !== "string"
+        ) {
+            return res.status(400).json({ message: "Invalid query" });
+        }
+
+        const data = await service.getAttendanceDay(
+            employeeId,
+            companyId,
+            date
+        );
+
+        res.json(data);
+    } catch (err: any) {
+        res.status(400).json({ message: err.message });
+    }
+}
+
+export async function getAttendanceRange(req: Request, res: Response) {
+    try {
+        const companyId = req.header("x-company-id");
+        const { employeeId, from, to } = req.query;
+
+        if (
+            !companyId ||
+            typeof employeeId !== "string" ||
+            typeof from !== "string" ||
+            typeof to !== "string"
+        ) {
+            return res.status(400).json({ message: "Invalid query" });
+        }
+
+        const data = await service.getAttendanceRange(
+            employeeId,
+            companyId,
+            from,
+            to
+        );
+
+        res.json(data);
+    } catch (err: any) {
+        res.status(400).json({ message: err.message });
+    }
+}
+

@@ -69,3 +69,18 @@ export type Designation = Prisma.DesignationModel
  * 
  */
 export type EmployeeProfile = Prisma.EmployeeProfileModel
+/**
+ * Model AttendanceDay
+ * 
+ */
+export type AttendanceDay = Prisma.AttendanceDayModel
+/**
+ * Model AttendanceEvent
+ * 
+ */
+export type AttendanceEvent = Prisma.AttendanceEventModel
+/**
+ * Model OfficeLocation
+ * 
+ */
+export type OfficeLocation = Prisma.OfficeLocationModel

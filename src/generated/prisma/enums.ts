@@ -15,3 +15,28 @@ export const AuthProvider = {
 } as const
 
 export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
+
+
+export const AttendanceStatus = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  PARTIAL: 'PARTIAL'
+} as const
+
+export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
+
+
+export const AttendanceEventType = {
+  CHECK_IN: 'CHECK_IN',
+  CHECK_OUT: 'CHECK_OUT'
+} as const
+
+export type AttendanceEventType = (typeof AttendanceEventType)[keyof typeof AttendanceEventType]
+
+
+export const AttendanceSource = {
+  WEB: 'WEB',
+  PWA: 'PWA'
+} as const
+
+export type AttendanceSource = (typeof AttendanceSource)[keyof typeof AttendanceSource]

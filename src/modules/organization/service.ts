@@ -75,10 +75,10 @@ async createEmployeeProfile(dto: CreateEmployeeProfileDTO) {
     employeeCode: nextEmployeeCode,
 
     firstName: dto.firstName.trim(),
-    middleName: dto.middleName?.trim(),
     lastName: dto.lastName.trim(),
     displayName,
 
+    ...(dto.middleName?.trim() && { middleName: dto.middleName.trim() }),
     ...(dto.managerId && { managerId: dto.managerId }),
     joiningDate,
   });

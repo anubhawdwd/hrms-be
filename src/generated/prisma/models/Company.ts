@@ -178,6 +178,8 @@ export type CompanyWhereInput = {
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
   employees?: Prisma.EmployeeProfileListRelationFilter
+  attendanceDays?: Prisma.AttendanceDayListRelationFilter
+  officeLocations?: Prisma.OfficeLocationListRelationFilter
 }
 
 export type CompanyOrderByWithRelationInput = {
@@ -189,6 +191,8 @@ export type CompanyOrderByWithRelationInput = {
   departments?: Prisma.DepartmentOrderByRelationAggregateInput
   designations?: Prisma.DesignationOrderByRelationAggregateInput
   employees?: Prisma.EmployeeProfileOrderByRelationAggregateInput
+  attendanceDays?: Prisma.AttendanceDayOrderByRelationAggregateInput
+  officeLocations?: Prisma.OfficeLocationOrderByRelationAggregateInput
 }
 
 export type CompanyWhereUniqueInput = Prisma.AtLeast<{
@@ -203,6 +207,8 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
   employees?: Prisma.EmployeeProfileListRelationFilter
+  attendanceDays?: Prisma.AttendanceDayListRelationFilter
+  officeLocations?: Prisma.OfficeLocationListRelationFilter
 }, "id" | "name">
 
 export type CompanyOrderByWithAggregationInput = {
@@ -234,6 +240,8 @@ export type CompanyCreateInput = {
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateInput = {
@@ -245,6 +253,8 @@ export type CompanyUncheckedCreateInput = {
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUpdateInput = {
@@ -256,6 +266,8 @@ export type CompanyUpdateInput = {
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateInput = {
@@ -267,6 +279,8 @@ export type CompanyUncheckedUpdateInput = {
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateManyInput = {
@@ -384,6 +398,34 @@ export type CompanyUpdateOneRequiredWithoutEmployeesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutEmployeesInput, Prisma.CompanyUpdateWithoutEmployeesInput>, Prisma.CompanyUncheckedUpdateWithoutEmployeesInput>
 }
 
+export type CompanyCreateNestedOneWithoutAttendanceDaysInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceDaysInput, Prisma.CompanyUncheckedCreateWithoutAttendanceDaysInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutAttendanceDaysInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutAttendanceDaysNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceDaysInput, Prisma.CompanyUncheckedCreateWithoutAttendanceDaysInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutAttendanceDaysInput
+  upsert?: Prisma.CompanyUpsertWithoutAttendanceDaysInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutAttendanceDaysInput, Prisma.CompanyUpdateWithoutAttendanceDaysInput>, Prisma.CompanyUncheckedUpdateWithoutAttendanceDaysInput>
+}
+
+export type CompanyCreateNestedOneWithoutOfficeLocationsInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutOfficeLocationsInput, Prisma.CompanyUncheckedCreateWithoutOfficeLocationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutOfficeLocationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutOfficeLocationsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutOfficeLocationsInput, Prisma.CompanyUncheckedCreateWithoutOfficeLocationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutOfficeLocationsInput
+  upsert?: Prisma.CompanyUpsertWithoutOfficeLocationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutOfficeLocationsInput, Prisma.CompanyUpdateWithoutOfficeLocationsInput>, Prisma.CompanyUncheckedUpdateWithoutOfficeLocationsInput>
+}
+
 export type CompanyCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -392,6 +434,8 @@ export type CompanyCreateWithoutUsersInput = {
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutUsersInput = {
@@ -402,6 +446,8 @@ export type CompanyUncheckedCreateWithoutUsersInput = {
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutUsersInput = {
@@ -428,6 +474,8 @@ export type CompanyUpdateWithoutUsersInput = {
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutUsersInput = {
@@ -438,6 +486,8 @@ export type CompanyUncheckedUpdateWithoutUsersInput = {
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutDepartmentsInput = {
@@ -448,6 +498,8 @@ export type CompanyCreateWithoutDepartmentsInput = {
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutDepartmentsInput = {
@@ -458,6 +510,8 @@ export type CompanyUncheckedCreateWithoutDepartmentsInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutDepartmentsInput = {
@@ -484,6 +538,8 @@ export type CompanyUpdateWithoutDepartmentsInput = {
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
@@ -494,6 +550,8 @@ export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutDesignationsInput = {
@@ -504,6 +562,8 @@ export type CompanyCreateWithoutDesignationsInput = {
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutDesignationsInput = {
@@ -514,6 +574,8 @@ export type CompanyUncheckedCreateWithoutDesignationsInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutDesignationsInput = {
@@ -540,6 +602,8 @@ export type CompanyUpdateWithoutDesignationsInput = {
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutDesignationsInput = {
@@ -550,6 +614,8 @@ export type CompanyUncheckedUpdateWithoutDesignationsInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutEmployeesInput = {
@@ -560,6 +626,8 @@ export type CompanyCreateWithoutEmployeesInput = {
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutEmployeesInput = {
@@ -570,6 +638,8 @@ export type CompanyUncheckedCreateWithoutEmployeesInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutEmployeesInput = {
@@ -596,6 +666,8 @@ export type CompanyUpdateWithoutEmployeesInput = {
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutEmployeesInput = {
@@ -606,6 +678,136 @@ export type CompanyUncheckedUpdateWithoutEmployeesInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutAttendanceDaysInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutAttendanceDaysInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutAttendanceDaysInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceDaysInput, Prisma.CompanyUncheckedCreateWithoutAttendanceDaysInput>
+}
+
+export type CompanyUpsertWithoutAttendanceDaysInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutAttendanceDaysInput, Prisma.CompanyUncheckedUpdateWithoutAttendanceDaysInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceDaysInput, Prisma.CompanyUncheckedCreateWithoutAttendanceDaysInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutAttendanceDaysInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutAttendanceDaysInput, Prisma.CompanyUncheckedUpdateWithoutAttendanceDaysInput>
+}
+
+export type CompanyUpdateWithoutAttendanceDaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutAttendanceDaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutOfficeLocationsInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutOfficeLocationsInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutOfficeLocationsInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutOfficeLocationsInput, Prisma.CompanyUncheckedCreateWithoutOfficeLocationsInput>
+}
+
+export type CompanyUpsertWithoutOfficeLocationsInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutOfficeLocationsInput, Prisma.CompanyUncheckedUpdateWithoutOfficeLocationsInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutOfficeLocationsInput, Prisma.CompanyUncheckedCreateWithoutOfficeLocationsInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutOfficeLocationsInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutOfficeLocationsInput, Prisma.CompanyUncheckedUpdateWithoutOfficeLocationsInput>
+}
+
+export type CompanyUpdateWithoutOfficeLocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutOfficeLocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 
@@ -618,6 +820,8 @@ export type CompanyCountOutputType = {
   departments: number
   designations: number
   employees: number
+  attendanceDays: number
+  officeLocations: number
 }
 
 export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -625,6 +829,8 @@ export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   departments?: boolean | CompanyCountOutputTypeCountDepartmentsArgs
   designations?: boolean | CompanyCountOutputTypeCountDesignationsArgs
   employees?: boolean | CompanyCountOutputTypeCountEmployeesArgs
+  attendanceDays?: boolean | CompanyCountOutputTypeCountAttendanceDaysArgs
+  officeLocations?: boolean | CompanyCountOutputTypeCountOfficeLocationsArgs
 }
 
 /**
@@ -665,6 +871,20 @@ export type CompanyCountOutputTypeCountEmployeesArgs<ExtArgs extends runtime.Typ
   where?: Prisma.EmployeeProfileWhereInput
 }
 
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountAttendanceDaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceDayWhereInput
+}
+
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountOfficeLocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OfficeLocationWhereInput
+}
+
 
 export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -675,6 +895,8 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
   designations?: boolean | Prisma.Company$designationsArgs<ExtArgs>
   employees?: boolean | Prisma.Company$employeesArgs<ExtArgs>
+  attendanceDays?: boolean | Prisma.Company$attendanceDaysArgs<ExtArgs>
+  officeLocations?: boolean | Prisma.Company$officeLocationsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -705,6 +927,8 @@ export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
   designations?: boolean | Prisma.Company$designationsArgs<ExtArgs>
   employees?: boolean | Prisma.Company$employeesArgs<ExtArgs>
+  attendanceDays?: boolean | Prisma.Company$attendanceDaysArgs<ExtArgs>
+  officeLocations?: boolean | Prisma.Company$officeLocationsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CompanyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -717,6 +941,8 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     departments: Prisma.$DepartmentPayload<ExtArgs>[]
     designations: Prisma.$DesignationPayload<ExtArgs>[]
     employees: Prisma.$EmployeeProfilePayload<ExtArgs>[]
+    attendanceDays: Prisma.$AttendanceDayPayload<ExtArgs>[]
+    officeLocations: Prisma.$OfficeLocationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1121,6 +1347,8 @@ export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.
   departments<T extends Prisma.Company$departmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$departmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   designations<T extends Prisma.Company$designationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$designationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DesignationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   employees<T extends Prisma.Company$employeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendanceDays<T extends Prisma.Company$attendanceDaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$attendanceDaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceDayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  officeLocations<T extends Prisma.Company$officeLocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$officeLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OfficeLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1635,6 +1863,54 @@ export type Company$employeesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.EmployeeProfileScalarFieldEnum | Prisma.EmployeeProfileScalarFieldEnum[]
+}
+
+/**
+ * Company.attendanceDays
+ */
+export type Company$attendanceDaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceDay
+   */
+  select?: Prisma.AttendanceDaySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceDay
+   */
+  omit?: Prisma.AttendanceDayOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceDayInclude<ExtArgs> | null
+  where?: Prisma.AttendanceDayWhereInput
+  orderBy?: Prisma.AttendanceDayOrderByWithRelationInput | Prisma.AttendanceDayOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceDayWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceDayScalarFieldEnum | Prisma.AttendanceDayScalarFieldEnum[]
+}
+
+/**
+ * Company.officeLocations
+ */
+export type Company$officeLocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OfficeLocation
+   */
+  select?: Prisma.OfficeLocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OfficeLocation
+   */
+  omit?: Prisma.OfficeLocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OfficeLocationInclude<ExtArgs> | null
+  where?: Prisma.OfficeLocationWhereInput
+  orderBy?: Prisma.OfficeLocationOrderByWithRelationInput | Prisma.OfficeLocationOrderByWithRelationInput[]
+  cursor?: Prisma.OfficeLocationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OfficeLocationScalarFieldEnum | Prisma.OfficeLocationScalarFieldEnum[]
 }
 
 /**

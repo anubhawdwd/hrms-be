@@ -56,7 +56,10 @@ export const ModelName = {
   Department: 'Department',
   Team: 'Team',
   Designation: 'Designation',
-  EmployeeProfile: 'EmployeeProfile'
+  EmployeeProfile: 'EmployeeProfile',
+  AttendanceDay: 'AttendanceDay',
+  AttendanceEvent: 'AttendanceEvent',
+  OfficeLocation: 'OfficeLocation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -149,6 +152,46 @@ export const EmployeeProfileScalarFieldEnum = {
 } as const
 
 export type EmployeeProfileScalarFieldEnum = (typeof EmployeeProfileScalarFieldEnum)[keyof typeof EmployeeProfileScalarFieldEnum]
+
+
+export const AttendanceDayScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  companyId: 'companyId',
+  date: 'date',
+  status: 'status',
+  totalMinutes: 'totalMinutes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AttendanceDayScalarFieldEnum = (typeof AttendanceDayScalarFieldEnum)[keyof typeof AttendanceDayScalarFieldEnum]
+
+
+export const AttendanceEventScalarFieldEnum = {
+  id: 'id',
+  attendanceDayId: 'attendanceDayId',
+  type: 'type',
+  timestamp: 'timestamp',
+  source: 'source',
+  createdAt: 'createdAt'
+} as const
+
+export type AttendanceEventScalarFieldEnum = (typeof AttendanceEventScalarFieldEnum)[keyof typeof AttendanceEventScalarFieldEnum]
+
+
+export const OfficeLocationScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  radiusM: 'radiusM',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OfficeLocationScalarFieldEnum = (typeof OfficeLocationScalarFieldEnum)[keyof typeof OfficeLocationScalarFieldEnum]
 
 
 export const SortOrder = {

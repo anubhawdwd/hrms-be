@@ -19,6 +19,9 @@ model Company {
   departments  Department[]
   designations Designation[]
   employees    EmployeeProfile[]
+  attendanceDays AttendanceDay[]
+  officeLocations OfficeLocation[]
+
 }
 
 model User {
@@ -118,9 +121,72 @@ model EmployeeProfile {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  attendanceDays AttendanceDay[]
+
   @@unique([companyId, employeeCode])
   @@index([companyId])
   @@index([managerId])
+}
+
+// -----ATTENDANCE-----
+
+model AttendanceDay {
+  id             String   @id @default(uuid())
+
+  employeeId     String
+  employee       EmployeeProfile @relation(fields: [employeeId], references: [id])
+
+  companyId      String
+  company        Company  @relation(fields: [companyId], references: [id])
+
+  date           DateTime
+
+  status         AttendanceStatus @default(ABSENT)
+  totalMinutes   Int      @default(0)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  events         AttendanceEvent[]
+
+  @@unique([employeeId, date])
+  @@index([companyId, date])
+}
+
+model AttendanceEvent {
+  id              String   @id @default(uuid())
+
+  attendanceDayId String
+  attendanceDay   AttendanceDay @relation(fields: [attendanceDayId], references: [id])
+
+  type            AttendanceEventType
+  timestamp       DateTime
+
+  source          AttendanceSource
+
+  createdAt       DateTime @default(now())
+
+  @@index([attendanceDayId])
+}
+
+// --------Office Location---------
+
+model OfficeLocation {
+  id        String   @id @default(uuid())
+
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+
+  latitude  Float
+  longitude Float
+  radiusM   Int      // radius in meters
+
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId])
 }
 
 
@@ -130,4 +196,20 @@ model EmployeeProfile {
 enum AuthProvider {
   LOCAL
   GOOGLE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  PARTIAL
+}
+
+enum AttendanceEventType {
+  CHECK_IN
+  CHECK_OUT
+}
+
+enum AttendanceSource {
+  WEB
+  PWA
 }
