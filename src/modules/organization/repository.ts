@@ -144,5 +144,36 @@ export class OrganizationRepository {
     });
   }
 
+  // ------Office Geo Location-----
+
+  async upsertOfficeLocation(
+    companyId: string,
+    latitude: number,
+    longitude: number,
+    radiusM: number
+  ) {
+    // deactivate old locations
+    await prisma.officeLocation.updateMany({
+      where: { companyId, isActive: true },
+      data: { isActive: false },
+    });
+
+    return prisma.officeLocation.create({
+      data: {
+        company: { connect: { id: companyId } },
+        latitude,
+        longitude,
+        radiusM,
+        isActive: true,
+      },
+    });
+  }
+
+  async getActiveOfficeLocation(companyId: string) {
+    return prisma.officeLocation.findFirst({
+      where: { companyId, isActive: true },
+    });
+  }
+
 }
 

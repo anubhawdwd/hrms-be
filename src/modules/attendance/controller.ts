@@ -113,3 +113,27 @@ export async function getAttendanceRange(req: Request, res: Response) {
     }
 }
 
+export async function getAttendanceViolations(
+    req: Request,
+    res: Response
+) {
+    try {
+        const companyId = req.header("x-company-id");
+        const { employeeId, from, to } = req.query;
+
+        if (!companyId) {
+            return res.status(400).json({ message: "Missing companyId" });
+        }
+
+        const data = await service.getAttendanceViolations(
+            companyId,
+            typeof employeeId === "string" ? employeeId : undefined,
+            typeof from === "string" ? from : undefined,
+            typeof to === "string" ? to : undefined
+        );
+
+        res.json(data);
+    } catch (err: any) {
+        res.status(400).json({ message: err.message });
+    }
+}

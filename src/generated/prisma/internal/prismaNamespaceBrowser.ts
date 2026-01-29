@@ -56,9 +56,12 @@ export const ModelName = {
   Department: 'Department',
   Team: 'Team',
   Designation: 'Designation',
+  DesignationAttendancePolicy: 'DesignationAttendancePolicy',
   EmployeeProfile: 'EmployeeProfile',
   AttendanceDay: 'AttendanceDay',
   AttendanceEvent: 'AttendanceEvent',
+  AttendanceViolation: 'AttendanceViolation',
+  EmployeeAttendanceOverride: 'EmployeeAttendanceOverride',
   OfficeLocation: 'OfficeLocation'
 } as const
 
@@ -82,7 +85,8 @@ export const CompanyScalarFieldEnum = {
   id: 'id',
   name: 'name',
   isActive: 'isActive',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  logGeoFenceViolations: 'logGeoFenceViolations'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -133,6 +137,19 @@ export const DesignationScalarFieldEnum = {
 export type DesignationScalarFieldEnum = (typeof DesignationScalarFieldEnum)[keyof typeof DesignationScalarFieldEnum]
 
 
+export const DesignationAttendancePolicyScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  designationId: 'designationId',
+  autoPresent: 'autoPresent',
+  attendanceExempt: 'attendanceExempt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DesignationAttendancePolicyScalarFieldEnum = (typeof DesignationAttendancePolicyScalarFieldEnum)[keyof typeof DesignationAttendancePolicyScalarFieldEnum]
+
+
 export const EmployeeProfileScalarFieldEnum = {
   id: 'id',
   employeeCode: 'employeeCode',
@@ -178,6 +195,36 @@ export const AttendanceEventScalarFieldEnum = {
 } as const
 
 export type AttendanceEventScalarFieldEnum = (typeof AttendanceEventScalarFieldEnum)[keyof typeof AttendanceEventScalarFieldEnum]
+
+
+export const AttendanceViolationScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  companyId: 'companyId',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  distanceM: 'distanceM',
+  reason: 'reason',
+  source: 'source',
+  createdAt: 'createdAt'
+} as const
+
+export type AttendanceViolationScalarFieldEnum = (typeof AttendanceViolationScalarFieldEnum)[keyof typeof AttendanceViolationScalarFieldEnum]
+
+
+export const EmployeeAttendanceOverrideScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  autoPresent: 'autoPresent',
+  attendanceExempt: 'attendanceExempt',
+  reason: 'reason',
+  validFrom: 'validFrom',
+  validTo: 'validTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeAttendanceOverrideScalarFieldEnum = (typeof EmployeeAttendanceOverrideScalarFieldEnum)[keyof typeof EmployeeAttendanceOverrideScalarFieldEnum]
 
 
 export const OfficeLocationScalarFieldEnum = {

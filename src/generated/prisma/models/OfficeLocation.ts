@@ -481,14 +481,6 @@ export type OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput = {
   deleteMany?: Prisma.OfficeLocationScalarWhereInput | Prisma.OfficeLocationScalarWhereInput[]
 }
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type OfficeLocationCreateWithoutCompanyInput = {
   id?: string
   latitude: number

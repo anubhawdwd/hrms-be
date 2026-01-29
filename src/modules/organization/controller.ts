@@ -182,3 +182,45 @@ export async function listEmployees(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
+
+// Set Office Location
+export async function setOfficeLocation(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { latitude, longitude, radiusM } = req.body;
+
+    if (
+      !companyId ||
+      typeof latitude !== "number" ||
+      typeof longitude !== "number" ||
+      typeof radiusM !== "number"
+    ) {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+
+    const result = await service.setOfficeLocation(
+      companyId,
+      latitude,
+      longitude,
+      radiusM
+    );
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function getOfficeLocation(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    if (!companyId) {
+      return res.status(400).json({ message: "Missing companyId" });
+    }
+
+    const result = await service.getOfficeLocation(companyId);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}

@@ -22,6 +22,10 @@ model Company {
   attendanceDays AttendanceDay[]
   officeLocations OfficeLocation[]
 
+  attendanceViolations AttendanceViolation[]
+  logGeoFenceViolations Boolean @default(false)
+
+  designationAttendancePolicies DesignationAttendancePolicy[]
 }
 
 model User {
@@ -79,10 +83,30 @@ model Designation {
   company   Company  @relation(fields: [companyId], references: [id])
 
   employees EmployeeProfile[]
+  attendancePolicy DesignationAttendancePolicy?
 
   createdAt DateTime @default(now())
 
   @@unique([companyId, name])
+
+}
+
+model DesignationAttendancePolicy {
+  id              String   @id @default(uuid())
+
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id])
+
+  designationId   String   @unique
+  designation     Designation @relation(fields: [designationId], references: [id])
+
+  autoPresent     Boolean  @default(false)
+  attendanceExempt Boolean @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([companyId])
 }
 
 
@@ -103,8 +127,8 @@ model EmployeeProfile {
   designationId  String
   designation    Designation @relation(fields: [designationId], references: [id])
 
-  teamId         String
-  team           Team     @relation(fields: [teamId], references: [id])
+  teamId         String?
+  team           Team?     @relation(fields: [teamId], references: [id])
 
   managerId      String?
   manager        EmployeeProfile? @relation("ManagerRelation", fields: [managerId], references: [id])
@@ -122,6 +146,8 @@ model EmployeeProfile {
   updatedAt      DateTime @updatedAt
 
   attendanceDays AttendanceDay[]
+  attendanceViolations AttendanceViolation[]
+  employeeAttendanceOverrides EmployeeAttendanceOverride[]
 
   @@unique([companyId, employeeCode])
   @@index([companyId])
@@ -168,6 +194,50 @@ model AttendanceEvent {
 
   @@index([attendanceDayId])
 }
+// --------AttendanceViolation-------
+
+model AttendanceViolation {
+  id           String   @id @default(uuid())
+
+  employeeId   String
+  employee     EmployeeProfile @relation(fields: [employeeId], references: [id])
+
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id])
+
+  latitude     Float
+  longitude    Float
+  distanceM    Float
+
+  reason       String   // OUTSIDE_RADIUS | NO_OFFICE_CONFIG
+  source       AttendanceSource
+
+  createdAt    DateTime @default(now())
+
+  @@index([companyId])
+  @@index([employeeId])
+}
+
+model EmployeeAttendanceOverride {
+  id               String   @id @default(uuid())
+
+  employeeId       String
+  employee         EmployeeProfile @relation(fields: [employeeId], references: [id])
+
+  autoPresent      Boolean  @default(false)
+  attendanceExempt Boolean  @default(false)
+
+  reason           String?  // Offer letter / contract note
+
+  validFrom        DateTime
+  validTo          DateTime?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([employeeId])
+}
+
 
 // --------Office Location---------
 

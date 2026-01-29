@@ -308,9 +308,9 @@ export type TeamMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
-export type TeamScalarRelationFilter = {
-  is?: Prisma.TeamWhereInput
-  isNot?: Prisma.TeamWhereInput
+export type TeamNullableScalarRelationFilter = {
+  is?: Prisma.TeamWhereInput | null
+  isNot?: Prisma.TeamWhereInput | null
 }
 
 export type TeamCreateNestedManyWithoutDepartmentInput = {
@@ -361,10 +361,12 @@ export type TeamCreateNestedOneWithoutEmployeesInput = {
   connect?: Prisma.TeamWhereUniqueInput
 }
 
-export type TeamUpdateOneRequiredWithoutEmployeesNestedInput = {
+export type TeamUpdateOneWithoutEmployeesNestedInput = {
   create?: Prisma.XOR<Prisma.TeamCreateWithoutEmployeesInput, Prisma.TeamUncheckedCreateWithoutEmployeesInput>
   connectOrCreate?: Prisma.TeamCreateOrConnectWithoutEmployeesInput
   upsert?: Prisma.TeamUpsertWithoutEmployeesInput
+  disconnect?: Prisma.TeamWhereInput | boolean
+  delete?: Prisma.TeamWhereInput | boolean
   connect?: Prisma.TeamWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.TeamUpdateToOneWithWhereWithoutEmployeesInput, Prisma.TeamUpdateWithoutEmployeesInput>, Prisma.TeamUncheckedUpdateWithoutEmployeesInput>
 }

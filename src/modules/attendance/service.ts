@@ -1,6 +1,7 @@
 import { AttendanceRepository } from "./repository.js";
 import type { CheckInDTO, CheckOutDTO } from "./types.js";
 import { haversineDistanceMeters } from "../../utils/geo.js";
+import { prisma } from "../../config/prisma.js";
 
 const repo = new AttendanceRepository();
 
@@ -12,11 +13,45 @@ function startOfDay(date = new Date()) {
 
 export class AttendanceService {
     async checkIn(dto: CheckInDTO) {
+        const { employee, isExempt, isAutoPresent } =
+            await this.resolveAttendancePolicy(dto.employeeId);
+
+        // 1️⃣ Attendance exempt → ignore
+        if (isExempt) {
+            return { message: "Attendance exempt employee" };
+        }
+
+        // 2️⃣ Auto-present → mark present and exit
+        if (isAutoPresent) {
+            const today = startOfDay();
+
+            let attendanceDay = await repo.findAttendanceDay(employee.id, today);
+
+            if (!attendanceDay) {
+                attendanceDay = await repo.createAttendanceDay(
+                    employee.id,
+                    employee.companyId,
+                    today
+                );
+            }
+
+            await repo.updateAttendanceSummary(
+                attendanceDay.id,
+                attendanceDay.totalMinutes,
+                "PRESENT"
+            );
+
+            return { message: "Auto-present applied" };
+        }
+
         await this.validateGeoFence(
             dto.companyId,
+            dto.employeeId,
             dto.location.latitude,
-            dto.location.longitude
+            dto.location.longitude,
+            dto.source
         );
+
 
         const today = startOfDay();
 
@@ -51,11 +86,28 @@ export class AttendanceService {
     }
 
     async checkOut(dto: CheckOutDTO) {
+        const { isExempt, isAutoPresent } =
+            await this.resolveAttendancePolicy(dto.employeeId);
+
+        // 1️⃣ Exempt employees → no-op
+        if (isExempt) {
+            return { message: "Attendance exempt employee" };
+        }
+
+        // 2️⃣ Auto-present → no check-out required
+        if (isAutoPresent) {
+            return { message: "Auto-present employee" };
+        }
+
+
         await this.validateGeoFence(
             dto.companyId,
+            dto.employeeId,
             dto.location.latitude,
-            dto.location.longitude
+            dto.location.longitude,
+            dto.source
         );
+
 
         const today = startOfDay();
 
@@ -141,14 +193,32 @@ export class AttendanceService {
 
     private async validateGeoFence(
         companyId: string,
+        employeeId: string,
         latitude: number,
-        longitude: number
+        longitude: number,
+        source: "WEB" | "PWA"
     ) {
         const office = await repo.getActiveOfficeLocation(companyId);
+        const company = await prisma.company.findUnique({
+            where: { id: companyId },
+            select: { logGeoFenceViolations: true },
+        });
 
         if (!office) {
+            if (company?.logGeoFenceViolations) {
+                await repo.logViolation({
+                    employeeId,
+                    companyId,
+                    latitude,
+                    longitude,
+                    distanceM: 0,
+                    reason: "NO_OFFICE_CONFIG",
+                    source,
+                });
+            }
             throw new Error("Office location not configured");
         }
+
 
         const distance = haversineDistanceMeters(
             latitude,
@@ -158,8 +228,108 @@ export class AttendanceService {
         );
 
         if (distance > office.radiusM) {
+            await repo.logViolation({
+                employeeId,
+                companyId,
+                latitude,
+                longitude,
+                distanceM: distance,
+                reason: "OUTSIDE_RADIUS",
+                source,
+            });
+
             throw new Error("Outside office premises");
         }
     }
+
+    async getAttendanceViolations(
+        companyId: string,
+        employeeId?: string,
+        from?: string,
+        to?: string
+    ) {
+        const fromDate = from ? new Date(from) : undefined;
+        const toDate = to ? new Date(to) : undefined;
+
+        const params: {
+            companyId: string;
+            employeeId?: string;
+            from?: Date;
+            to?: Date;
+        } = {
+            companyId,
+            ...(employeeId && { employeeId }),
+            ...(fromDate && toDate && { from: fromDate, to: toDate }),
+        };
+
+        return repo.getViolations(params);
+    }
+
+    // private async resolveAttendancePolicy(employeeId: string) {
+    //     const employee = await repo.getEmployeeWithAttendancePolicy(employeeId);
+
+    //     if (!employee) {
+    //         throw new Error("Employee not found");
+    //     }
+
+    //     const policy = employee.designation.attendancePolicy;
+
+    //     return {
+    //         employee,
+    //         isExempt: policy?.attendanceExempt ?? false,
+    //         isAutoPresent: policy?.autoPresent ?? false,
+    //     };
+    // }
+    private async resolveAttendancePolicy(employeeId: string) {
+        const today = new Date();
+
+        const employee = await prisma.employeeProfile.findUnique({
+            where: { id: employeeId },
+            include: {
+                designation: {
+                    include: {
+                        attendancePolicy: true,
+                    },
+                },
+                employeeAttendanceOverrides: {
+                    where: {
+                        validFrom: { lte: today },
+                        OR: [
+                            { validTo: null },
+                            { validTo: { gte: today } },
+                        ],
+                    },
+                    orderBy: { validFrom: "desc" },
+                    take: 1,
+                },
+            },
+        });
+
+        if (!employee) {
+            throw new Error("Employee not found");
+        }
+
+        // 1️⃣ Employee-level override (highest priority)
+        const override = employee.employeeAttendanceOverrides[0];
+
+        if (override) {
+            return {
+                employee,
+                isExempt: override.attendanceExempt,
+                isAutoPresent: override.autoPresent,
+            };
+        }
+
+        // 2️⃣ Designation-level policy
+        const policy = employee.designation.attendancePolicy;
+
+        return {
+            employee,
+            isExempt: policy?.attendanceExempt ?? false,
+            isAutoPresent: policy?.autoPresent ?? false,
+        };
+    }
+
+
 
 }

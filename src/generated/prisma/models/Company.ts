@@ -29,6 +29,7 @@ export type CompanyMinAggregateOutputType = {
   name: string | null
   isActive: boolean | null
   createdAt: Date | null
+  logGeoFenceViolations: boolean | null
 }
 
 export type CompanyMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type CompanyMaxAggregateOutputType = {
   name: string | null
   isActive: boolean | null
   createdAt: Date | null
+  logGeoFenceViolations: boolean | null
 }
 
 export type CompanyCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type CompanyCountAggregateOutputType = {
   name: number
   isActive: number
   createdAt: number
+  logGeoFenceViolations: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type CompanyMinAggregateInputType = {
   name?: true
   isActive?: true
   createdAt?: true
+  logGeoFenceViolations?: true
 }
 
 export type CompanyMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type CompanyMaxAggregateInputType = {
   name?: true
   isActive?: true
   createdAt?: true
+  logGeoFenceViolations?: true
 }
 
 export type CompanyCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type CompanyCountAggregateInputType = {
   name?: true
   isActive?: true
   createdAt?: true
+  logGeoFenceViolations?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type CompanyGroupByOutputType = {
   name: string
   isActive: boolean
   createdAt: Date
+  logGeoFenceViolations: boolean
   _count: CompanyCountAggregateOutputType | null
   _min: CompanyMinAggregateOutputType | null
   _max: CompanyMaxAggregateOutputType | null
@@ -174,12 +181,15 @@ export type CompanyWhereInput = {
   name?: Prisma.StringFilter<"Company"> | string
   isActive?: Prisma.BoolFilter<"Company"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
+  logGeoFenceViolations?: Prisma.BoolFilter<"Company"> | boolean
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
   employees?: Prisma.EmployeeProfileListRelationFilter
   attendanceDays?: Prisma.AttendanceDayListRelationFilter
   officeLocations?: Prisma.OfficeLocationListRelationFilter
+  attendanceViolations?: Prisma.AttendanceViolationListRelationFilter
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyListRelationFilter
 }
 
 export type CompanyOrderByWithRelationInput = {
@@ -187,12 +197,15 @@ export type CompanyOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  logGeoFenceViolations?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   departments?: Prisma.DepartmentOrderByRelationAggregateInput
   designations?: Prisma.DesignationOrderByRelationAggregateInput
   employees?: Prisma.EmployeeProfileOrderByRelationAggregateInput
   attendanceDays?: Prisma.AttendanceDayOrderByRelationAggregateInput
   officeLocations?: Prisma.OfficeLocationOrderByRelationAggregateInput
+  attendanceViolations?: Prisma.AttendanceViolationOrderByRelationAggregateInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyOrderByRelationAggregateInput
 }
 
 export type CompanyWhereUniqueInput = Prisma.AtLeast<{
@@ -203,12 +216,15 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CompanyWhereInput | Prisma.CompanyWhereInput[]
   isActive?: Prisma.BoolFilter<"Company"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
+  logGeoFenceViolations?: Prisma.BoolFilter<"Company"> | boolean
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
   employees?: Prisma.EmployeeProfileListRelationFilter
   attendanceDays?: Prisma.AttendanceDayListRelationFilter
   officeLocations?: Prisma.OfficeLocationListRelationFilter
+  attendanceViolations?: Prisma.AttendanceViolationListRelationFilter
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyListRelationFilter
 }, "id" | "name">
 
 export type CompanyOrderByWithAggregationInput = {
@@ -216,6 +232,7 @@ export type CompanyOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  logGeoFenceViolations?: Prisma.SortOrder
   _count?: Prisma.CompanyCountOrderByAggregateInput
   _max?: Prisma.CompanyMaxOrderByAggregateInput
   _min?: Prisma.CompanyMinOrderByAggregateInput
@@ -229,6 +246,7 @@ export type CompanyScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Company"> | string
   isActive?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
+  logGeoFenceViolations?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
 }
 
 export type CompanyCreateInput = {
@@ -236,12 +254,15 @@ export type CompanyCreateInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateInput = {
@@ -249,12 +270,15 @@ export type CompanyUncheckedCreateInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUpdateInput = {
@@ -262,12 +286,15 @@ export type CompanyUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateInput = {
@@ -275,12 +302,15 @@ export type CompanyUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateManyInput = {
@@ -288,6 +318,7 @@ export type CompanyCreateManyInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
 }
 
 export type CompanyUpdateManyMutationInput = {
@@ -295,6 +326,7 @@ export type CompanyUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CompanyUncheckedUpdateManyInput = {
@@ -302,6 +334,7 @@ export type CompanyUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CompanyCountOrderByAggregateInput = {
@@ -309,6 +342,7 @@ export type CompanyCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  logGeoFenceViolations?: Prisma.SortOrder
 }
 
 export type CompanyMaxOrderByAggregateInput = {
@@ -316,6 +350,7 @@ export type CompanyMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  logGeoFenceViolations?: Prisma.SortOrder
 }
 
 export type CompanyMinOrderByAggregateInput = {
@@ -323,6 +358,7 @@ export type CompanyMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  logGeoFenceViolations?: Prisma.SortOrder
 }
 
 export type CompanyScalarRelationFilter = {
@@ -384,6 +420,20 @@ export type CompanyUpdateOneRequiredWithoutDesignationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutDesignationsInput, Prisma.CompanyUpdateWithoutDesignationsInput>, Prisma.CompanyUncheckedUpdateWithoutDesignationsInput>
 }
 
+export type CompanyCreateNestedOneWithoutDesignationAttendancePoliciesInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutDesignationAttendancePoliciesInput, Prisma.CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutDesignationAttendancePoliciesInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutDesignationAttendancePoliciesNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutDesignationAttendancePoliciesInput, Prisma.CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutDesignationAttendancePoliciesInput
+  upsert?: Prisma.CompanyUpsertWithoutDesignationAttendancePoliciesInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutDesignationAttendancePoliciesInput, Prisma.CompanyUpdateWithoutDesignationAttendancePoliciesInput>, Prisma.CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput>
+}
+
 export type CompanyCreateNestedOneWithoutEmployeesInput = {
   create?: Prisma.XOR<Prisma.CompanyCreateWithoutEmployeesInput, Prisma.CompanyUncheckedCreateWithoutEmployeesInput>
   connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutEmployeesInput
@@ -412,6 +462,20 @@ export type CompanyUpdateOneRequiredWithoutAttendanceDaysNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutAttendanceDaysInput, Prisma.CompanyUpdateWithoutAttendanceDaysInput>, Prisma.CompanyUncheckedUpdateWithoutAttendanceDaysInput>
 }
 
+export type CompanyCreateNestedOneWithoutAttendanceViolationsInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceViolationsInput, Prisma.CompanyUncheckedCreateWithoutAttendanceViolationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutAttendanceViolationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutAttendanceViolationsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceViolationsInput, Prisma.CompanyUncheckedCreateWithoutAttendanceViolationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutAttendanceViolationsInput
+  upsert?: Prisma.CompanyUpsertWithoutAttendanceViolationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutAttendanceViolationsInput, Prisma.CompanyUpdateWithoutAttendanceViolationsInput>, Prisma.CompanyUncheckedUpdateWithoutAttendanceViolationsInput>
+}
+
 export type CompanyCreateNestedOneWithoutOfficeLocationsInput = {
   create?: Prisma.XOR<Prisma.CompanyCreateWithoutOfficeLocationsInput, Prisma.CompanyUncheckedCreateWithoutOfficeLocationsInput>
   connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutOfficeLocationsInput
@@ -431,11 +495,14 @@ export type CompanyCreateWithoutUsersInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutUsersInput = {
@@ -443,11 +510,14 @@ export type CompanyUncheckedCreateWithoutUsersInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutUsersInput = {
@@ -471,11 +541,14 @@ export type CompanyUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutUsersInput = {
@@ -483,11 +556,14 @@ export type CompanyUncheckedUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutDepartmentsInput = {
@@ -495,11 +571,14 @@ export type CompanyCreateWithoutDepartmentsInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutDepartmentsInput = {
@@ -507,11 +586,14 @@ export type CompanyUncheckedCreateWithoutDepartmentsInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutDepartmentsInput = {
@@ -535,11 +617,14 @@ export type CompanyUpdateWithoutDepartmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
@@ -547,11 +632,14 @@ export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutDesignationsInput = {
@@ -559,11 +647,14 @@ export type CompanyCreateWithoutDesignationsInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutDesignationsInput = {
@@ -571,11 +662,14 @@ export type CompanyUncheckedCreateWithoutDesignationsInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutDesignationsInput = {
@@ -599,11 +693,14 @@ export type CompanyUpdateWithoutDesignationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutDesignationsInput = {
@@ -611,11 +708,90 @@ export type CompanyUncheckedUpdateWithoutDesignationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutDesignationAttendancePoliciesInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  logGeoFenceViolations?: boolean
+  users?: Prisma.UserCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  logGeoFenceViolations?: boolean
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutDesignationAttendancePoliciesInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutDesignationAttendancePoliciesInput, Prisma.CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput>
+}
+
+export type CompanyUpsertWithoutDesignationAttendancePoliciesInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutDesignationAttendancePoliciesInput, Prisma.CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutDesignationAttendancePoliciesInput, Prisma.CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutDesignationAttendancePoliciesInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutDesignationAttendancePoliciesInput, Prisma.CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput>
+}
+
+export type CompanyUpdateWithoutDesignationAttendancePoliciesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutEmployeesInput = {
@@ -623,11 +799,14 @@ export type CompanyCreateWithoutEmployeesInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutEmployeesInput = {
@@ -635,11 +814,14 @@ export type CompanyUncheckedCreateWithoutEmployeesInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutEmployeesInput = {
@@ -663,11 +845,14 @@ export type CompanyUpdateWithoutEmployeesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutEmployeesInput = {
@@ -675,11 +860,14 @@ export type CompanyUncheckedUpdateWithoutEmployeesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutAttendanceDaysInput = {
@@ -687,11 +875,14 @@ export type CompanyCreateWithoutAttendanceDaysInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutAttendanceDaysInput = {
@@ -699,11 +890,14 @@ export type CompanyUncheckedCreateWithoutAttendanceDaysInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutAttendanceDaysInput = {
@@ -727,11 +921,14 @@ export type CompanyUpdateWithoutAttendanceDaysInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutAttendanceDaysInput = {
@@ -739,11 +936,90 @@ export type CompanyUncheckedUpdateWithoutAttendanceDaysInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutAttendanceViolationsInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  logGeoFenceViolations?: boolean
+  users?: Prisma.UserCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutAttendanceViolationsInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  logGeoFenceViolations?: boolean
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutAttendanceViolationsInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceViolationsInput, Prisma.CompanyUncheckedCreateWithoutAttendanceViolationsInput>
+}
+
+export type CompanyUpsertWithoutAttendanceViolationsInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutAttendanceViolationsInput, Prisma.CompanyUncheckedUpdateWithoutAttendanceViolationsInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutAttendanceViolationsInput, Prisma.CompanyUncheckedCreateWithoutAttendanceViolationsInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutAttendanceViolationsInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutAttendanceViolationsInput, Prisma.CompanyUncheckedUpdateWithoutAttendanceViolationsInput>
+}
+
+export type CompanyUpdateWithoutAttendanceViolationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutAttendanceViolationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutOfficeLocationsInput = {
@@ -751,11 +1027,14 @@ export type CompanyCreateWithoutOfficeLocationsInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutOfficeLocationsInput = {
@@ -763,11 +1042,14 @@ export type CompanyUncheckedCreateWithoutOfficeLocationsInput = {
   name: string
   isActive?: boolean
   createdAt?: Date | string
+  logGeoFenceViolations?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
   attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutOfficeLocationsInput = {
@@ -791,11 +1073,14 @@ export type CompanyUpdateWithoutOfficeLocationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutOfficeLocationsInput = {
@@ -803,11 +1088,14 @@ export type CompanyUncheckedUpdateWithoutOfficeLocationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 
@@ -822,6 +1110,8 @@ export type CompanyCountOutputType = {
   employees: number
   attendanceDays: number
   officeLocations: number
+  attendanceViolations: number
+  designationAttendancePolicies: number
 }
 
 export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -831,6 +1121,8 @@ export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   employees?: boolean | CompanyCountOutputTypeCountEmployeesArgs
   attendanceDays?: boolean | CompanyCountOutputTypeCountAttendanceDaysArgs
   officeLocations?: boolean | CompanyCountOutputTypeCountOfficeLocationsArgs
+  attendanceViolations?: boolean | CompanyCountOutputTypeCountAttendanceViolationsArgs
+  designationAttendancePolicies?: boolean | CompanyCountOutputTypeCountDesignationAttendancePoliciesArgs
 }
 
 /**
@@ -885,18 +1177,35 @@ export type CompanyCountOutputTypeCountOfficeLocationsArgs<ExtArgs extends runti
   where?: Prisma.OfficeLocationWhereInput
 }
 
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountAttendanceViolationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceViolationWhereInput
+}
+
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountDesignationAttendancePoliciesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DesignationAttendancePolicyWhereInput
+}
+
 
 export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   isActive?: boolean
   createdAt?: boolean
+  logGeoFenceViolations?: boolean
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
   designations?: boolean | Prisma.Company$designationsArgs<ExtArgs>
   employees?: boolean | Prisma.Company$employeesArgs<ExtArgs>
   attendanceDays?: boolean | Prisma.Company$attendanceDaysArgs<ExtArgs>
   officeLocations?: boolean | Prisma.Company$officeLocationsArgs<ExtArgs>
+  attendanceViolations?: boolean | Prisma.Company$attendanceViolationsArgs<ExtArgs>
+  designationAttendancePolicies?: boolean | Prisma.Company$designationAttendancePoliciesArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -905,6 +1214,7 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   isActive?: boolean
   createdAt?: boolean
+  logGeoFenceViolations?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -912,6 +1222,7 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   isActive?: boolean
   createdAt?: boolean
+  logGeoFenceViolations?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectScalar = {
@@ -919,9 +1230,10 @@ export type CompanySelectScalar = {
   name?: boolean
   isActive?: boolean
   createdAt?: boolean
+  logGeoFenceViolations?: boolean
 }
 
-export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt", ExtArgs["result"]["company"]>
+export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt" | "logGeoFenceViolations", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
@@ -929,6 +1241,8 @@ export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   employees?: boolean | Prisma.Company$employeesArgs<ExtArgs>
   attendanceDays?: boolean | Prisma.Company$attendanceDaysArgs<ExtArgs>
   officeLocations?: boolean | Prisma.Company$officeLocationsArgs<ExtArgs>
+  attendanceViolations?: boolean | Prisma.Company$attendanceViolationsArgs<ExtArgs>
+  designationAttendancePolicies?: boolean | Prisma.Company$designationAttendancePoliciesArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CompanyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -943,12 +1257,15 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     employees: Prisma.$EmployeeProfilePayload<ExtArgs>[]
     attendanceDays: Prisma.$AttendanceDayPayload<ExtArgs>[]
     officeLocations: Prisma.$OfficeLocationPayload<ExtArgs>[]
+    attendanceViolations: Prisma.$AttendanceViolationPayload<ExtArgs>[]
+    designationAttendancePolicies: Prisma.$DesignationAttendancePolicyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     isActive: boolean
     createdAt: Date
+    logGeoFenceViolations: boolean
   }, ExtArgs["result"]["company"]>
   composites: {}
 }
@@ -1349,6 +1666,8 @@ export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.
   employees<T extends Prisma.Company$employeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendanceDays<T extends Prisma.Company$attendanceDaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$attendanceDaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceDayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   officeLocations<T extends Prisma.Company$officeLocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$officeLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OfficeLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendanceViolations<T extends Prisma.Company$attendanceViolationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$attendanceViolationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceViolationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  designationAttendancePolicies<T extends Prisma.Company$designationAttendancePoliciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$designationAttendancePoliciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DesignationAttendancePolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1382,6 +1701,7 @@ export interface CompanyFieldRefs {
   readonly name: Prisma.FieldRef<"Company", 'String'>
   readonly isActive: Prisma.FieldRef<"Company", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Company", 'DateTime'>
+  readonly logGeoFenceViolations: Prisma.FieldRef<"Company", 'Boolean'>
 }
     
 
@@ -1911,6 +2231,54 @@ export type Company$officeLocationsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.OfficeLocationScalarFieldEnum | Prisma.OfficeLocationScalarFieldEnum[]
+}
+
+/**
+ * Company.attendanceViolations
+ */
+export type Company$attendanceViolationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceViolation
+   */
+  select?: Prisma.AttendanceViolationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceViolation
+   */
+  omit?: Prisma.AttendanceViolationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceViolationInclude<ExtArgs> | null
+  where?: Prisma.AttendanceViolationWhereInput
+  orderBy?: Prisma.AttendanceViolationOrderByWithRelationInput | Prisma.AttendanceViolationOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceViolationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceViolationScalarFieldEnum | Prisma.AttendanceViolationScalarFieldEnum[]
+}
+
+/**
+ * Company.designationAttendancePolicies
+ */
+export type Company$designationAttendancePoliciesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DesignationAttendancePolicy
+   */
+  select?: Prisma.DesignationAttendancePolicySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DesignationAttendancePolicy
+   */
+  omit?: Prisma.DesignationAttendancePolicyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DesignationAttendancePolicyInclude<ExtArgs> | null
+  where?: Prisma.DesignationAttendancePolicyWhereInput
+  orderBy?: Prisma.DesignationAttendancePolicyOrderByWithRelationInput | Prisma.DesignationAttendancePolicyOrderByWithRelationInput[]
+  cursor?: Prisma.DesignationAttendancePolicyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DesignationAttendancePolicyScalarFieldEnum | Prisma.DesignationAttendancePolicyScalarFieldEnum[]
 }
 
 /**

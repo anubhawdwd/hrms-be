@@ -389,9 +389,12 @@ export const ModelName = {
   Department: 'Department',
   Team: 'Team',
   Designation: 'Designation',
+  DesignationAttendancePolicy: 'DesignationAttendancePolicy',
   EmployeeProfile: 'EmployeeProfile',
   AttendanceDay: 'AttendanceDay',
   AttendanceEvent: 'AttendanceEvent',
+  AttendanceViolation: 'AttendanceViolation',
+  EmployeeAttendanceOverride: 'EmployeeAttendanceOverride',
   OfficeLocation: 'OfficeLocation'
 } as const
 
@@ -408,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "department" | "team" | "designation" | "employeeProfile" | "attendanceDay" | "attendanceEvent" | "officeLocation"
+    modelProps: "company" | "user" | "department" | "team" | "designation" | "designationAttendancePolicy" | "employeeProfile" | "attendanceDay" | "attendanceEvent" | "attendanceViolation" | "employeeAttendanceOverride" | "officeLocation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -782,6 +785,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DesignationAttendancePolicy: {
+      payload: Prisma.$DesignationAttendancePolicyPayload<ExtArgs>
+      fields: Prisma.DesignationAttendancePolicyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DesignationAttendancePolicyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DesignationAttendancePolicyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>
+        }
+        findFirst: {
+          args: Prisma.DesignationAttendancePolicyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DesignationAttendancePolicyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>
+        }
+        findMany: {
+          args: Prisma.DesignationAttendancePolicyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>[]
+        }
+        create: {
+          args: Prisma.DesignationAttendancePolicyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>
+        }
+        createMany: {
+          args: Prisma.DesignationAttendancePolicyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DesignationAttendancePolicyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>[]
+        }
+        delete: {
+          args: Prisma.DesignationAttendancePolicyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>
+        }
+        update: {
+          args: Prisma.DesignationAttendancePolicyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>
+        }
+        deleteMany: {
+          args: Prisma.DesignationAttendancePolicyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DesignationAttendancePolicyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DesignationAttendancePolicyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>[]
+        }
+        upsert: {
+          args: Prisma.DesignationAttendancePolicyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DesignationAttendancePolicyPayload>
+        }
+        aggregate: {
+          args: Prisma.DesignationAttendancePolicyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDesignationAttendancePolicy>
+        }
+        groupBy: {
+          args: Prisma.DesignationAttendancePolicyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DesignationAttendancePolicyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DesignationAttendancePolicyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DesignationAttendancePolicyCountAggregateOutputType> | number
+        }
+      }
+    }
     EmployeeProfile: {
       payload: Prisma.$EmployeeProfilePayload<ExtArgs>
       fields: Prisma.EmployeeProfileFieldRefs
@@ -1004,6 +1081,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AttendanceViolation: {
+      payload: Prisma.$AttendanceViolationPayload<ExtArgs>
+      fields: Prisma.AttendanceViolationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AttendanceViolationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AttendanceViolationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>
+        }
+        findFirst: {
+          args: Prisma.AttendanceViolationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AttendanceViolationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>
+        }
+        findMany: {
+          args: Prisma.AttendanceViolationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>[]
+        }
+        create: {
+          args: Prisma.AttendanceViolationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>
+        }
+        createMany: {
+          args: Prisma.AttendanceViolationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AttendanceViolationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>[]
+        }
+        delete: {
+          args: Prisma.AttendanceViolationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>
+        }
+        update: {
+          args: Prisma.AttendanceViolationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>
+        }
+        deleteMany: {
+          args: Prisma.AttendanceViolationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AttendanceViolationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AttendanceViolationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>[]
+        }
+        upsert: {
+          args: Prisma.AttendanceViolationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceViolationPayload>
+        }
+        aggregate: {
+          args: Prisma.AttendanceViolationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAttendanceViolation>
+        }
+        groupBy: {
+          args: Prisma.AttendanceViolationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttendanceViolationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AttendanceViolationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttendanceViolationCountAggregateOutputType> | number
+        }
+      }
+    }
+    EmployeeAttendanceOverride: {
+      payload: Prisma.$EmployeeAttendanceOverridePayload<ExtArgs>
+      fields: Prisma.EmployeeAttendanceOverrideFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmployeeAttendanceOverrideFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmployeeAttendanceOverrideFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>
+        }
+        findFirst: {
+          args: Prisma.EmployeeAttendanceOverrideFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmployeeAttendanceOverrideFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>
+        }
+        findMany: {
+          args: Prisma.EmployeeAttendanceOverrideFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>[]
+        }
+        create: {
+          args: Prisma.EmployeeAttendanceOverrideCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>
+        }
+        createMany: {
+          args: Prisma.EmployeeAttendanceOverrideCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmployeeAttendanceOverrideCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>[]
+        }
+        delete: {
+          args: Prisma.EmployeeAttendanceOverrideDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>
+        }
+        update: {
+          args: Prisma.EmployeeAttendanceOverrideUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>
+        }
+        deleteMany: {
+          args: Prisma.EmployeeAttendanceOverrideDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmployeeAttendanceOverrideUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmployeeAttendanceOverrideUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>[]
+        }
+        upsert: {
+          args: Prisma.EmployeeAttendanceOverrideUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAttendanceOverridePayload>
+        }
+        aggregate: {
+          args: Prisma.EmployeeAttendanceOverrideAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmployeeAttendanceOverride>
+        }
+        groupBy: {
+          args: Prisma.EmployeeAttendanceOverrideGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeAttendanceOverrideGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmployeeAttendanceOverrideCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeAttendanceOverrideCountAggregateOutputType> | number
+        }
+      }
+    }
     OfficeLocation: {
       payload: Prisma.$OfficeLocationPayload<ExtArgs>
       fields: Prisma.OfficeLocationFieldRefs
@@ -1121,7 +1346,8 @@ export const CompanyScalarFieldEnum = {
   id: 'id',
   name: 'name',
   isActive: 'isActive',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  logGeoFenceViolations: 'logGeoFenceViolations'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -1172,6 +1398,19 @@ export const DesignationScalarFieldEnum = {
 export type DesignationScalarFieldEnum = (typeof DesignationScalarFieldEnum)[keyof typeof DesignationScalarFieldEnum]
 
 
+export const DesignationAttendancePolicyScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  designationId: 'designationId',
+  autoPresent: 'autoPresent',
+  attendanceExempt: 'attendanceExempt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DesignationAttendancePolicyScalarFieldEnum = (typeof DesignationAttendancePolicyScalarFieldEnum)[keyof typeof DesignationAttendancePolicyScalarFieldEnum]
+
+
 export const EmployeeProfileScalarFieldEnum = {
   id: 'id',
   employeeCode: 'employeeCode',
@@ -1217,6 +1456,36 @@ export const AttendanceEventScalarFieldEnum = {
 } as const
 
 export type AttendanceEventScalarFieldEnum = (typeof AttendanceEventScalarFieldEnum)[keyof typeof AttendanceEventScalarFieldEnum]
+
+
+export const AttendanceViolationScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  companyId: 'companyId',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  distanceM: 'distanceM',
+  reason: 'reason',
+  source: 'source',
+  createdAt: 'createdAt'
+} as const
+
+export type AttendanceViolationScalarFieldEnum = (typeof AttendanceViolationScalarFieldEnum)[keyof typeof AttendanceViolationScalarFieldEnum]
+
+
+export const EmployeeAttendanceOverrideScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  autoPresent: 'autoPresent',
+  attendanceExempt: 'attendanceExempt',
+  reason: 'reason',
+  validFrom: 'validFrom',
+  validTo: 'validTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeAttendanceOverrideScalarFieldEnum = (typeof EmployeeAttendanceOverrideScalarFieldEnum)[keyof typeof EmployeeAttendanceOverrideScalarFieldEnum]
 
 
 export const OfficeLocationScalarFieldEnum = {
@@ -1481,9 +1750,12 @@ export type GlobalOmitConfig = {
   department?: Prisma.DepartmentOmit
   team?: Prisma.TeamOmit
   designation?: Prisma.DesignationOmit
+  designationAttendancePolicy?: Prisma.DesignationAttendancePolicyOmit
   employeeProfile?: Prisma.EmployeeProfileOmit
   attendanceDay?: Prisma.AttendanceDayOmit
   attendanceEvent?: Prisma.AttendanceEventOmit
+  attendanceViolation?: Prisma.AttendanceViolationOmit
+  employeeAttendanceOverride?: Prisma.EmployeeAttendanceOverrideOmit
   officeLocation?: Prisma.OfficeLocationOmit
 }
 

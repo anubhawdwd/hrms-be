@@ -111,5 +111,62 @@ export class AttendanceRepository {
             },
         });
     }
+    // -----violation Log-----
+    async logViolation(params: {
+        employeeId: string;
+        companyId: string;
+        latitude: number;
+        longitude: number;
+        distanceM: number;
+        reason: string;
+        source: "WEB" | "PWA";
+    }) {
+        return prisma.attendanceViolation.create({
+            data: {
+                employee: { connect: { id: params.employeeId } },
+                company: { connect: { id: params.companyId } },
+                latitude: params.latitude,
+                longitude: params.longitude,
+                distanceM: params.distanceM,
+                reason: params.reason,
+                source: params.source,
+            },
+        });
+    }
+    // -----violation log sorting for display----
+    async getViolations(params: {
+        companyId: string;
+        employeeId?: string;
+        from?: Date;
+        to?: Date;
+    }) {
+        return prisma.attendanceViolation.findMany({
+            where: {
+                companyId: params.companyId,
+                ...(params.employeeId && { employeeId: params.employeeId }),
+                ...(params.from &&
+                    params.to && {
+                    createdAt: {
+                        gte: params.from,
+                        lte: params.to,
+                    },
+                }),
+            },
+            orderBy: { createdAt: "desc" },
+        });
+    }
+
+    async getEmployeeWithAttendancePolicy(employeeId: string) {
+        return prisma.employeeProfile.findUnique({
+            where: { id: employeeId },
+            include: {
+                designation: {
+                    include: {
+                        attendancePolicy: true,
+                    },
+                },
+            },
+        });
+    }
 
 }

@@ -32,7 +32,7 @@ export class OrganizationService {
   }
 
   // ---------- Designations ----------
-  
+
   async createDesignation(dto: CreateDesignationDTO) {
     if (!dto.name.trim()) {
       throw new Error("Designation name is required");
@@ -44,48 +44,72 @@ export class OrganizationService {
     return repo.getDesignations(companyId);
   }
 
-   // ---------- EmployeeProfile ----------
-   
-async createEmployeeProfile(dto: CreateEmployeeProfileDTO) {
-  if (!dto.firstName.trim() || !dto.lastName.trim()) {
-    throw new Error("First name and last name are required");
+  // ---------- EmployeeProfile ----------
+
+  async createEmployeeProfile(dto: CreateEmployeeProfileDTO) {
+    if (!dto.firstName.trim() || !dto.lastName.trim()) {
+      throw new Error("First name and last name are required");
+    }
+
+    const joiningDate = new Date(dto.joiningDate);
+    if (Number.isNaN(joiningDate.getTime())) {
+      throw new Error("Invalid joining date");
+    }
+
+    const displayName =
+      dto.displayName?.trim() ||
+      [dto.firstName, dto.middleName, dto.lastName]
+        .filter(Boolean)
+        .join(" ");
+
+    // 🔑 generate next employeeCode
+    const lastEmployee = await repo.getLastEmployeeCode(dto.companyId);
+    const nextEmployeeCode = (lastEmployee?.employeeCode ?? 0) + 1;
+
+    return repo.createEmployeeProfile({
+      userId: dto.userId,
+      companyId: dto.companyId,
+      teamId: dto.teamId,
+      designationId: dto.designationId,
+
+      employeeCode: nextEmployeeCode,
+
+      firstName: dto.firstName.trim(),
+      lastName: dto.lastName.trim(),
+      displayName,
+
+      ...(dto.middleName?.trim() && { middleName: dto.middleName.trim() }),
+      ...(dto.managerId && { managerId: dto.managerId }),
+      joiningDate,
+    });
   }
-
-  const joiningDate = new Date(dto.joiningDate);
-  if (Number.isNaN(joiningDate.getTime())) {
-    throw new Error("Invalid joining date");
-  }
-
-  const displayName =
-    dto.displayName?.trim() ||
-    [dto.firstName, dto.middleName, dto.lastName]
-      .filter(Boolean)
-      .join(" ");
-
-  // 🔑 generate next employeeCode
-  const lastEmployee = await repo.getLastEmployeeCode(dto.companyId);
-  const nextEmployeeCode = (lastEmployee?.employeeCode ?? 0) + 1;
-
-  return repo.createEmployeeProfile({
-    userId: dto.userId,
-    companyId: dto.companyId,
-    teamId: dto.teamId,
-    designationId: dto.designationId,
-
-    employeeCode: nextEmployeeCode,
-
-    firstName: dto.firstName.trim(),
-    lastName: dto.lastName.trim(),
-    displayName,
-
-    ...(dto.middleName?.trim() && { middleName: dto.middleName.trim() }),
-    ...(dto.managerId && { managerId: dto.managerId }),
-    joiningDate,
-  });
-}
 
 
   async listEmployees(companyId: string) {
     return repo.listEmployees(companyId);
   }
+
+  // ----setOffice Location----
+  async setOfficeLocation(
+    companyId: string,
+    latitude: number,
+    longitude: number,
+    radiusM: number
+  ) {
+    if (radiusM <= 0) {
+      throw new Error("Radius must be positive greater than 0");
+    }
+
+    return repo.upsertOfficeLocation(
+      companyId,
+      latitude,
+      longitude,
+      radiusM
+    );
+  }
+
+  async getOfficeLocation(companyId: string) {
+    return repo.getActiveOfficeLocation(companyId);
+  }
+
 }

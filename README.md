@@ -25,6 +25,11 @@ hrms-be/
 │  │  │  └─ types.ts
 │  │  ├─ employee/           # Users + hierarchy
 │  │  ├─ attendance/         # Phase 2+
+│  │  │  ├─ controller.ts
+│  │  │  ├─ service.ts
+│  │  │  ├─ repository.ts
+│  │  │  ├─ routes.ts
+│  │  │  └─ types.ts
 │  │  ├─ leave/              # Phase 3
 │  │  └─ audit/              # Phase 4
 │
@@ -44,6 +49,7 @@ hrms-be/
 │
 │  ├─ utils/
 │  │  ├─ logger.ts
+│  │  ├─ geo.ts
 │  │  └─ date.ts
 │
 │  └─ generated/

@@ -1,8 +1,7 @@
 // src/app.ts
 import express from "express";
 import cors from "cors";
-import organizationRoutes from "./modules/organization/routes.js";
-import attendanceRoutes from "./modules/attendance/routes.js";
+import routes from "./routes/index.js";
 
 const app = express();
 
@@ -17,8 +16,7 @@ app.get("/health", (_, res) => {
  * Temporary company scoping:
  * In Phase 2 this will come from JWT.
  */
-app.use("/api/organization", organizationRoutes);
 
-app.use("/api/attendance", attendanceRoutes);
+app.use("/api", routes);
 
 export default app;

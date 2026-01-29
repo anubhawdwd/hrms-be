@@ -43,6 +43,11 @@ export type Team = Prisma.TeamModel
  */
 export type Designation = Prisma.DesignationModel
 /**
+ * Model DesignationAttendancePolicy
+ * 
+ */
+export type DesignationAttendancePolicy = Prisma.DesignationAttendancePolicyModel
+/**
  * Model EmployeeProfile
  * 
  */
@@ -57,6 +62,16 @@ export type AttendanceDay = Prisma.AttendanceDayModel
  * 
  */
 export type AttendanceEvent = Prisma.AttendanceEventModel
+/**
+ * Model AttendanceViolation
+ * 
+ */
+export type AttendanceViolation = Prisma.AttendanceViolationModel
+/**
+ * Model EmployeeAttendanceOverride
+ * 
+ */
+export type EmployeeAttendanceOverride = Prisma.EmployeeAttendanceOverrideModel
 /**
  * Model OfficeLocation
  * 
