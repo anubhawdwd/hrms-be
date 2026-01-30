@@ -35,4 +35,34 @@ export class UserRepository {
       orderBy: { createdAt: "asc" },
     });
   }
+
+  async updateUser(
+    userId: string,
+    companyId: string,
+    data: {
+      email?: string;
+      authProvider?: AuthProvider;
+    }
+  ) {
+    return prisma.user.updateMany({
+      where: {
+        id: userId,
+        companyId,
+        isActive: true,
+      },
+      data,
+    });
+  }
+
+  async deactivateUser(userId: string, companyId: string) {
+    return prisma.user.updateMany({
+      where: {
+        id: userId,
+        companyId,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+  }
 }

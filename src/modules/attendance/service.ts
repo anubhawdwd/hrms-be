@@ -1,5 +1,5 @@
 import { AttendanceRepository } from "./repository.js";
-import type { CheckInDTO, CheckOutDTO } from "./types.js";
+import type { CheckInDTO, CheckOutDTO, HrAddAttendanceEventDTO, HrUpsertAttendanceDayDTO } from "./types.js";
 import { haversineDistanceMeters } from "../../utils/geo.js";
 import { prisma } from "../../config/prisma.js";
 
@@ -265,21 +265,6 @@ export class AttendanceService {
         return repo.getViolations(params);
     }
 
-    // private async resolveAttendancePolicy(employeeId: string) {
-    //     const employee = await repo.getEmployeeWithAttendancePolicy(employeeId);
-
-    //     if (!employee) {
-    //         throw new Error("Employee not found");
-    //     }
-
-    //     const policy = employee.designation.attendancePolicy;
-
-    //     return {
-    //         employee,
-    //         isExempt: policy?.attendanceExempt ?? false,
-    //         isAutoPresent: policy?.autoPresent ?? false,
-    //     };
-    // }
     private async resolveAttendancePolicy(employeeId: string) {
         const today = new Date();
 
@@ -330,6 +315,57 @@ export class AttendanceService {
         };
     }
 
+    async hrUpsertAttendanceDay(dto: HrUpsertAttendanceDayDTO) {
+        const date = new Date(dto.date);
+        date.setHours(0, 0, 0, 0);
 
+        if (Number.isNaN(date.getTime())) {
+            throw new Error("Invalid date");
+        }
+
+        return repo.upsertAttendanceDay(
+            dto.employeeId,
+            dto.companyId,
+            date,
+            dto.status,
+            dto.totalMinutes ?? 0
+        );
+    }
+
+    async hrAddAttendanceEvent(dto: HrAddAttendanceEventDTO) {
+        const date = new Date(dto.date);
+        date.setHours(0, 0, 0, 0);
+
+        let attendanceDay = await repo.findAttendanceDay(dto.employeeId, date);
+
+        if (!attendanceDay) {
+            attendanceDay = await repo.createAttendanceDay(
+                dto.employeeId,
+                dto.companyId,
+                date
+            );
+        }
+
+        return repo.addHrEvent(
+            attendanceDay.id,
+            dto.type,
+            dto.source,
+            new Date(dto.timestamp)
+        );
+    }
+
+    async hrUpdateAttendanceDay(
+        attendanceDayId: string,
+        status: "PRESENT" | "ABSENT" | "PARTIAL",
+        totalMinutes: number
+    ) {
+        return prisma.attendanceDay.update({
+            where: { id: attendanceDayId },
+            data: {
+                status,
+                totalMinutes,
+            },
+        });
+    }
 
 }

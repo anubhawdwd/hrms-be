@@ -1372,6 +1372,7 @@ export const DepartmentScalarFieldEnum = {
   id: 'id',
   name: 'name',
   companyId: 'companyId',
+  isActive: 'isActive',
   createdAt: 'createdAt'
 } as const
 
@@ -1382,6 +1383,7 @@ export const TeamScalarFieldEnum = {
   id: 'id',
   name: 'name',
   departmentId: 'departmentId',
+  isActive: 'isActive',
   createdAt: 'createdAt'
 } as const
 
@@ -1392,6 +1394,7 @@ export const DesignationScalarFieldEnum = {
   id: 'id',
   name: 'name',
   companyId: 'companyId',
+  isActive: 'isActive',
   createdAt: 'createdAt'
 } as const
 
@@ -1423,6 +1426,7 @@ export const EmployeeProfileScalarFieldEnum = {
   middleName: 'middleName',
   lastName: 'lastName',
   displayName: 'displayName',
+  isActive: 'isActive',
   isProbation: 'isProbation',
   joiningDate: 'joiningDate',
   createdAt: 'createdAt',

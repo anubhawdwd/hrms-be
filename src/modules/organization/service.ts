@@ -1,5 +1,5 @@
 import { OrganizationRepository } from "./repository.js";
-import type { CreateDepartmentDTO, CreateTeamDTO, CreateDesignationDTO, CreateEmployeeProfileDTO } from "./types.js";
+import type { CreateDepartmentDTO, CreateTeamDTO, CreateDesignationDTO, CreateEmployeeProfileDTO, UpsertDesignationAttendancePolicyDTO } from "./types.js";
 
 const repo = new OrganizationRepository();
 
@@ -17,6 +17,19 @@ export class OrganizationService {
     return repo.getDepartments(companyId);
   }
 
+  async updateDepartment(
+    companyId: string,
+    departmentId: string,
+    name: string
+  ) {
+    if (!name.trim()) throw new Error("Name required");
+    return repo.updateDepartment(departmentId, companyId, name.trim());
+  }
+
+  async deactivateDepartment(companyId: string, departmentId: string) {
+    return repo.deactivateDepartment(departmentId, companyId);
+  }
+
   // ---------- Teams ----------
 
   async createTeam(dto: CreateTeamDTO) {
@@ -31,6 +44,31 @@ export class OrganizationService {
     return repo.getTeamsByDepartment(departmentId, companyId);
   }
 
+  async updateTeam(
+    companyId: string,
+    teamId: string,
+    data: {
+      name?: string;
+      departmentId?: string;
+    }
+  ) {
+    if (!data.name && !data.departmentId) {
+      throw new Error("Nothing to update");
+    }
+
+    if (data.name && !data.name.trim()) {
+      throw new Error("Team name cannot be empty");
+    }
+
+    return repo.updateTeam(teamId, companyId, {
+      ...(data.name && { name: data.name.trim() }),
+      ...(data.departmentId && { departmentId: data.departmentId }),
+    });
+  }
+
+  async deactivateTeam(companyId: string, teamId: string) {
+    return repo.deactivateTeam(teamId, companyId);
+  }
   // ---------- Designations ----------
 
   async createDesignation(dto: CreateDesignationDTO) {
@@ -44,6 +82,25 @@ export class OrganizationService {
     return repo.getDesignations(companyId);
   }
 
+  async updateDesignation(
+    companyId: string,
+    designationId: string,
+    name: string
+  ) {
+    if (!name.trim()) {
+      throw new Error("Designation name is required");
+    }
+
+    return repo.updateDesignation(
+      designationId,
+      companyId,
+      name.trim()
+    );
+  }
+
+  async deactivateDesignation(companyId: string, designationId: string) {
+    return repo.deactivateDesignation(designationId, companyId);
+  }
   // ---------- EmployeeProfile ----------
 
   async createEmployeeProfile(dto: CreateEmployeeProfileDTO) {
@@ -84,9 +141,38 @@ export class OrganizationService {
     });
   }
 
-
   async listEmployees(companyId: string) {
     return repo.listEmployees(companyId);
+  }
+
+  async updateEmployee(
+    employeeId: string,
+    companyId: string,
+    data: {
+      designationId?: string;
+      teamId?: string | null;
+      firstName?: string;
+      middleName?: string | null;
+      lastName?: string;
+      joiningDate?: string;
+    }
+  ) {
+    if (data.firstName && !data.firstName.trim()) {
+      throw new Error("First name cannot be empty");
+    }
+
+    return repo.updateEmployee(employeeId, companyId, {
+      ...(data.designationId && { designationId: data.designationId }),
+      ...(data.teamId !== undefined && { teamId: data.teamId }),
+      ...(data.firstName && { firstName: data.firstName.trim() }),
+      ...(data.middleName !== undefined && { middleName: data.middleName }),
+      ...(data.lastName && { lastName: data.lastName.trim() }),
+      ...(data.joiningDate && { joiningDate: new Date(data.joiningDate) }),
+    });
+  }
+
+  async deactivateEmployee(employeeId: string, companyId: string) {
+    return repo.deactivateEmployee(employeeId, companyId);
   }
 
   // ----setOffice Location----
@@ -110,6 +196,38 @@ export class OrganizationService {
 
   async getOfficeLocation(companyId: string) {
     return repo.getActiveOfficeLocation(companyId);
+  }
+
+  async upsertDesignationAttendancePolicy(
+    dto: UpsertDesignationAttendancePolicyDTO,
+    companyId: string
+  ) {
+    if (dto.autoPresent && dto.attendanceExempt) {
+      throw new Error(
+        "autoPresent and attendanceExempt cannot both be true"
+      );
+    }
+
+    return repo.upsertDesignationAttendancePolicy(
+      companyId,
+      dto.designationId,
+      dto.autoPresent,
+      dto.attendanceExempt
+    );
+  }
+  // --------Designation Attendance Policy-------------
+  async listDesignationAttendancePolicies(companyId: string) {
+    return repo.getDesignationAttendancePolicies(companyId);
+  }
+
+  async getDesignationAttendancePolicy(
+    companyId: string,
+    designationId: string
+  ) {
+    return repo.getDesignationAttendancePolicy(
+      companyId,
+      designationId
+    );
   }
 
 }

@@ -28,6 +28,7 @@ export type DepartmentMinAggregateOutputType = {
   id: string | null
   name: string | null
   companyId: string | null
+  isActive: boolean | null
   createdAt: Date | null
 }
 
@@ -35,6 +36,7 @@ export type DepartmentMaxAggregateOutputType = {
   id: string | null
   name: string | null
   companyId: string | null
+  isActive: boolean | null
   createdAt: Date | null
 }
 
@@ -42,6 +44,7 @@ export type DepartmentCountAggregateOutputType = {
   id: number
   name: number
   companyId: number
+  isActive: number
   createdAt: number
   _all: number
 }
@@ -51,6 +54,7 @@ export type DepartmentMinAggregateInputType = {
   id?: true
   name?: true
   companyId?: true
+  isActive?: true
   createdAt?: true
 }
 
@@ -58,6 +62,7 @@ export type DepartmentMaxAggregateInputType = {
   id?: true
   name?: true
   companyId?: true
+  isActive?: true
   createdAt?: true
 }
 
@@ -65,6 +70,7 @@ export type DepartmentCountAggregateInputType = {
   id?: true
   name?: true
   companyId?: true
+  isActive?: true
   createdAt?: true
   _all?: true
 }
@@ -145,6 +151,7 @@ export type DepartmentGroupByOutputType = {
   id: string
   name: string
   companyId: string
+  isActive: boolean
   createdAt: Date
   _count: DepartmentCountAggregateOutputType | null
   _min: DepartmentMinAggregateOutputType | null
@@ -173,6 +180,7 @@ export type DepartmentWhereInput = {
   id?: Prisma.StringFilter<"Department"> | string
   name?: Prisma.StringFilter<"Department"> | string
   companyId?: Prisma.StringFilter<"Department"> | string
+  isActive?: Prisma.BoolFilter<"Department"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Department"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   teams?: Prisma.TeamListRelationFilter
@@ -182,6 +190,7 @@ export type DepartmentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
   teams?: Prisma.TeamOrderByRelationAggregateInput
@@ -195,6 +204,7 @@ export type DepartmentWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DepartmentWhereInput | Prisma.DepartmentWhereInput[]
   name?: Prisma.StringFilter<"Department"> | string
   companyId?: Prisma.StringFilter<"Department"> | string
+  isActive?: Prisma.BoolFilter<"Department"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Department"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   teams?: Prisma.TeamListRelationFilter
@@ -204,6 +214,7 @@ export type DepartmentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.DepartmentCountOrderByAggregateInput
   _max?: Prisma.DepartmentMaxOrderByAggregateInput
@@ -217,12 +228,14 @@ export type DepartmentScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Department"> | string
   name?: Prisma.StringWithAggregatesFilter<"Department"> | string
   companyId?: Prisma.StringWithAggregatesFilter<"Department"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Department"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Department"> | Date | string
 }
 
 export type DepartmentCreateInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutDepartmentsInput
   teams?: Prisma.TeamCreateNestedManyWithoutDepartmentInput
@@ -232,6 +245,7 @@ export type DepartmentUncheckedCreateInput = {
   id?: string
   name: string
   companyId: string
+  isActive?: boolean
   createdAt?: Date | string
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutDepartmentInput
 }
@@ -239,6 +253,7 @@ export type DepartmentUncheckedCreateInput = {
 export type DepartmentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutDepartmentsNestedInput
   teams?: Prisma.TeamUpdateManyWithoutDepartmentNestedInput
@@ -248,6 +263,7 @@ export type DepartmentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teams?: Prisma.TeamUncheckedUpdateManyWithoutDepartmentNestedInput
 }
@@ -256,12 +272,14 @@ export type DepartmentCreateManyInput = {
   id?: string
   name: string
   companyId: string
+  isActive?: boolean
   createdAt?: Date | string
 }
 
 export type DepartmentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -269,6 +287,7 @@ export type DepartmentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -291,6 +310,7 @@ export type DepartmentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -298,6 +318,7 @@ export type DepartmentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -305,6 +326,7 @@ export type DepartmentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -372,6 +394,7 @@ export type DepartmentUpdateOneRequiredWithoutTeamsNestedInput = {
 export type DepartmentCreateWithoutCompanyInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   teams?: Prisma.TeamCreateNestedManyWithoutDepartmentInput
 }
@@ -379,6 +402,7 @@ export type DepartmentCreateWithoutCompanyInput = {
 export type DepartmentUncheckedCreateWithoutCompanyInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutDepartmentInput
 }
@@ -416,12 +440,14 @@ export type DepartmentScalarWhereInput = {
   id?: Prisma.StringFilter<"Department"> | string
   name?: Prisma.StringFilter<"Department"> | string
   companyId?: Prisma.StringFilter<"Department"> | string
+  isActive?: Prisma.BoolFilter<"Department"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Department"> | Date | string
 }
 
 export type DepartmentCreateWithoutTeamsInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutDepartmentsInput
 }
@@ -430,6 +456,7 @@ export type DepartmentUncheckedCreateWithoutTeamsInput = {
   id?: string
   name: string
   companyId: string
+  isActive?: boolean
   createdAt?: Date | string
 }
 
@@ -452,6 +479,7 @@ export type DepartmentUpdateToOneWithWhereWithoutTeamsInput = {
 export type DepartmentUpdateWithoutTeamsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutDepartmentsNestedInput
 }
@@ -460,18 +488,21 @@ export type DepartmentUncheckedUpdateWithoutTeamsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DepartmentCreateManyCompanyInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
 }
 
 export type DepartmentUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teams?: Prisma.TeamUpdateManyWithoutDepartmentNestedInput
 }
@@ -479,6 +510,7 @@ export type DepartmentUpdateWithoutCompanyInput = {
 export type DepartmentUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teams?: Prisma.TeamUncheckedUpdateManyWithoutDepartmentNestedInput
 }
@@ -486,6 +518,7 @@ export type DepartmentUncheckedUpdateWithoutCompanyInput = {
 export type DepartmentUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -524,6 +557,7 @@ export type DepartmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   teams?: boolean | Prisma.Department$teamsArgs<ExtArgs>
@@ -534,6 +568,7 @@ export type DepartmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["department"]>
@@ -542,6 +577,7 @@ export type DepartmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["department"]>
@@ -550,10 +586,11 @@ export type DepartmentSelectScalar = {
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
 }
 
-export type DepartmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "companyId" | "createdAt", ExtArgs["result"]["department"]>
+export type DepartmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "companyId" | "isActive" | "createdAt", ExtArgs["result"]["department"]>
 export type DepartmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   teams?: boolean | Prisma.Department$teamsArgs<ExtArgs>
@@ -576,6 +613,7 @@ export type $DepartmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     name: string
     companyId: string
+    isActive: boolean
     createdAt: Date
   }, ExtArgs["result"]["department"]>
   composites: {}
@@ -1005,6 +1043,7 @@ export interface DepartmentFieldRefs {
   readonly id: Prisma.FieldRef<"Department", 'String'>
   readonly name: Prisma.FieldRef<"Department", 'String'>
   readonly companyId: Prisma.FieldRef<"Department", 'String'>
+  readonly isActive: Prisma.FieldRef<"Department", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Department", 'DateTime'>
 }
     

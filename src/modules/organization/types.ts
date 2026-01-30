@@ -29,3 +29,10 @@ export interface CreateEmployeeProfileDTO {
   joiningDate: string;
 }
 
+export interface UpsertDesignationAttendancePolicyDTO {
+  designationId: string;
+  autoPresent: boolean;
+  attendanceExempt: boolean;
+}
+
+

@@ -15,34 +15,34 @@ model Company {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  users        User[]
-  departments  Department[]
-  designations Designation[]
-  employees    EmployeeProfile[]
-  attendanceDays AttendanceDay[]
+  users           User[]
+  departments     Department[]
+  designations    Designation[]
+  employees       EmployeeProfile[]
+  attendanceDays  AttendanceDay[]
   officeLocations OfficeLocation[]
 
-  attendanceViolations AttendanceViolation[]
-  logGeoFenceViolations Boolean @default(false)
+  attendanceViolations  AttendanceViolation[]
+  logGeoFenceViolations Boolean               @default(false)
 
   designationAttendancePolicies DesignationAttendancePolicy[]
 }
 
 model User {
-  id            String       @id @default(uuid())
-  email         String       @unique
-  passwordHash  String?
-  authProvider  AuthProvider
-  providerId    String?
-  isActive      Boolean      @default(true)
+  id           String       @id @default(uuid())
+  email        String       @unique
+  passwordHash String?
+  authProvider AuthProvider
+  providerId   String?
+  isActive     Boolean      @default(true)
 
-  companyId     String
-  company       Company      @relation(fields: [companyId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-  employee      EmployeeProfile?
+  employee EmployeeProfile?
 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([companyId])
 }
@@ -50,11 +50,11 @@ model User {
 // ---------ORGANIZATION-----------
 
 model Department {
-  id        String   @id @default(uuid())
+  id        String  @id @default(uuid())
   name      String
   companyId String
-  company   Company  @relation(fields: [companyId], references: [id])
-
+  company   Company @relation(fields: [companyId], references: [id])
+  isActive  Boolean @default(true)
   teams     Team[]
 
   createdAt DateTime @default(now())
@@ -64,89 +64,86 @@ model Department {
 }
 
 model Team {
-  id           String   @id @default(uuid())
+  id           String            @id @default(uuid())
   name         String
   departmentId String
-  department   Department @relation(fields: [departmentId], references: [id])
-
+  department   Department        @relation(fields: [departmentId], references: [id])
+  isActive     Boolean           @default(true)
   employees    EmployeeProfile[]
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([departmentId, name])
 }
 
 model Designation {
-  id        String   @id @default(uuid())
-  name      String
-  companyId String
-  company   Company  @relation(fields: [companyId], references: [id])
-
-  employees EmployeeProfile[]
+  id               String                       @id @default(uuid())
+  name             String
+  companyId        String
+  company          Company                      @relation(fields: [companyId], references: [id])
+  isActive         Boolean                      @default(true)
+  employees        EmployeeProfile[]
   attendancePolicy DesignationAttendancePolicy?
 
   createdAt DateTime @default(now())
 
   @@unique([companyId, name])
-
 }
 
 model DesignationAttendancePolicy {
-  id              String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  companyId       String
-  company         Company  @relation(fields: [companyId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-  designationId   String   @unique
-  designation     Designation @relation(fields: [designationId], references: [id])
+  designationId String      @unique
+  designation   Designation @relation(fields: [designationId], references: [id])
 
-  autoPresent     Boolean  @default(false)
+  autoPresent      Boolean @default(false)
   attendanceExempt Boolean @default(false)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([companyId])
 }
 
-
 // ----------EMPLOYEE-----------
 
-
 model EmployeeProfile {
-  id             String   @id @default(uuid())
-  
-  employeeCode   Int
-  
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id])
+  id String @id @default(uuid())
 
-  companyId      String
-  company        Company  @relation(fields: [companyId], references: [id])
+  employeeCode Int
 
-  designationId  String
-  designation    Designation @relation(fields: [designationId], references: [id])
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 
-  teamId         String?
-  team           Team?     @relation(fields: [teamId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-  managerId      String?
-  manager        EmployeeProfile? @relation("ManagerRelation", fields: [managerId], references: [id])
-  subordinates   EmployeeProfile[] @relation("ManagerRelation")
-  
-  firstName      String
-  middleName     String?
-  lastName       String
-  displayName    String
-  
-  isProbation    Boolean  @default(true)
-  joiningDate    DateTime
+  designationId String
+  designation   Designation @relation(fields: [designationId], references: [id])
+  teamId        String?
+  team          Team?       @relation(fields: [teamId], references: [id])
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  managerId    String?
+  manager      EmployeeProfile?  @relation("ManagerRelation", fields: [managerId], references: [id])
+  subordinates EmployeeProfile[] @relation("ManagerRelation")
 
-  attendanceDays AttendanceDay[]
-  attendanceViolations AttendanceViolation[]
+  firstName   String
+  middleName  String?
+  lastName    String
+  displayName String
+
+  isActive    Boolean  @default(true)
+  isProbation Boolean  @default(true)
+  joiningDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attendanceDays              AttendanceDay[]
+  attendanceViolations        AttendanceViolation[]
   employeeAttendanceOverrides EmployeeAttendanceOverride[]
 
   @@unique([companyId, employeeCode])
@@ -157,101 +154,101 @@ model EmployeeProfile {
 // -----ATTENDANCE-----
 
 model AttendanceDay {
-  id             String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  employeeId     String
-  employee       EmployeeProfile @relation(fields: [employeeId], references: [id])
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
 
-  companyId      String
-  company        Company  @relation(fields: [companyId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-  date           DateTime
+  date DateTime
 
-  status         AttendanceStatus @default(ABSENT)
-  totalMinutes   Int      @default(0)
+  status       AttendanceStatus @default(ABSENT)
+  totalMinutes Int              @default(0)
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  events         AttendanceEvent[]
+  events AttendanceEvent[]
 
   @@unique([employeeId, date])
   @@index([companyId, date])
 }
 
 model AttendanceEvent {
-  id              String   @id @default(uuid())
+  id String @id @default(uuid())
 
   attendanceDayId String
   attendanceDay   AttendanceDay @relation(fields: [attendanceDayId], references: [id])
 
-  type            AttendanceEventType
-  timestamp       DateTime
+  type      AttendanceEventType
+  timestamp DateTime
 
-  source          AttendanceSource
+  source AttendanceSource
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([attendanceDayId])
 }
+
 // --------AttendanceViolation-------
 
 model AttendanceViolation {
-  id           String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  employeeId   String
-  employee     EmployeeProfile @relation(fields: [employeeId], references: [id])
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
 
-  companyId    String
-  company      Company  @relation(fields: [companyId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-  latitude     Float
-  longitude    Float
-  distanceM    Float
+  latitude  Float
+  longitude Float
+  distanceM Float
 
-  reason       String   // OUTSIDE_RADIUS | NO_OFFICE_CONFIG
-  source       AttendanceSource
+  reason String // OUTSIDE_RADIUS | NO_OFFICE_CONFIG
+  source AttendanceSource
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([companyId])
   @@index([employeeId])
 }
 
 model EmployeeAttendanceOverride {
-  id               String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  employeeId       String
-  employee         EmployeeProfile @relation(fields: [employeeId], references: [id])
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
 
-  autoPresent      Boolean  @default(false)
-  attendanceExempt Boolean  @default(false)
+  autoPresent      Boolean @default(false)
+  attendanceExempt Boolean @default(false)
 
-  reason           String?  // Offer letter / contract note
+  reason String? // Offer letter / contract note
 
-  validFrom        DateTime
-  validTo          DateTime?
+  validFrom DateTime
+  validTo   DateTime?
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([employeeId])
 }
 
-
 // --------Office Location---------
 
 model OfficeLocation {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
   companyId String
-  company   Company  @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
 
   latitude  Float
   longitude Float
-  radiusM   Int      // radius in meters
+  radiusM   Int // radius in meters
 
-  isActive  Boolean  @default(true)
+  isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -259,9 +256,7 @@ model OfficeLocation {
   @@index([companyId])
 }
 
-
 // ---------ENUMS------
-
 
 enum AuthProvider {
   LOCAL

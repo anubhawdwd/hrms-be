@@ -42,3 +42,43 @@ export async function listUsers(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
+
+
+export async function updateUser(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { userId } = req.params;
+    const { email, authProvider } = req.body;
+
+    if (!companyId || !userId || Array.isArray(userId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    const result = await service.updateUser({
+      userId,
+      companyId,
+      email,
+      authProvider,
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function deactivateUser(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { userId } = req.params;
+
+    if (!companyId || !userId || Array.isArray(userId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    const result = await service.deactivateUser(userId, companyId);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}

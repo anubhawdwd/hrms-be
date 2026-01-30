@@ -18,6 +18,24 @@ export class OrganizationRepository {
     });
   }
 
+  async updateDepartment(
+    departmentId: string,
+    companyId: string,
+    name: string
+  ) {
+    return prisma.department.updateMany({
+      where: { id: departmentId, companyId, isActive: true },
+      data: { name },
+    });
+  }
+
+  async deactivateDepartment(departmentId: string, companyId: string) {
+    return prisma.department.updateMany({
+      where: { id: departmentId, companyId },
+      data: { isActive: false },
+    });
+  }
+
   // ---------- Teams ----------
 
   async createTeam(
@@ -63,6 +81,34 @@ export class OrganizationRepository {
     });
   }
 
+  async updateTeam(
+    teamId: string,
+    companyId: string,
+    data: {
+      name?: string;
+      departmentId?: string;
+    }
+  ) {
+    return prisma.team.updateMany({
+      where: {
+        id: teamId,
+        department: { companyId },
+        isActive: true,
+      },
+      data,
+    });
+  }
+
+  async deactivateTeam(teamId: string, companyId: string) {
+    return prisma.team.updateMany({
+      where: {
+        id: teamId,
+        department: { companyId },
+      },
+      data: { isActive: false },
+    });
+  }
+
   // ---------- Designations ----------
 
   async createDesignation(name: string, companyId: string) {
@@ -78,6 +124,27 @@ export class OrganizationRepository {
     return prisma.designation.findMany({
       where: { companyId },
       orderBy: { createdAt: "asc" },
+    });
+  }
+
+  async updateDesignation(
+    designationId: string,
+    companyId: string,
+    name: string
+  ) {
+    return prisma.designation.updateMany({
+      where: { id: designationId, companyId, isActive: true },
+      data: { name },
+    });
+  }
+
+  async deactivateDesignation(
+    designationId: string,
+    companyId: string
+  ) {
+    return prisma.designation.updateMany({
+      where: { id: designationId, companyId },
+      data: { isActive: false },
     });
   }
 
@@ -114,6 +181,24 @@ export class OrganizationRepository {
 
         joiningDate: data.joiningDate,
       },
+    });
+  }
+
+  async updateEmployee(
+    employeeId: string,
+    companyId: string,
+    data: any
+  ) {
+    return prisma.employeeProfile.updateMany({
+      where: { id: employeeId, companyId, isActive: true },
+      data,
+    });
+  }
+
+  async deactivateEmployee(employeeId: string, companyId: string) {
+    return prisma.employeeProfile.updateMany({
+      where: { id: employeeId, companyId },
+      data: { isActive: false },
     });
   }
 
@@ -174,6 +259,51 @@ export class OrganizationRepository {
       where: { companyId, isActive: true },
     });
   }
+
+  // ---------- Designation Attendance Policy ----------
+
+  async upsertDesignationAttendancePolicy(
+    companyId: string,
+    designationId: string,
+    autoPresent: boolean,
+    attendanceExempt: boolean
+  ) {
+    return prisma.designationAttendancePolicy.upsert({
+      where: { designationId },
+      update: {
+        autoPresent,
+        attendanceExempt,
+      },
+      create: {
+        companyId,
+        designationId,
+        autoPresent,
+        attendanceExempt,
+      },
+    });
+  }
+
+  async getDesignationAttendancePolicies(companyId: string) {
+    return prisma.designationAttendancePolicy.findMany({
+      where: { companyId },
+      include: {
+        designation: { select: { name: true } },
+      },
+    });
+  }
+
+  async getDesignationAttendancePolicy(
+    companyId: string,
+    designationId: string
+  ) {
+    return prisma.designationAttendancePolicy.findFirst({
+      where: {
+        companyId,
+        designationId,
+      },
+    });
+  }
+
 
 }
 

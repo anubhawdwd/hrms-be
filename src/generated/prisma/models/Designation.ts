@@ -28,6 +28,7 @@ export type DesignationMinAggregateOutputType = {
   id: string | null
   name: string | null
   companyId: string | null
+  isActive: boolean | null
   createdAt: Date | null
 }
 
@@ -35,6 +36,7 @@ export type DesignationMaxAggregateOutputType = {
   id: string | null
   name: string | null
   companyId: string | null
+  isActive: boolean | null
   createdAt: Date | null
 }
 
@@ -42,6 +44,7 @@ export type DesignationCountAggregateOutputType = {
   id: number
   name: number
   companyId: number
+  isActive: number
   createdAt: number
   _all: number
 }
@@ -51,6 +54,7 @@ export type DesignationMinAggregateInputType = {
   id?: true
   name?: true
   companyId?: true
+  isActive?: true
   createdAt?: true
 }
 
@@ -58,6 +62,7 @@ export type DesignationMaxAggregateInputType = {
   id?: true
   name?: true
   companyId?: true
+  isActive?: true
   createdAt?: true
 }
 
@@ -65,6 +70,7 @@ export type DesignationCountAggregateInputType = {
   id?: true
   name?: true
   companyId?: true
+  isActive?: true
   createdAt?: true
   _all?: true
 }
@@ -145,6 +151,7 @@ export type DesignationGroupByOutputType = {
   id: string
   name: string
   companyId: string
+  isActive: boolean
   createdAt: Date
   _count: DesignationCountAggregateOutputType | null
   _min: DesignationMinAggregateOutputType | null
@@ -173,6 +180,7 @@ export type DesignationWhereInput = {
   id?: Prisma.StringFilter<"Designation"> | string
   name?: Prisma.StringFilter<"Designation"> | string
   companyId?: Prisma.StringFilter<"Designation"> | string
+  isActive?: Prisma.BoolFilter<"Designation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Designation"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   employees?: Prisma.EmployeeProfileListRelationFilter
@@ -183,6 +191,7 @@ export type DesignationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
   employees?: Prisma.EmployeeProfileOrderByRelationAggregateInput
@@ -197,6 +206,7 @@ export type DesignationWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DesignationWhereInput | Prisma.DesignationWhereInput[]
   name?: Prisma.StringFilter<"Designation"> | string
   companyId?: Prisma.StringFilter<"Designation"> | string
+  isActive?: Prisma.BoolFilter<"Designation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Designation"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   employees?: Prisma.EmployeeProfileListRelationFilter
@@ -207,6 +217,7 @@ export type DesignationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.DesignationCountOrderByAggregateInput
   _max?: Prisma.DesignationMaxOrderByAggregateInput
@@ -220,12 +231,14 @@ export type DesignationScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Designation"> | string
   name?: Prisma.StringWithAggregatesFilter<"Designation"> | string
   companyId?: Prisma.StringWithAggregatesFilter<"Designation"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Designation"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Designation"> | Date | string
 }
 
 export type DesignationCreateInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutDesignationsInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutDesignationInput
@@ -236,6 +249,7 @@ export type DesignationUncheckedCreateInput = {
   id?: string
   name: string
   companyId: string
+  isActive?: boolean
   createdAt?: Date | string
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutDesignationInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedOneWithoutDesignationInput
@@ -244,6 +258,7 @@ export type DesignationUncheckedCreateInput = {
 export type DesignationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutDesignationsNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutDesignationNestedInput
@@ -254,6 +269,7 @@ export type DesignationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutDesignationNestedInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyUncheckedUpdateOneWithoutDesignationNestedInput
@@ -263,12 +279,14 @@ export type DesignationCreateManyInput = {
   id?: string
   name: string
   companyId: string
+  isActive?: boolean
   createdAt?: Date | string
 }
 
 export type DesignationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -276,6 +294,7 @@ export type DesignationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -298,6 +317,7 @@ export type DesignationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -305,6 +325,7 @@ export type DesignationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -312,6 +333,7 @@ export type DesignationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -393,6 +415,7 @@ export type DesignationUpdateOneRequiredWithoutEmployeesNestedInput = {
 export type DesignationCreateWithoutCompanyInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutDesignationInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyCreateNestedOneWithoutDesignationInput
@@ -401,6 +424,7 @@ export type DesignationCreateWithoutCompanyInput = {
 export type DesignationUncheckedCreateWithoutCompanyInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutDesignationInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedOneWithoutDesignationInput
@@ -439,12 +463,14 @@ export type DesignationScalarWhereInput = {
   id?: Prisma.StringFilter<"Designation"> | string
   name?: Prisma.StringFilter<"Designation"> | string
   companyId?: Prisma.StringFilter<"Designation"> | string
+  isActive?: Prisma.BoolFilter<"Designation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Designation"> | Date | string
 }
 
 export type DesignationCreateWithoutAttendancePolicyInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutDesignationsInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutDesignationInput
@@ -454,6 +480,7 @@ export type DesignationUncheckedCreateWithoutAttendancePolicyInput = {
   id?: string
   name: string
   companyId: string
+  isActive?: boolean
   createdAt?: Date | string
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutDesignationInput
 }
@@ -477,6 +504,7 @@ export type DesignationUpdateToOneWithWhereWithoutAttendancePolicyInput = {
 export type DesignationUpdateWithoutAttendancePolicyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutDesignationsNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutDesignationNestedInput
@@ -486,6 +514,7 @@ export type DesignationUncheckedUpdateWithoutAttendancePolicyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutDesignationNestedInput
 }
@@ -493,6 +522,7 @@ export type DesignationUncheckedUpdateWithoutAttendancePolicyInput = {
 export type DesignationCreateWithoutEmployeesInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutDesignationsInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyCreateNestedOneWithoutDesignationInput
@@ -502,6 +532,7 @@ export type DesignationUncheckedCreateWithoutEmployeesInput = {
   id?: string
   name: string
   companyId: string
+  isActive?: boolean
   createdAt?: Date | string
   attendancePolicy?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedOneWithoutDesignationInput
 }
@@ -525,6 +556,7 @@ export type DesignationUpdateToOneWithWhereWithoutEmployeesInput = {
 export type DesignationUpdateWithoutEmployeesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutDesignationsNestedInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyUpdateOneWithoutDesignationNestedInput
@@ -534,6 +566,7 @@ export type DesignationUncheckedUpdateWithoutEmployeesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendancePolicy?: Prisma.DesignationAttendancePolicyUncheckedUpdateOneWithoutDesignationNestedInput
 }
@@ -541,12 +574,14 @@ export type DesignationUncheckedUpdateWithoutEmployeesInput = {
 export type DesignationCreateManyCompanyInput = {
   id?: string
   name: string
+  isActive?: boolean
   createdAt?: Date | string
 }
 
 export type DesignationUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.EmployeeProfileUpdateManyWithoutDesignationNestedInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyUpdateOneWithoutDesignationNestedInput
@@ -555,6 +590,7 @@ export type DesignationUpdateWithoutCompanyInput = {
 export type DesignationUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutDesignationNestedInput
   attendancePolicy?: Prisma.DesignationAttendancePolicyUncheckedUpdateOneWithoutDesignationNestedInput
@@ -563,6 +599,7 @@ export type DesignationUncheckedUpdateWithoutCompanyInput = {
 export type DesignationUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -601,6 +638,7 @@ export type DesignationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   employees?: boolean | Prisma.Designation$employeesArgs<ExtArgs>
@@ -612,6 +650,7 @@ export type DesignationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designation"]>
@@ -620,6 +659,7 @@ export type DesignationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designation"]>
@@ -628,10 +668,11 @@ export type DesignationSelectScalar = {
   id?: boolean
   name?: boolean
   companyId?: boolean
+  isActive?: boolean
   createdAt?: boolean
 }
 
-export type DesignationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "companyId" | "createdAt", ExtArgs["result"]["designation"]>
+export type DesignationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "companyId" | "isActive" | "createdAt", ExtArgs["result"]["designation"]>
 export type DesignationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   employees?: boolean | Prisma.Designation$employeesArgs<ExtArgs>
@@ -656,6 +697,7 @@ export type $DesignationPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     name: string
     companyId: string
+    isActive: boolean
     createdAt: Date
   }, ExtArgs["result"]["designation"]>
   composites: {}
@@ -1086,6 +1128,7 @@ export interface DesignationFieldRefs {
   readonly id: Prisma.FieldRef<"Designation", 'String'>
   readonly name: Prisma.FieldRef<"Designation", 'String'>
   readonly companyId: Prisma.FieldRef<"Designation", 'String'>
+  readonly isActive: Prisma.FieldRef<"Designation", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Designation", 'DateTime'>
 }
     

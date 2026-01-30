@@ -9,3 +9,10 @@ export interface CreateUserDTO {
 export interface ListUsersDTO {
   companyId: string;
 }
+
+export interface UpdateUserDTO {
+  userId: string;
+  companyId: string;
+  email?: string;
+  authProvider?: AuthProvider;
+}

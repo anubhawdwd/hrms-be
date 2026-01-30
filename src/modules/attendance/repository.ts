@@ -168,5 +168,50 @@ export class AttendanceRepository {
             },
         });
     }
+// ------HR updateAttendance------
+    async upsertAttendanceDay(
+        employeeId: string,
+        companyId: string,
+        date: Date,
+        status: "PRESENT" | "ABSENT" | "PARTIAL",
+        totalMinutes: number
+    ) {
+        return prisma.attendanceDay.upsert({
+            where: {
+                employeeId_date: {
+                    employeeId,
+                    date,
+                },
+            },
+            update: {
+                status,
+                totalMinutes,
+            },
+            create: {
+                employeeId,
+                companyId,
+                date,
+                status,
+                totalMinutes,
+            },
+        });
+    }
+
+    async addHrEvent(
+        attendanceDayId: string,
+        type: "CHECK_IN" | "CHECK_OUT",
+        source: "WEB" | "PWA",
+        timestamp: Date
+    ) {
+        return prisma.attendanceEvent.create({
+            data: {
+                attendanceDayId,
+                type,
+                source,
+                timestamp,
+            },
+        });
+    }
+
 
 }
