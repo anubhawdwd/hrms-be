@@ -40,3 +40,41 @@ export const AttendanceSource = {
 } as const
 
 export type AttendanceSource = (typeof AttendanceSource)[keyof typeof AttendanceSource]
+
+
+export const LeaveDurationType = {
+  FULL_DAY: 'FULL_DAY',
+  HALF_DAY: 'HALF_DAY',
+  QUARTER_DAY: 'QUARTER_DAY',
+  HOURLY: 'HOURLY'
+} as const
+
+export type LeaveDurationType = (typeof LeaveDurationType)[keyof typeof LeaveDurationType]
+
+
+export const LeaveRequestStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type LeaveRequestStatus = (typeof LeaveRequestStatus)[keyof typeof LeaveRequestStatus]
+
+
+export const LeaveEncashmentStatus = {
+  REQUESTED: 'REQUESTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type LeaveEncashmentStatus = (typeof LeaveEncashmentStatus)[keyof typeof LeaveEncashmentStatus]
+
+
+export const GenderRestriction = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
+} as const
+
+export type GenderRestriction = (typeof GenderRestriction)[keyof typeof GenderRestriction]

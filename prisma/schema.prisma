@@ -22,6 +22,10 @@ model Company {
   attendanceDays  AttendanceDay[]
   officeLocations OfficeLocation[]
 
+  holidays      Holiday[]
+  leaveTypes    LeaveType[]
+  leavePolicies LeavePolicy[]
+
   attendanceViolations  AttendanceViolation[]
   logGeoFenceViolations Boolean               @default(false)
 
@@ -145,6 +149,11 @@ model EmployeeProfile {
   attendanceDays              AttendanceDay[]
   attendanceViolations        AttendanceViolation[]
   employeeAttendanceOverrides EmployeeAttendanceOverride[]
+  leaveBalances               LeaveBalance[]
+  leaveRequests               LeaveRequest[]               @relation("LeaveApplicant")
+  approvedLeaveRequests       LeaveRequest[]               @relation("LeaveApprover")
+  leaveEncashments            LeaveEncashment[]
+  employeeLeaveOverrides      EmployeeLeaveOverride[]
 
   @@unique([companyId, employeeCode])
   @@index([companyId])
@@ -256,6 +265,176 @@ model OfficeLocation {
   @@index([companyId])
 }
 
+// ----------CompanyDefined Leave Types------------
+model LeaveType {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  name     String // Casual Leave
+  code     String // CL
+  isPaid   Boolean @default(true)
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  policies               LeavePolicy[]
+  balances               LeaveBalance[]
+  requests               LeaveRequest[]
+  leaveEncashments       LeaveEncashment[]
+  employeeLeaveOverrides EmployeeLeaveOverride[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+// -----Leave Policy--------
+model LeavePolicy {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  leaveTypeId String
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  year Int
+
+  yearlyAllocation Float
+
+  allowCarryForward Boolean @default(false)
+  maxCarryForward   Int?
+
+  allowEncashment  Boolean @default(false)
+  probationAllowed Boolean @default(false)
+
+  genderRestriction GenderRestriction?
+
+  monthlyAccrual Boolean @default(false)
+
+  sandwichRule Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([leaveTypeId, year])
+  @@index([companyId, year])
+}
+
+// --------Leave Balance -------------
+model LeaveBalance {
+  id String @id @default(uuid())
+
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
+
+  leaveTypeId String
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  year Int
+
+  allocated      Float
+  used           Float @default(0)
+  carriedForward Float @default(0)
+  remaining      Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([employeeId, leaveTypeId, year])
+  @@index([employeeId, year])
+}
+
+// -------Leave Request-------------
+model LeaveRequest {
+  id String @id @default(uuid())
+
+  employeeId String
+  employee   EmployeeProfile @relation("LeaveApplicant", fields: [employeeId], references: [id])
+
+  leaveTypeId String
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  fromDate DateTime
+  toDate   DateTime
+
+  durationType  LeaveDurationType
+  durationValue Float
+
+  reason String?
+
+  status LeaveRequestStatus @default(PENDING)
+
+  approvedById String?
+  approvedBy   EmployeeProfile? @relation("LeaveApprover", fields: [approvedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+// -----Leave Encashment---------
+model LeaveEncashment {
+  id String @id @default(uuid())
+
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
+
+  leaveTypeId String
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  year Int
+  days Float
+
+  status LeaveEncashmentStatus @default(REQUESTED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([employeeId, year])
+}
+
+//-------- Employee Leave Overide byHR-------------
+model EmployeeLeaveOverride {
+  id String @id @default(uuid())
+
+  employeeId String
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id])
+
+  leaveTypeId String
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  year Int
+
+  allowSandwich   Boolean?
+  allowEncashment Boolean?
+  extraAllocation Float?
+
+  reason String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([employeeId, leaveTypeId, year])
+}
+
+//------ Holiday Calendar CompanyWise-------
+model Holiday {
+  id String @id @default(uuid())
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  name String
+  date DateTime
+
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, date])
+  @@index([companyId])
+}
+
 // ---------ENUMS------
 
 enum AuthProvider {
@@ -277,4 +456,30 @@ enum AttendanceEventType {
 enum AttendanceSource {
   WEB
   PWA
+}
+
+enum LeaveDurationType {
+  FULL_DAY
+  HALF_DAY
+  QUARTER_DAY
+  HOURLY
+}
+
+enum LeaveRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum LeaveEncashmentStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+}
+
+enum GenderRestriction {
+  MALE
+  FEMALE
+  OTHER
 }

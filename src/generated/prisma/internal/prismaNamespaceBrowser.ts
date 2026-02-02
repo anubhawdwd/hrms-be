@@ -62,7 +62,14 @@ export const ModelName = {
   AttendanceEvent: 'AttendanceEvent',
   AttendanceViolation: 'AttendanceViolation',
   EmployeeAttendanceOverride: 'EmployeeAttendanceOverride',
-  OfficeLocation: 'OfficeLocation'
+  OfficeLocation: 'OfficeLocation',
+  LeaveType: 'LeaveType',
+  LeavePolicy: 'LeavePolicy',
+  LeaveBalance: 'LeaveBalance',
+  LeaveRequest: 'LeaveRequest',
+  LeaveEncashment: 'LeaveEncashment',
+  EmployeeLeaveOverride: 'EmployeeLeaveOverride',
+  Holiday: 'Holiday'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -243,6 +250,114 @@ export const OfficeLocationScalarFieldEnum = {
 } as const
 
 export type OfficeLocationScalarFieldEnum = (typeof OfficeLocationScalarFieldEnum)[keyof typeof OfficeLocationScalarFieldEnum]
+
+
+export const LeaveTypeScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  name: 'name',
+  code: 'code',
+  isPaid: 'isPaid',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveTypeScalarFieldEnum = (typeof LeaveTypeScalarFieldEnum)[keyof typeof LeaveTypeScalarFieldEnum]
+
+
+export const LeavePolicyScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  leaveTypeId: 'leaveTypeId',
+  year: 'year',
+  yearlyAllocation: 'yearlyAllocation',
+  allowCarryForward: 'allowCarryForward',
+  maxCarryForward: 'maxCarryForward',
+  allowEncashment: 'allowEncashment',
+  probationAllowed: 'probationAllowed',
+  genderRestriction: 'genderRestriction',
+  monthlyAccrual: 'monthlyAccrual',
+  sandwichRule: 'sandwichRule',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeavePolicyScalarFieldEnum = (typeof LeavePolicyScalarFieldEnum)[keyof typeof LeavePolicyScalarFieldEnum]
+
+
+export const LeaveBalanceScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  year: 'year',
+  allocated: 'allocated',
+  used: 'used',
+  carriedForward: 'carriedForward',
+  remaining: 'remaining',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveBalanceScalarFieldEnum = (typeof LeaveBalanceScalarFieldEnum)[keyof typeof LeaveBalanceScalarFieldEnum]
+
+
+export const LeaveRequestScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  fromDate: 'fromDate',
+  toDate: 'toDate',
+  durationType: 'durationType',
+  durationValue: 'durationValue',
+  reason: 'reason',
+  status: 'status',
+  approvedById: 'approvedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveRequestScalarFieldEnum = (typeof LeaveRequestScalarFieldEnum)[keyof typeof LeaveRequestScalarFieldEnum]
+
+
+export const LeaveEncashmentScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  year: 'year',
+  days: 'days',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveEncashmentScalarFieldEnum = (typeof LeaveEncashmentScalarFieldEnum)[keyof typeof LeaveEncashmentScalarFieldEnum]
+
+
+export const EmployeeLeaveOverrideScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  year: 'year',
+  allowSandwich: 'allowSandwich',
+  allowEncashment: 'allowEncashment',
+  extraAllocation: 'extraAllocation',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type EmployeeLeaveOverrideScalarFieldEnum = (typeof EmployeeLeaveOverrideScalarFieldEnum)[keyof typeof EmployeeLeaveOverrideScalarFieldEnum]
+
+
+export const HolidayScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  name: 'name',
+  date: 'date',
+  createdAt: 'createdAt'
+} as const
+
+export type HolidayScalarFieldEnum = (typeof HolidayScalarFieldEnum)[keyof typeof HolidayScalarFieldEnum]
 
 
 export const SortOrder = {

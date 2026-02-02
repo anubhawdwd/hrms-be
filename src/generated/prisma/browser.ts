@@ -77,3 +77,38 @@ export type EmployeeAttendanceOverride = Prisma.EmployeeAttendanceOverrideModel
  * 
  */
 export type OfficeLocation = Prisma.OfficeLocationModel
+/**
+ * Model LeaveType
+ * 
+ */
+export type LeaveType = Prisma.LeaveTypeModel
+/**
+ * Model LeavePolicy
+ * 
+ */
+export type LeavePolicy = Prisma.LeavePolicyModel
+/**
+ * Model LeaveBalance
+ * 
+ */
+export type LeaveBalance = Prisma.LeaveBalanceModel
+/**
+ * Model LeaveRequest
+ * 
+ */
+export type LeaveRequest = Prisma.LeaveRequestModel
+/**
+ * Model LeaveEncashment
+ * 
+ */
+export type LeaveEncashment = Prisma.LeaveEncashmentModel
+/**
+ * Model EmployeeLeaveOverride
+ * 
+ */
+export type EmployeeLeaveOverride = Prisma.EmployeeLeaveOverrideModel
+/**
+ * Model Holiday
+ * 
+ */
+export type Holiday = Prisma.HolidayModel

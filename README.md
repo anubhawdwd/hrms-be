@@ -7,50 +7,71 @@ hrms-be/
 │
 ├─ src/
 │  ├─ app.ts                 # express app setup
-│  ├─ server.ts              # server bootstrap
+│  ├─ server.ts              
 │
 │  ├─ config/
-│  │  ├─ env.ts              # env validation (zod later)
+│  │  ├─ env.ts              # env validation (zod Not Implemented Yet)
 │  │  ├─ prisma.ts           # PrismaClient singleton
-│  │  └─ auth.ts             # JWT / OAuth config (Phase 2)
+│  │  └─ auth.ts             # JWT / OAuth config (Not Implemented yet)
 │
-│  ├─ modules/               # DOMAIN-DRIVEN CORE
-│  │  ├─ auth/               # Phase 2
-│  │  ├─ company/            # Company domain
-│  │  ├─ organization/       # Phase 1 (Departments, Teams)
+│  ├─ modules/               
+│  │  ├─ auth/               
+│  │  ├─ company/   
+│  │  │  ├─ controller.ts
+│  │  │  ├─ service.ts
+│  │  │  ├─ repository.ts
+│  │  │  ├─ routes.ts
+│  │  │  └─ types.ts         
+│  │  ├─ organization/       
 │  │  │  ├─ controller.ts
 │  │  │  ├─ service.ts
 │  │  │  ├─ repository.ts
 │  │  │  ├─ routes.ts
 │  │  │  └─ types.ts
-│  │  ├─ employee/           # Users + hierarchy
-│  │  ├─ attendance/         # Phase 2+
+│  │  ├─ employee/           
 │  │  │  ├─ controller.ts
 │  │  │  ├─ service.ts
 │  │  │  ├─ repository.ts
 │  │  │  ├─ routes.ts
 │  │  │  └─ types.ts
-│  │  ├─ leave/              # Phase 3
-│  │  └─ audit/              # Phase 4
+│  │  ├─ attendance/         
+│  │  │  ├─ controller.ts
+│  │  │  ├─ service.ts
+│  │  │  ├─ repository.ts
+│  │  │  ├─ routes.ts
+│  │  │  └─ types.ts
+│  │  ├─ user/ 
+│  │  │  ├─ controller.ts
+│  │  │  ├─ service.ts
+│  │  │  ├─ repository.ts
+│  │  │  ├─ routes.ts
+│  │  │  └─ types.ts                 
+│  │  ├─ leave/              
+│  │  │  ├─ controller.ts
+│  │  │  ├─ service.ts
+│  │  │  ├─ repository.ts
+│  │  │  ├─ routes.ts
+│  │  │  └─ types.ts
+│  │  └─ audit/              #(Not Implemented yet)
 │
-│  ├─ common/
-│  │  ├─ constants/
-│  │  ├─ enums/
-│  │  ├─ errors/
-│  │  └─ types/
+│  ├─ common/               #(folder is unused for now)
+│  │  ├─ constants/             
+│  │  ├─ enums/             
+│  │  ├─ errors/                
+│  │  └─ types/             
 │
-│  ├─ middlewares/
-│  │  ├─ auth.middleware.ts
-│  │  ├─ company.middleware.ts
-│  │  └─ error.middleware.ts
+│  ├─ middlewares/          #(folder is unused for now)
+│  │  ├─ auth.middleware.ts             
+│  │  ├─ company.middleware.ts              
+│  │  └─ error.middleware.ts                
 │
 │  ├─ routes/
-│  │  └─ index.ts            # route registration only
+│  │  └─ index.ts            # (mounts module routes only)
 │
 │  ├─ utils/
-│  │  ├─ logger.ts
+│  │  ├─ logger.ts          #(unused for now)
 │  │  ├─ geo.ts
-│  │  └─ date.ts
+│  │  └─ date.ts            #(unused for now)
 │
 │  └─ generated/
 │     └─ prisma/      # prisma generated (unchanged)
@@ -76,3 +97,64 @@ src/modules/organization/
 | POST   | `/attendance/hr/day`     | Create / overwrite attendance day |
 | POST   | `/attendance/hr/event`   | Add check-in / check-out manually |
 | PATCH  | `/attendance/hr/day/:id` | Fix minutes / status              |
+
+
+ROUTING STYLE (FIXED)
+---------------------------------------
+
+routes/index.ts mounts modules like:
+
+router.use("/company", companyRoutes);
+router.use("/organization", organizationRoutes);
+router.use("/attendance", attendanceRoutes);
+router.use("/users", userRoutes);
+router.use("/employees", employeeRoutes);
+router.use("/leave", leaveRoutes);
+
+Controllers:
+- Only parse HTTP request / response
+- NO Prisma calls
+
+Services:
+- Business rules
+- Validation
+- Transactions
+
+Repositories:
+- Prisma only
+- No business logic
+
+---------------------------------------
+CURRENT STATE
+---------------------------------------
+
+Completed modules:
+- company
+- organization
+- employee
+- attendance
+- user
+
+Leave module:
+- Schema is finalized
+- Basic leave APIs already exist
+- No authentication / role middleware yet
+- HR vs Employee distinction is logical only (not enforced by middleware)
+
+---------------------------------------
+MISSING LEAVE FEATURES (TO IMPLEMENT)
+---------------------------------------
+
+1. Employee cancel leave request
+   - Allowed only if status = PENDING
+
+2. HR cancel APPROVED leave (force cancel)
+   - Must revert leave balance
+   - Must store cancel reason
+
+3. Leave encashment approval & rejection (HR)
+
+4. Holiday calendar APIs (company-wise)
+   - Create holiday
+   - List holidays
+   - Delete holiday
