@@ -29,7 +29,7 @@ export class EmployeeService {
         const last = await repo.getLastEmployeeCode(dto.companyId);
         const nextEmployeeCode = (last?.employeeCode ?? 0) + 1;
 
-        return repo.createEmployee({
+        const employee = await repo.createEmployee({
             userId: dto.userId,
             companyId: dto.companyId,
             teamId: dto.teamId,
@@ -42,11 +42,19 @@ export class EmployeeService {
             ...(dto.middleName !== undefined && {
                 middleName: dto.middleName.trim(),
             }),
-
             lastName: dto.lastName.trim(),
             displayName,
             joiningDate,
+            ...(dto.isProbation !== undefined && {
+                isProbation: dto.isProbation,
+            }),
         });
+
+        /* 👇 NEW */
+        await this.bootstrapLeaveBalances(employee);
+
+        return employee;
+
     }
 
     async getEmployeeById(employeeId: string, companyId: string) {
@@ -66,6 +74,13 @@ export class EmployeeService {
         companyId: string,
         dto: UpdateEmployeeDTO
     ) {
+        // Fetch existing employee
+        const existing = await repo.findById(employeeId, companyId);
+
+        if (!existing) {
+            throw new Error("Employee not found");
+        }
+
         const updateData: any = {};
 
         if (dto.firstName) updateData.firstName = dto.firstName.trim();
@@ -75,6 +90,11 @@ export class EmployeeService {
         if (dto.teamId) updateData.teamId = dto.teamId;
         if (dto.designationId) updateData.designationId = dto.designationId;
 
+        
+        if (typeof dto.isProbation === "boolean") {
+            updateData.isProbation = dto.isProbation;
+        }
+
         if (dto.joiningDate) {
             const date = new Date(dto.joiningDate);
             if (Number.isNaN(date.getTime())) {
@@ -83,8 +103,24 @@ export class EmployeeService {
             updateData.joiningDate = date;
         }
 
-        return repo.updateEmployee(employeeId, companyId, updateData);
+        // Perform update
+        const updated = await repo.updateEmployee(
+            employeeId,
+            companyId,
+            updateData
+        );
+
+        //  Probation → Confirmed transition
+        if (
+            existing.isProbation === true &&
+            dto.isProbation === false
+        ) {
+            await this.topUpLeaveAfterProbation(existing);
+        }
+
+        return updated;
     }
+
 
     async changeManager(dto: ChangeManagerDTO) {
         return repo.changeManager(
@@ -93,4 +129,80 @@ export class EmployeeService {
             dto.managerId
         );
     }
+
+    private async bootstrapLeaveBalances(employee: any) {
+        const year = employee.joiningDate.getFullYear();
+
+        const policies = await repo.getLeavePoliciesForCompany(
+            employee.companyId,
+            year
+        );
+
+        const joiningMonth = employee.joiningDate.getMonth() + 1;
+        const monthsRemaining = 12 - joiningMonth + 1;
+
+        const balances = [];
+
+        for (const policy of policies) {
+            let totalEntitlement =
+                (policy.yearlyAllocation / 12) * monthsRemaining;
+
+            if (!policy.probationAllowed && employee.isProbation) {
+                totalEntitlement = 0;
+            }
+
+            if (policy.monthlyAccrual) {
+                const monthly = policy.yearlyAllocation / 12;
+                totalEntitlement = monthly;
+            }
+
+            balances.push({
+                employeeId: employee.id,
+                leaveTypeId: policy.leaveTypeId,
+                year,
+                allocated: totalEntitlement,
+                used: 0,
+                carriedForward: 0,
+                remaining: totalEntitlement,
+            });
+        }
+
+        if (balances.length > 0) {
+            await repo.createManyLeaveBalances(balances);
+        }
+    }
+
+    private async topUpLeaveAfterProbation(employee: any) {
+        const year = new Date().getFullYear();
+
+        const policies = await repo.getLeavePoliciesForCompany(
+            employee.companyId,
+            year
+        );
+
+        const joiningMonth = employee.joiningDate.getMonth() + 1;
+        const monthsRemaining = 12 - joiningMonth + 1;
+
+        for (const policy of policies) {
+            if (!policy.probationAllowed) continue;
+
+            const shouldHave =
+                (policy.yearlyAllocation / 12) * monthsRemaining;
+
+            const balance = await repo.getLeaveBalance(
+                employee.id,
+                policy.leaveTypeId,
+                year
+            );
+
+            if (!balance) continue;
+
+            const delta = shouldHave - balance.allocated;
+
+            if (delta > 0) {
+                await repo.incrementLeaveBalance(balance.id, delta);
+            }
+        }
+    }
+
 }

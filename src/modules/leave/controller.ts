@@ -202,6 +202,20 @@ export async function listMyLeaveRequests(req: Request, res: Response) {
   }
 }
 
+export async function cancelLeaveRequest(req: Request, res: Response) {
+  try {
+    const { requestId } = req.params;
+
+    if (!requestId || Array.isArray(requestId)) {
+      return res.status(400).json({ message: "Invalid requestId" });
+    }
+
+    res.json(await service.cancelLeaveRequest(requestId));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 /* =========================================================
    LEAVE APPROVAL (MANAGER / HR)
 ========================================================= */
@@ -231,6 +245,26 @@ export async function rejectLeave(req: Request, res: Response) {
     }
 
     res.json(await service.rejectLeave({ requestId, approvedById }));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function hrCancelApprovedLeave(req: Request, res: Response) {
+  try {
+    const { requestId } = req.params;
+    const { reason } = req.body;
+
+    if (!requestId || Array.isArray(requestId)) {
+      return res.status(400).json({ message: "Invalid requestId" });
+    }
+
+    res.json(
+      await service.hrCancelApprovedLeave({
+        requestId,
+        reason: typeof reason === "string" ? reason : null,
+      })
+    );
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -284,6 +318,31 @@ export async function requestLeaveEncashment(req: Request, res: Response) {
   }
 }
 
+export async function approveLeaveEncashment(req: Request, res: Response) {
+  try {
+    const { encashmentId } = req.params;
+    if (!encashmentId || Array.isArray(encashmentId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+    res.json(await service.approveLeaveEncashment(encashmentId));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function rejectLeaveEncashment(req: Request, res: Response) {
+  try {
+    const { encashmentId } = req.params;
+    if (!encashmentId || Array.isArray(encashmentId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+    res.json(await service.rejectLeaveEncashment(encashmentId));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+
 /* =========================================================
    HR OVERRIDE
 ========================================================= */
@@ -315,6 +374,51 @@ export async function upsertEmployeeLeaveOverride(req: Request, res: Response) {
         reason: typeof reason === "string" ? reason : null,
       })
     );
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+// --------Holiday Calendar----------
+export async function createHoliday(req: Request, res: Response) {
+  try {
+    const { companyId, name, date } = req.body;
+
+    if (!companyId || !name || !date) {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+
+    res.status(201).json(
+      await service.createHoliday({
+        companyId,
+        name,
+        date: new Date(date),
+      })
+    );
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function listHolidays(req: Request, res: Response) {
+  try {
+    const { companyId } = req.params;
+     if (!companyId || Array.isArray(companyId)) {
+            return res.status(400).json({ message: "Invalid request" });
+        }
+        res.json(await service.listHolidays(companyId));
+      } catch (err: any) {
+        res.status(400).json({ message: err.message });
+      }
+    }
+    
+    export async function deleteHoliday(req: Request, res: Response) {
+      try {
+        const { holidayId } = req.params;
+        if (!holidayId || Array.isArray(holidayId)) {
+               return res.status(400).json({ message: "Invalid request" });
+           }
+    res.json(await service.deleteHoliday(holidayId));
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }

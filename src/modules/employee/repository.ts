@@ -26,6 +26,7 @@ export class EmployeeRepository {
     displayName: string;
 
     joiningDate: Date;
+    isProbation?: boolean;
   }) {
     return prisma.employeeProfile.create({
       data: {
@@ -45,10 +46,14 @@ export class EmployeeRepository {
         ...(data.middleName !== undefined && {
           middleName: data.middleName,
         }),
+
         lastName: data.lastName,
         displayName: data.displayName,
         joiningDate: data.joiningDate,
 
+        ...(data.isProbation !== undefined && {
+          isProbation: data.isProbation,
+        }),
       },
     });
   }
@@ -117,4 +122,44 @@ export class EmployeeRepository {
       },
     });
   }
+
+  getLeavePoliciesForCompany(companyId: string, year: number) {
+    return prisma.leavePolicy.findMany({
+      where: { companyId, year },
+    });
+  }
+
+  createManyLeaveBalances(data: any[]) {
+    return prisma.leaveBalance.createMany({
+      data,
+    });
+  }
+
+
+  getLeaveBalance(
+    employeeId: string,
+    leaveTypeId: string,
+    year: number
+  ) {
+    return prisma.leaveBalance.findUnique({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId,
+          leaveTypeId,
+          year,
+        },
+      },
+    });
+  }
+
+  incrementLeaveBalance(balanceId: string, amount: number) {
+    return prisma.leaveBalance.update({
+      where: { id: balanceId },
+      data: {
+        allocated: { increment: amount },
+        remaining: { increment: amount },
+      },
+    });
+  }
+
 }

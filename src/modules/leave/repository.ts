@@ -131,6 +131,21 @@ export class LeaveRepository {
       orderBy: { createdAt: "asc" },
     });
   }
+  // --sandwich--
+  getLeavePolicy(params: {
+    companyId: string;
+    leaveTypeId: string;
+    year: number;
+  }) {
+    return prisma.leavePolicy.findUnique({
+      where: {
+        leaveTypeId_year: {
+          leaveTypeId: params.leaveTypeId,
+          year: params.year,
+        },
+      },
+    });
+  }
 
   // =====================================================
   // LEAVE REQUEST
@@ -182,6 +197,19 @@ export class LeaveRepository {
     });
   }
 
+  updateLeaveRequestStatusSimple(params: {
+    requestId: string;
+    status: LeaveRequestStatus;
+  }) {
+    return prisma.leaveRequest.update({
+      where: { id: params.requestId },
+      data: {
+        status: params.status,
+      },
+    });
+  }
+
+
   // =====================================================
   // LEAVE BALANCE
   // =====================================================
@@ -191,6 +219,46 @@ export class LeaveRepository {
       where: { employeeId, year },
       include: {
         leaveType: { select: { name: true, code: true } },
+      },
+    });
+  }
+
+  revertLeaveBalance(
+    tx: any,
+    params: {
+      employeeId: string;
+      leaveTypeId: string;
+      year: number;
+      days: number;
+    }
+  ) {
+    return tx.leaveBalance.update({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId: params.employeeId,
+          leaveTypeId: params.leaveTypeId,
+          year: params.year,
+        },
+      },
+      data: {
+        used: { decrement: params.days },
+        remaining: { increment: params.days },
+      },
+    });
+  }
+
+  updateLeaveRequestAfterHrCancel(
+    tx: any,
+    params: {
+      requestId: string;
+      reason: string | null;
+    }
+  ) {
+    return tx.leaveRequest.update({
+      where: { id: params.requestId },
+      data: {
+        status: LeaveRequestStatus.CANCELLED,
+        reason: params.reason,
       },
     });
   }
@@ -223,6 +291,30 @@ export class LeaveRepository {
       where: { id: params.encashmentId },
       data: {
         status: params.status,
+      },
+    });
+  }
+
+  deductLeaveBalanceForEncashment(
+    tx: any,
+    params: {
+      employeeId: string;
+      leaveTypeId: string;
+      year: number;
+      days: number;
+    }
+  ) {
+    return tx.leaveBalance.update({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId: params.employeeId,
+          leaveTypeId: params.leaveTypeId,
+          year: params.year,
+        },
+      },
+      data: {
+        used: { increment: params.days },
+        remaining: { decrement: params.days },
       },
     });
   }
@@ -265,4 +357,87 @@ export class LeaveRepository {
       },
     });
   }
+  getEmployeeLeaveOverride(params: {
+    employeeId: string;
+    leaveTypeId: string;
+    year: number;
+  }) {
+    return prisma.employeeLeaveOverride.findUnique({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId: params.employeeId,
+          leaveTypeId: params.leaveTypeId,
+          year: params.year,
+        },
+      },
+    });
+  }
+
+  // -------------Holiday Calendar-------------
+  createHoliday(params: {
+    companyId: string;
+    name: string;
+    date: Date;
+  }) {
+    return prisma.holiday.create({
+      data: params,
+    });
+  }
+
+  listHolidays(companyId: string) {
+    return prisma.holiday.findMany({
+      where: { companyId },
+      orderBy: { date: "asc" },
+    });
+  }
+
+  deleteHoliday(holidayId: string) {
+    return prisma.holiday.delete({
+      where: { id: holidayId },
+    });
+  }
+  // --sandwich--
+  getHolidaysForRange(params: {
+    companyId: string;
+    from: Date;
+    to: Date;
+  }) {
+    return prisma.holiday.findMany({
+      where: {
+        companyId: params.companyId,
+        date: {
+          gte: params.from,
+          lte: params.to,
+        },
+      },
+    });
+  }
+
+  findOverlappingLeaveRequest(params: {
+    employeeId: string;
+    from: Date;
+    to: Date;
+  }) {
+    return prisma.leaveRequest.findFirst({
+      where: {
+        employeeId: params.employeeId,
+        status: {
+          in: ["PENDING", "APPROVED"],
+        },
+        AND: [
+          {
+            fromDate: {
+              lte: params.to,
+            },
+          },
+          {
+            toDate: {
+              gte: params.from,
+            },
+          },
+        ],
+      },
+    });
+  }
+
 }

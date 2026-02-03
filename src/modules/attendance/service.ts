@@ -1,3 +1,4 @@
+// src/modules/attendance/service.ts
 import { AttendanceRepository } from "./repository.js";
 import type { CheckInDTO, CheckOutDTO, HrAddAttendanceEventDTO, HrUpsertAttendanceDayDTO } from "./types.js";
 import { haversineDistanceMeters } from "../../utils/geo.js";
@@ -16,14 +17,42 @@ export class AttendanceService {
         const { employee, isExempt, isAutoPresent } =
             await this.resolveAttendancePolicy(dto.employeeId);
 
-        // 1️⃣ Attendance exempt → ignore
+        // 1 Attendance exempt → ignore
         if (isExempt) {
             return { message: "Attendance exempt employee" };
         }
 
-        // 2️⃣ Auto-present → mark present and exit
+        const today = startOfDay();
+        // 2 Auto-present → mark present and exit
         if (isAutoPresent) {
-            const today = startOfDay();
+            // Leave-check
+            const leave = await repo.findApprovedLeaveForDate(
+                employee.id,
+                today
+            );
+
+            if (leave) {
+                let attendanceDay = await repo.findAttendanceDay(
+                    employee.id,
+                    today
+                );
+
+                if (!attendanceDay) {
+                    attendanceDay = await repo.createAttendanceDay(
+                        employee.id,
+                        employee.companyId,
+                        today
+                    );
+                }
+
+                await repo.updateAttendanceSummary(
+                    attendanceDay.id,
+                    0,
+                    "LEAVE"
+                );
+
+                return { message: "Employee is on approved leave" };
+            }
 
             let attendanceDay = await repo.findAttendanceDay(employee.id, today);
 
@@ -44,6 +73,38 @@ export class AttendanceService {
             return { message: "Auto-present applied" };
         }
 
+        // const today = startOfDay();
+
+        //  Leave check
+        const leave = await repo.findApprovedLeaveForDate(
+            dto.employeeId,
+            today
+        );
+
+
+        if (leave) {
+            let attendanceDay = await repo.findAttendanceDay(
+                dto.employeeId,
+                today
+            );
+
+            if (!attendanceDay) {
+                attendanceDay = await repo.createAttendanceDay(
+                    dto.employeeId,
+                    dto.companyId,
+                    today
+                );
+            }
+
+            await repo.updateAttendanceSummary(
+                attendanceDay.id,
+                0,
+                "LEAVE"
+            );
+
+            return { message: "Employee is on approved leave" };
+        }
+
         await this.validateGeoFence(
             dto.companyId,
             dto.employeeId,
@@ -51,9 +112,6 @@ export class AttendanceService {
             dto.location.longitude,
             dto.source
         );
-
-
-        const today = startOfDay();
 
         let attendanceDay = await repo.findAttendanceDay(dto.employeeId, today);
 
@@ -89,16 +147,26 @@ export class AttendanceService {
         const { isExempt, isAutoPresent } =
             await this.resolveAttendancePolicy(dto.employeeId);
 
-        // 1️⃣ Exempt employees → no-op
+        // 1 Exempt employees → no-op
         if (isExempt) {
             return { message: "Attendance exempt employee" };
         }
 
-        // 2️⃣ Auto-present → no check-out required
+        // 2 Auto-present → no check-out required
         if (isAutoPresent) {
             return { message: "Auto-present employee" };
         }
 
+        const today = startOfDay();
+        // Detect Leave At Check-Out
+        const leave = await repo.findApprovedLeaveForDate(
+            dto.employeeId,
+            today
+        );
+
+        if (leave) {
+            return { message: "Employee is on approved leave" };
+        }
 
         await this.validateGeoFence(
             dto.companyId,
@@ -107,9 +175,6 @@ export class AttendanceService {
             dto.location.longitude,
             dto.source
         );
-
-
-        const today = startOfDay();
 
         const attendanceDay = await repo.findAttendanceDay(dto.employeeId, today);
 
@@ -294,7 +359,7 @@ export class AttendanceService {
             throw new Error("Employee not found");
         }
 
-        // 1️⃣ Employee-level override (highest priority)
+        // 1 Employee-level override (highest priority)
         const override = employee.employeeAttendanceOverrides[0];
 
         if (override) {
@@ -305,7 +370,7 @@ export class AttendanceService {
             };
         }
 
-        // 2️⃣ Designation-level policy
+        // 2 Designation-level policy
         const policy = employee.designation.attendancePolicy;
 
         return {
@@ -356,7 +421,7 @@ export class AttendanceService {
 
     async hrUpdateAttendanceDay(
         attendanceDayId: string,
-        status: "PRESENT" | "ABSENT" | "PARTIAL",
+        status: "PRESENT" | "ABSENT" | "PARTIAL" | "LEAVE",
         totalMinutes: number
     ) {
         return prisma.attendanceDay.update({

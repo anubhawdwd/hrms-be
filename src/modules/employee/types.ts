@@ -13,6 +13,7 @@ export interface CreateEmployeeDTO {
 
   managerId?: string;
   joiningDate: string;
+  isProbation?: boolean; 
 }
 
 export interface UpdateEmployeeDTO {
@@ -23,8 +24,9 @@ export interface UpdateEmployeeDTO {
   middleName?: string | null;
   lastName?: string;
   displayName?: string;
-
+  
   joiningDate?: string;
+  isProbation?: boolean; 
 }
 
 export interface ChangeManagerDTO {

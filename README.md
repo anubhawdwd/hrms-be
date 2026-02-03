@@ -92,12 +92,6 @@ src/modules/organization/
 ├─ repository.ts    ← Talks to DB via prisma
 ├─ types.ts         ← DTOs
 
-| Method | Route                    | Purpose                           |
-| ------ | ------------------------ | --------------------------------- |
-| POST   | `/attendance/hr/day`     | Create / overwrite attendance day |
-| POST   | `/attendance/hr/event`   | Add check-in / check-out manually |
-| PATCH  | `/attendance/hr/day/:id` | Fix minutes / status              |
-
 
 ROUTING STYLE (FIXED)
 ---------------------------------------

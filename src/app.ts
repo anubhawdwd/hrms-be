@@ -2,6 +2,9 @@
 import express from "express";
 import cors from "cors";
 import routes from "./routes/index.js";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 
@@ -16,6 +19,15 @@ app.get("/health", (_, res) => {
  * Temporary company scoping:
  * In Phase 2 this will come from JWT.
  */
+const swaggerPath = path.resolve("./swagger-output.json");
+
+if (fs.existsSync(swaggerPath)) {
+  const swaggerDocument = JSON.parse(
+    fs.readFileSync(swaggerPath, "utf-8")
+  );
+
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
 
 app.use("/api", routes);
 

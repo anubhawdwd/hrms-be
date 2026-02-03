@@ -20,7 +20,8 @@ export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
 export const AttendanceStatus = {
   PRESENT: 'PRESENT',
   ABSENT: 'ABSENT',
-  PARTIAL: 'PARTIAL'
+  PARTIAL: 'PARTIAL',
+  LEAVE: 'LEAVE'
 } as const
 
 export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]

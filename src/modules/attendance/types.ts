@@ -1,3 +1,4 @@
+// src/modules/attendance/types.ts
 export type AttendanceSource = "WEB" | "PWA";
 
 export interface GeoLocation {
@@ -35,7 +36,7 @@ export interface HrUpsertAttendanceDayDTO {
   employeeId: string;
   companyId: string;
   date: string; // YYYY-MM-DD
-  status: "PRESENT" | "ABSENT" | "PARTIAL";
+  status: "PRESENT" | "ABSENT" | "PARTIAL" | "LEAVE";
   totalMinutes?: number;
   reason: string; // mandatory
 }

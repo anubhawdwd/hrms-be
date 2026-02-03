@@ -1,3 +1,4 @@
+// src/modules/attendance/controller.ts
 import type { Request, Response } from "express";
 import { AttendanceService } from "./service.js";
 import { prisma } from "../../config/prisma.js";

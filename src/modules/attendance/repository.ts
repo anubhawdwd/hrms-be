@@ -1,3 +1,4 @@
+// src/modules/attendance/repository.ts
 import { prisma } from "../../config/prisma.js";
 
 export class AttendanceRepository {
@@ -47,7 +48,7 @@ export class AttendanceRepository {
     async updateAttendanceSummary(
         attendanceDayId: string,
         totalMinutes: number,
-        status: "PRESENT" | "ABSENT" | "PARTIAL"
+        status: "PRESENT" | "ABSENT" | "PARTIAL" | "LEAVE"
     ) {
         return prisma.attendanceDay.update({
             where: { id: attendanceDayId },
@@ -168,12 +169,12 @@ export class AttendanceRepository {
             },
         });
     }
-// ------HR updateAttendance------
+    // ------HR updateAttendance------
     async upsertAttendanceDay(
         employeeId: string,
         companyId: string,
         date: Date,
-        status: "PRESENT" | "ABSENT" | "PARTIAL",
+        status: "PRESENT" | "ABSENT" | "PARTIAL" | "LEAVE",
         totalMinutes: number
     ) {
         return prisma.attendanceDay.upsert({
@@ -213,5 +214,15 @@ export class AttendanceRepository {
         });
     }
 
+    findApprovedLeaveForDate(employeeId: string, date: Date) {
+        return prisma.leaveRequest.findFirst({
+            where: {
+                employeeId,
+                status: "APPROVED",
+                fromDate: { lte: date },
+                toDate: { gte: date },
+            },
+        });
+    }
 
 }
