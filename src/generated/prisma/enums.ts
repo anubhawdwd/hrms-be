@@ -11,7 +11,8 @@
 
 export const AuthProvider = {
   LOCAL: 'LOCAL',
-  GOOGLE: 'GOOGLE'
+  GOOGLE: 'GOOGLE',
+  MICROSOFT: 'MICROSOFT'
 } as const
 
 export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]

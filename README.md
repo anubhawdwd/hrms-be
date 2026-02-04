@@ -53,18 +53,7 @@ hrms-be/
 │  │  │  ├─ routes.ts
 │  │  │  └─ types.ts
 │  │  └─ audit/              #(Not Implemented yet)
-│
-│  ├─ common/               #(folder is unused for now)
-│  │  ├─ constants/             
-│  │  ├─ enums/             
-│  │  ├─ errors/                
-│  │  └─ types/             
-│
-│  ├─ middlewares/          #(folder is unused for now)
-│  │  ├─ auth.middleware.ts             
-│  │  ├─ company.middleware.ts              
-│  │  └─ error.middleware.ts                
-│
+│  │       
 │  ├─ routes/
 │  │  └─ index.ts            # (mounts module routes only)
 │

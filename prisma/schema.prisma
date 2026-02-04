@@ -49,6 +49,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([companyId])
+  refreshTokens RefreshToken[]
 }
 
 // ---------ORGANIZATION-----------
@@ -435,11 +436,23 @@ model Holiday {
   @@index([companyId])
 }
 
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
 // ---------ENUMS------
 
 enum AuthProvider {
   LOCAL
   GOOGLE
+  MICROSOFT
 }
 
 enum AttendanceStatus {

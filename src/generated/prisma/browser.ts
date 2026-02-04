@@ -112,3 +112,8 @@ export type EmployeeLeaveOverride = Prisma.EmployeeLeaveOverrideModel
  * 
  */
 export type Holiday = Prisma.HolidayModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel

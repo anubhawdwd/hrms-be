@@ -3,14 +3,15 @@ import { AttendanceRepository } from "./repository.js";
 import type { CheckInDTO, CheckOutDTO, HrAddAttendanceEventDTO, HrUpsertAttendanceDayDTO } from "./types.js";
 import { haversineDistanceMeters } from "../../utils/geo.js";
 import { prisma } from "../../config/prisma.js";
+import { startOfDay } from "../../utils/date.js";
 
 const repo = new AttendanceRepository();
 
-function startOfDay(date = new Date()) {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d;
-}
+// function startOfDay(date = new Date()) {
+//     const d = new Date(date);
+//     d.setHours(0, 0, 0, 0);
+//     return d;
+// }
 
 export class AttendanceService {
     async checkIn(dto: CheckInDTO) {
