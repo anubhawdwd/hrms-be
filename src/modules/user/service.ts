@@ -2,13 +2,17 @@
 
 import { UserRepository } from "./repository.js";
 import type { CreateUserDTO, ListUsersDTO, UpdateUserDTO } from "./types.js";
-import { AuthProvider } from "../../generated/prisma/enums.js";
+import { AuthProvider, UserRole } from "../../generated/prisma/enums.js";
 
 const repo = new UserRepository();
 
 export class UserService {
   async createUser(dto: CreateUserDTO) {
     const email = dto.email?.trim().toLowerCase();
+
+    const role = dto.role && Object.values(UserRole).includes(dto.role)
+      ? dto.role
+      : UserRole.EMPLOYEE;
 
     if (!email) {
       throw new Error("Email is required");
@@ -22,8 +26,7 @@ export class UserService {
     if (existing) {
       throw new Error("User already exists in this company");
     }
-
-    return repo.createUser(email, dto.companyId, dto.authProvider);
+    return repo.createUser(email, dto.companyId, dto.authProvider, role);
   }
 
   async listUsers(dto: ListUsersDTO) {
@@ -31,7 +34,7 @@ export class UserService {
   }
 
   async updateUser(dto: UpdateUserDTO) {
-    if (!dto.email && !dto.authProvider) {
+    if (!dto.email && !dto.authProvider && !dto.role) {
       throw new Error("Nothing to update");
     }
 
@@ -42,12 +45,20 @@ export class UserService {
       throw new Error("Invalid auth provider");
     }
 
+    if (
+      dto.role &&
+      !Object.values(UserRole).includes(dto.role)
+    ) {
+      throw new Error("Invalid role");
+    }
+
     const result = await repo.updateUser(
       dto.userId,
       dto.companyId,
       {
         ...(dto.email && { email: dto.email.trim().toLowerCase() }),
         ...(dto.authProvider && { authProvider: dto.authProvider }),
+        ...(dto.role && { role: dto.role }),
       }
     );
 

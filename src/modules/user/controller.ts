@@ -2,14 +2,14 @@
 
 import type { Request, Response } from "express";
 import { UserService } from "./service.js";
-import { AuthProvider } from "../../generated/prisma/enums.js";
+import { AuthProvider, UserRole  } from "../../generated/prisma/enums.js";
 
 const service = new UserService();
 
 export async function createUser(req: Request, res: Response) {
   try {
     const companyId = req.header("x-company-id");
-    const { email, authProvider } = req.body;
+    const { email, authProvider, role } = req.body;
 
     if (!companyId) {
       return res.status(400).json({ message: "Missing x-company-id header" });
@@ -19,6 +19,7 @@ export async function createUser(req: Request, res: Response) {
       companyId,
       email,
       authProvider,
+      role
     });
 
     res.status(201).json(user);
@@ -48,7 +49,7 @@ export async function updateUser(req: Request, res: Response) {
   try {
     const companyId = req.header("x-company-id");
     const { userId } = req.params;
-    const { email, authProvider } = req.body;
+    const { email, authProvider, role } = req.body;
 
     if (!companyId || !userId || Array.isArray(userId)) {
       return res.status(400).json({ message: "Invalid request" });
@@ -59,6 +60,7 @@ export async function updateUser(req: Request, res: Response) {
       companyId,
       email,
       authProvider,
+      role,
     });
 
     res.json(result);

@@ -141,3 +141,20 @@ MISSING LEAVE FEATURES (TO IMPLEMENT)
    - Create holiday
    - List holidays
    - Delete holiday
+
+   Role Capability Model (Final)
+Area	                               Allowed Roles
+Auth routes	                              Public
+Company create	                         SUPER_ADMIN
+Company view/update	                   SUPER_ADMIN, COMPANY_ADMIN
+Organization (dept/team/designation)	 COMPANY_ADMIN, HR
+Employee CRUD	                         HR, COMPANY_ADMIN
+User CRUD	                            COMPANY_ADMIN, HR
+Leave config (types/policy/holiday)	    HR, COMPANY_ADMIN
+Leave apply	                            EMPLOYEE, HR, COMPANY_ADMIN
+Leave approve	                         HR, COMPANY_ADMIN
+Attendance check-in/out	                EMPLOYEE, HR, COMPANY_ADMIN
+Attendance HR ops	                      HR, COMPANY_ADMIN
+Violations	                            HR, COMPANY_ADMIN
+    
+SUPER_ADMIN automatically works everywhere if you include it.

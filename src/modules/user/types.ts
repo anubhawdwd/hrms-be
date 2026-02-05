@@ -1,9 +1,10 @@
-import { AuthProvider } from "../../generated/prisma/enums.js";
+import { AuthProvider, UserRole  } from "../../generated/prisma/enums.js";
 
 export interface CreateUserDTO {
   companyId: string;
   email: string;
   authProvider: AuthProvider;
+  role?: UserRole; 
 }
 
 export interface ListUsersDTO {
@@ -15,4 +16,5 @@ export interface UpdateUserDTO {
   companyId: string;
   email?: string;
   authProvider?: AuthProvider;
+  role?: UserRole; 
 }

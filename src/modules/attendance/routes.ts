@@ -11,25 +11,57 @@ import {
   hrUpsertAttendanceDay,
   upsertEmployeeAttendanceOverride,
 } from "./controller.js";
+import { authenticateJWT } from "../../middlewares/auth.middleware.js";
+import { requireRole } from "../../middlewares/requireRole.js";
+import { UserRole } from "../../generated/prisma/enums.js";
+import { requireSelfOrHR } from "../../middlewares/requireSelfOrHR.js";
 
 const router = Router();
 
-router.post("/check-in", checkIn);
-router.post("/check-out", checkOut);
+router.post("/check-in",
+  authenticateJWT,
+  requireSelfOrHR("employeeId"),
+  checkIn);
+router.post("/check-out",
+  authenticateJWT,
+  requireSelfOrHR("employeeId"),
+  checkOut);
 
-router.get("/day", getAttendanceDay);
-router.get("/range", getAttendanceRange);
+router.get("/day",
+  authenticateJWT,
+  requireSelfOrHR("employeeId"),
+  getAttendanceDay);
 
-router.get("/violations", getAttendanceViolations);
+router.get("/range",
+  authenticateJWT,
+  requireSelfOrHR("employeeId"),
+  getAttendanceRange);
+
+router.get("/violations",
+  authenticateJWT,
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  getAttendanceViolations);
+
 // -------SpecialProvision-for-DefaultAttendance------
-router.post("/employee-override", upsertEmployeeAttendanceOverride);
+router.post("/employee-override",
+  authenticateJWT,
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  upsertEmployeeAttendanceOverride);
 
 // 🔑 HR APIs
-router.post("/hr/attendance-day", hrUpsertAttendanceDay);
-router.post("/hr/attendance-event", hrAddAttendanceEvent);
-router.patch("/hr/attendance-day/:attendanceDayId", hrUpdateAttendanceDay);
+router.post("/hr/attendance-day",
+  authenticateJWT,
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  hrUpsertAttendanceDay);
 
+router.post("/hr/attendance-event",
+  authenticateJWT,
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  hrAddAttendanceEvent);
 
+router.patch("/hr/attendance-day/:attendanceDayId",
+  authenticateJWT,
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  hrUpdateAttendanceDay);
 
 export default router;
-

@@ -69,58 +69,102 @@ export class EmployeeService {
         return repo.listEmployees(companyId);
     }
 
-    async updateEmployee(
-        employeeId: string,
-        companyId: string,
-        dto: UpdateEmployeeDTO
-    ) {
-        // Fetch existing employee
-        const existing = await repo.findById(employeeId, companyId);
+    // async updateEmployee(
+    //     employeeId: string,
+    //     companyId: string,
+    //     dto: UpdateEmployeeDTO
+    // ) {
+    //     // Fetch existing employee
+    //     const existing = await repo.findById(employeeId, companyId);
 
-        if (!existing) {
-            throw new Error("Employee not found");
-        }
+    //     if (!existing) {
+    //         throw new Error("Employee not found");
+    //     }
 
-        const updateData: any = {};
+    //     const updateData: any = {};
 
-        if (dto.firstName) updateData.firstName = dto.firstName.trim();
-        if (dto.middleName !== undefined) updateData.middleName = dto.middleName;
-        if (dto.lastName) updateData.lastName = dto.lastName.trim();
-        if (dto.displayName) updateData.displayName = dto.displayName.trim();
-        if (dto.teamId) updateData.teamId = dto.teamId;
-        if (dto.designationId) updateData.designationId = dto.designationId;
+    //     if (dto.firstName) updateData.firstName = dto.firstName.trim();
+    //     if (dto.middleName !== undefined) updateData.middleName = dto.middleName;
+    //     if (dto.lastName) updateData.lastName = dto.lastName.trim();
+    //     if (dto.displayName) updateData.displayName = dto.displayName.trim();
+    //     if (dto.teamId) updateData.teamId = dto.teamId;
+    //     if (dto.designationId) updateData.designationId = dto.designationId;
 
-        
-        if (typeof dto.isProbation === "boolean") {
-            updateData.isProbation = dto.isProbation;
-        }
 
-        if (dto.joiningDate) {
-            const date = new Date(dto.joiningDate);
-            if (Number.isNaN(date.getTime())) {
-                throw new Error("Invalid joining date");
-            }
-            updateData.joiningDate = date;
-        }
+    //     if (typeof dto.isProbation === "boolean") {
+    //         updateData.isProbation = dto.isProbation;
+    //     }
 
-        // Perform update
-        const updated = await repo.updateEmployee(
-            employeeId,
-            companyId,
-            updateData
-        );
+    //     if (dto.joiningDate) {
+    //         const date = new Date(dto.joiningDate);
+    //         if (Number.isNaN(date.getTime())) {
+    //             throw new Error("Invalid joining date");
+    //         }
+    //         updateData.joiningDate = date;
+    //     }
 
-        //  Probation → Confirmed transition
-        if (
-            existing.isProbation === true &&
-            dto.isProbation === false
-        ) {
-            await this.topUpLeaveAfterProbation(existing);
-        }
+    //     // Perform update
+    //     const updated = await repo.updateEmployee(
+    //         employeeId,
+    //         companyId,
+    //         updateData
+    //     );
 
-        return updated;
+    //     //  Probation → Confirmed transition
+    //     if (
+    //         existing.isProbation === true &&
+    //         dto.isProbation === false
+    //     ) {
+    //         await this.topUpLeaveAfterProbation(existing);
+    //     }
+
+    //     return updated;
+    // }
+
+    async updateMyProfile(employeeId: string, companyId: string, dto: {
+        firstName?: string;
+        middleName?: string;
+        lastName?: string;
+        displayName?: string;
+    }) {
+        return repo.updateEmployee(employeeId, companyId, {
+            ...(dto.firstName && { firstName: dto.firstName }),
+            ...(dto.middleName !== undefined && { middleName: dto.middleName }),
+            ...(dto.lastName && { lastName: dto.lastName }),
+            ...(dto.displayName && { displayName: dto.displayName }),
+        });
     }
 
+    async updateEmployeeAdmin(employeeId: string, companyId:string, dto: {
+        teamId?: string;
+        designationId?: string;
+        joiningDate?: string;
+        isProbation?: boolean;
+        firstName?: string;
+        middleName?: string;
+        lastName?: string;
+        displayName?: string;
+    }) {
+        return repo.updateEmployee(employeeId, companyId, {
+            ...(dto.teamId && { teamId: dto.teamId }),
+            ...(dto.designationId && { designationId: dto.designationId }),
+            ...(dto.joiningDate && { joiningDate: new Date(dto.joiningDate) }),
+            ...(dto.isProbation !== undefined && { isProbation: dto.isProbation }),
+
+            ...(dto.firstName && { firstName: dto.firstName }),
+            ...(dto.middleName !== undefined && { middleName: dto.middleName }),
+            ...(dto.lastName && { lastName: dto.lastName }),
+            ...(dto.displayName && { displayName: dto.displayName }),
+        });
+    }
+
+
+    async deactivateEmployee(
+        employeeId: string,
+        companyId: string
+    ) {
+        return repo.deactivateEmployee(employeeId, companyId);
+    }
 
     async changeManager(dto: ChangeManagerDTO) {
         return repo.changeManager(

@@ -1,7 +1,7 @@
 // src/modules/user/repository.ts
 
 import { prisma } from "../../config/prisma.js";
-import { AuthProvider } from "../../generated/prisma/enums.js";
+import { AuthProvider, UserRole } from "../../generated/prisma/enums.js";
 
 export class UserRepository {
   async findByEmail(email: string, companyId: string) {
@@ -16,12 +16,14 @@ export class UserRepository {
   async createUser(
     email: string,
     companyId: string,
-    authProvider: AuthProvider
+    authProvider: AuthProvider,
+    role: UserRole
   ) {
     return prisma.user.create({
       data: {
         email,
         authProvider,
+        role,
         company: {
           connect: { id: companyId },
         },
@@ -42,6 +44,7 @@ export class UserRepository {
     data: {
       email?: string;
       authProvider?: AuthProvider;
+      role?: UserRole;
     }
   ) {
     return prisma.user.updateMany({

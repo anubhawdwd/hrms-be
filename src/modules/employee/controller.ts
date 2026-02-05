@@ -53,20 +53,65 @@ export async function getEmployeeById(req: Request, res: Response) {
   }
 }
 
-export async function updateEmployee(req: Request, res: Response) {
+// export async function updateEmployee(req: Request, res: Response) {
+//   try {
+//     const companyId = req.header("x-company-id");
+//     const { employeeId } = req.params;
+
+//     if (!companyId || !employeeId || Array.isArray(employeeId)) {
+//       return res.status(400).json({ message: "Invalid input" });
+//     }
+
+//     const employee = await service.updateEmployee(
+//       employeeId,
+//       companyId,
+//       req.body
+//     );
+
+//     res.json(employee);
+//   } catch (err: any) {
+//     res.status(400).json({ message: err.message });
+//   }
+// }
+
+export async function updateMyProfile(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { employeeId } = req.params;
+    if (!companyId || !employeeId || Array.isArray(employeeId)) {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+    const result = await service.updateMyProfile(employeeId, companyId, req.body);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function updateEmployeeAdmin(req: Request, res: Response) {
+  try {
+    const companyId = req.header("x-company-id");
+    const { employeeId } = req.params;
+    if (!companyId || !employeeId || Array.isArray(employeeId)) {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+    const result = await service.updateEmployeeAdmin(employeeId, companyId, req.body);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function deactivateEmployee(req: Request, res: Response) {
   try {
     const companyId = req.header("x-company-id");
     const { employeeId } = req.params;
 
     if (!companyId || !employeeId || Array.isArray(employeeId)) {
-      return res.status(400).json({ message: "Invalid input" });
+      return res.status(400).json({ message: "Invalid request" });
     }
 
-    const employee = await service.updateEmployee(
-      employeeId,
-      companyId,
-      req.body
-    );
+    const employee = await service.deactivateEmployee(employeeId, companyId);
 
     res.json(employee);
   } catch (err: any) {

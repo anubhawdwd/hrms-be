@@ -2,12 +2,39 @@
 
 import { Router } from "express";
 import { createUser, deactivateUser, listUsers, updateUser } from "./controller.js";
+import { authenticateJWT } from "../../middlewares/auth.middleware.js";
+import * as controller from "./controller.js";
+import { requireRole } from "../../middlewares/requireRole.js";
+import { UserRole } from "../../generated/prisma/enums.js";
 
 const router = Router();
 
-router.post("/", createUser);
-router.get("/", listUsers);
+router.post(
+    "/",
+    authenticateJWT,
+    requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+    createUser
+);
 
-router.patch("/:userId", updateUser);
-router.delete("/:userId", deactivateUser);
+router.get(
+    "/",
+    authenticateJWT,
+    requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+    listUsers
+);
+
+router.patch(
+    "/:userId",
+    authenticateJWT,
+    requireRole(UserRole.COMPANY_ADMIN),
+    updateUser
+);
+
+router.delete(
+    "/:userId",
+    authenticateJWT,
+    requireRole(UserRole.COMPANY_ADMIN),
+    deactivateUser
+);
+
 export default router;

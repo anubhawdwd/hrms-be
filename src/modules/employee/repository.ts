@@ -110,6 +110,30 @@ export class EmployeeRepository {
     });
   }
 
+  // updateEmployee(employeeId: string, data: any) {
+  //   return prisma.employeeProfile.update({
+  //     where: { id: employeeId },
+  //     data
+  //   });
+  // }
+
+
+  async deactivateEmployee(
+    employeeId: string,
+    companyId: string
+  ) {
+    return prisma.employeeProfile.updateMany({
+      where: {
+        id: employeeId,
+        companyId,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+  }
+
+
   async changeManager(
     employeeId: string,
     companyId: string,

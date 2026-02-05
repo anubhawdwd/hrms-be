@@ -224,96 +224,96 @@ export async function deactivateDesignation(req: Request, res: Response) {
 
 
 // ---------- EmployeeProfile ----------
-export async function createEmployee(req: Request, res: Response) {
-  try {
-    const companyId = req.header("x-company-id");
+// export async function createEmployee(req: Request, res: Response) {
+//   try {
+//     const companyId = req.header("x-company-id");
 
-    if (!companyId) {
-      return res.status(400).json({ message: "x-company-id header missing" });
-    }
+//     if (!companyId) {
+//       return res.status(400).json({ message: "x-company-id header missing" });
+//     }
 
-    const {
-      userId,
-      teamId,
-      designationId,
-      firstName,
-      middleName,
-      lastName,
-      displayName,
-      managerId,
-      joiningDate,
-    } = req.body;
+//     const {
+//       userId,
+//       teamId,
+//       designationId,
+//       firstName,
+//       middleName,
+//       lastName,
+//       displayName,
+//       managerId,
+//       joiningDate,
+//     } = req.body;
 
-    if (!userId || !teamId || !designationId || !firstName || !lastName || !joiningDate) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
+//     if (!userId || !teamId || !designationId || !firstName || !lastName || !joiningDate) {
+//       return res.status(400).json({ message: "Missing required fields" });
+//     }
 
-    const employee = await service.createEmployeeProfile({
-      userId,
-      companyId,
-      teamId,
-      designationId,
-      firstName,
-      middleName,
-      lastName,
-      displayName,
-      managerId,
-      joiningDate,
-    });
+//     const employee = await service.createEmployeeProfile({
+//       userId,
+//       companyId,
+//       teamId,
+//       designationId,
+//       firstName,
+//       middleName,
+//       lastName,
+//       displayName,
+//       managerId,
+//       joiningDate,
+//     });
 
-    res.status(201).json(employee);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-}
+//     res.status(201).json(employee);
+//   } catch (err: any) {
+//     res.status(400).json({ message: err.message });
+//   }
+// }
 
-export async function updateEmployee(req: Request, res: Response) {
-  try {
-    const companyId = req.header("x-company-id");
-    const { employeeId } = req.params;
+// export async function updateEmployee(req: Request, res: Response) {
+//   try {
+//     const companyId = req.header("x-company-id");
+//     const { employeeId } = req.params;
 
-    if (!companyId || !employeeId || Array.isArray(employeeId)) {
-      return res.status(400).json({ message: "Invalid request" });
-    }
+//     if (!companyId || !employeeId || Array.isArray(employeeId)) {
+//       return res.status(400).json({ message: "Invalid request" });
+//     }
 
-    await service.updateEmployee(employeeId, companyId, req.body);
-    res.json({ message: "Employee updated successfully" });
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-}
+//     await service.updateEmployee(employeeId, companyId, req.body);
+//     res.json({ message: "Employee updated successfully" });
+//   } catch (err: any) {
+//     res.status(400).json({ message: err.message });
+//   }
+// }
 
-export async function deactivateEmployee(req: Request, res: Response) {
-  try {
-    const companyId = req.header("x-company-id");
-    const { employeeId } = req.params;
+// export async function deactivateEmployee(req: Request, res: Response) {
+//   try {
+//     const companyId = req.header("x-company-id");
+//     const { employeeId } = req.params;
 
-    if (!companyId || !employeeId || Array.isArray(employeeId)) {
-      return res.status(400).json({ message: "Invalid request" });
-    }
+//     if (!companyId || !employeeId || Array.isArray(employeeId)) {
+//       return res.status(400).json({ message: "Invalid request" });
+//     }
 
-    await service.deactivateEmployee(employeeId, companyId);
-    res.json({ message: "Employee deactivated successfully" });
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-}
+//     await service.deactivateEmployee(employeeId, companyId);
+//     res.json({ message: "Employee deactivated successfully" });
+//   } catch (err: any) {
+//     res.status(400).json({ message: err.message });
+//   }
+// }
 
 
-export async function listEmployees(req: Request, res: Response) {
-  try {
-    const companyId = req.header("x-company-id");
+// export async function listEmployees(req: Request, res: Response) {
+//   try {
+//     const companyId = req.header("x-company-id");
 
-    if (!companyId) {
-      return res.status(400).json({ message: "x-company-id header missing" });
-    }
+//     if (!companyId) {
+//       return res.status(400).json({ message: "x-company-id header missing" });
+//     }
 
-    const employees = await service.listEmployees(companyId);
-    res.json(employees);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-}
+//     const employees = await service.listEmployees(companyId);
+//     res.json(employees);
+//   } catch (err: any) {
+//     res.status(400).json({ message: err.message });
+//   }
+// }
 
 // Set Office Location
 export async function setOfficeLocation(req: Request, res: Response) {

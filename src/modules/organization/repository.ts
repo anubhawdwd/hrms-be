@@ -149,85 +149,85 @@ export class OrganizationRepository {
   }
 
   // ---------- EmployeeProfile ----------
-  async createEmployeeProfile(data: {
-    userId: string;
-    companyId: string;
-    teamId: string;
-    designationId: string;
-    employeeCode: number;
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-    displayName: string;
-    managerId?: string;
-    joiningDate: Date;
-  }) {
-    return prisma.employeeProfile.create({
-      data: {
-        employeeCode: data.employeeCode,
-        user: { connect: { id: data.userId } },
-        company: { connect: { id: data.companyId } },
-        team: { connect: { id: data.teamId } },
-        designation: { connect: { id: data.designationId } },
+  // async createEmployeeProfile(data: {
+  //   userId: string;
+  //   companyId: string;
+  //   teamId: string;
+  //   designationId: string;
+  //   employeeCode: number;
+  //   firstName: string;
+  //   middleName?: string;
+  //   lastName: string;
+  //   displayName: string;
+  //   managerId?: string;
+  //   joiningDate: Date;
+  // }) {
+  //   return prisma.employeeProfile.create({
+  //     data: {
+  //       employeeCode: data.employeeCode,
+  //       user: { connect: { id: data.userId } },
+  //       company: { connect: { id: data.companyId } },
+  //       team: { connect: { id: data.teamId } },
+  //       designation: { connect: { id: data.designationId } },
 
-        firstName: data.firstName,
-        ...(data.middleName && { middleName: data.middleName }),
-        lastName: data.lastName,
-        displayName: data.displayName,
+  //       firstName: data.firstName,
+  //       ...(data.middleName && { middleName: data.middleName }),
+  //       lastName: data.lastName,
+  //       displayName: data.displayName,
 
-        ...(data.managerId && {
-          manager: { connect: { id: data.managerId } },
-        }),
+  //       ...(data.managerId && {
+  //         manager: { connect: { id: data.managerId } },
+  //       }),
 
-        joiningDate: data.joiningDate,
-      },
-    });
-  }
+  //       joiningDate: data.joiningDate,
+  //     },
+  //   });
+  // }
 
-  async updateEmployee(
-    employeeId: string,
-    companyId: string,
-    data: any
-  ) {
-    return prisma.employeeProfile.updateMany({
-      where: { id: employeeId, companyId, isActive: true },
-      data,
-    });
-  }
+  // async updateEmployee(
+  //   employeeId: string,
+  //   companyId: string,
+  //   data: any
+  // ) {
+  //   return prisma.employeeProfile.updateMany({
+  //     where: { id: employeeId, companyId, isActive: true },
+  //     data,
+  //   });
+  // }
 
-  async deactivateEmployee(employeeId: string, companyId: string) {
-    return prisma.employeeProfile.updateMany({
-      where: { id: employeeId, companyId },
-      data: { isActive: false },
-    });
-  }
+  // async deactivateEmployee(employeeId: string, companyId: string) {
+  //   return prisma.employeeProfile.updateMany({
+  //     where: { id: employeeId, companyId },
+  //     data: { isActive: false },
+  //   });
+  // }
 
 
-  async listEmployees(companyId: string) {
-    return prisma.employeeProfile.findMany({
-      where: { companyId },
-      include: {
-        user: { select: { email: true } },
-        team: { select: { name: true } },
-        designation: { select: { name: true } },
-        manager: {
-          select: {
-            id: true,
-            user: { select: { email: true } },
-          },
-        },
-      },
-      orderBy: { createdAt: "asc" },
-    });
-  }
+  // async listEmployees(companyId: string) {
+  //   return prisma.employeeProfile.findMany({
+  //     where: { companyId },
+  //     include: {
+  //       user: { select: { email: true } },
+  //       team: { select: { name: true } },
+  //       designation: { select: { name: true } },
+  //       manager: {
+  //         select: {
+  //           id: true,
+  //           user: { select: { email: true } },
+  //         },
+  //       },
+  //     },
+  //     orderBy: { createdAt: "asc" },
+  //   });
+  // }
 
-  async getLastEmployeeCode(companyId: string) {
-    return prisma.employeeProfile.findFirst({
-      where: { companyId },
-      orderBy: { employeeCode: "desc" },
-      select: { employeeCode: true },
-    });
-  }
+  // async getLastEmployeeCode(companyId: string) {
+  //   return prisma.employeeProfile.findFirst({
+  //     where: { companyId },
+  //     orderBy: { employeeCode: "desc" },
+  //     select: { employeeCode: true },
+  //   });
+  // }
 
   // ------Office Geo Location-----
 

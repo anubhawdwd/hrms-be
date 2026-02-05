@@ -21,6 +21,11 @@ export class CompanyService {
     return repo.createCompany(name);
   }
 
+  async listCompanies() {
+    return repo.listCompanies();
+  }
+
+
   async getCompany(companyId: string) {
     const company = await repo.findById(companyId);
 

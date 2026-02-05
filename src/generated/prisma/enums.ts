@@ -80,3 +80,13 @@ export const GenderRestriction = {
 } as const
 
 export type GenderRestriction = (typeof GenderRestriction)[keyof typeof GenderRestriction]
+
+
+export const UserRole = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  COMPANY_ADMIN: 'COMPANY_ADMIN',
+  HR: 'HR',
+  EMPLOYEE: 'EMPLOYEE'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]

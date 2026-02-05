@@ -11,6 +11,12 @@ export class CompanyRepository {
     });
   }
 
+  listCompanies() {
+    return prisma.company.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async findByName(name: string) {
     return prisma.company.findUnique({
       where: { name },

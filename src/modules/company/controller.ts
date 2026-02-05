@@ -17,6 +17,16 @@ export async function createCompany(req: Request, res: Response) {
     }
 }
 
+export async function listCompanies(req: Request, res: Response) {
+  try {
+    const companies = await service.listCompanies();
+    res.json(companies);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+
 export async function getCompany(req: Request, res: Response) {
     try {
         const { companyId } = req.params;

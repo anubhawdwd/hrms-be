@@ -107,6 +107,7 @@ export const UserScalarFieldEnum = {
   authProvider: 'authProvider',
   providerId: 'providerId',
   isActive: 'isActive',
+  role: 'role',
   companyId: 'companyId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

@@ -39,7 +39,9 @@ model User {
   authProvider AuthProvider
   providerId   String?
   isActive     Boolean      @default(true)
-
+  
+  role UserRole @default(EMPLOYEE) 
+  
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
 
@@ -496,4 +498,10 @@ enum GenderRestriction {
   MALE
   FEMALE
   OTHER
+}
+enum UserRole {
+  SUPER_ADMIN
+  COMPANY_ADMIN
+  HR
+  EMPLOYEE
 }

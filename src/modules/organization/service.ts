@@ -1,5 +1,10 @@
 import { OrganizationRepository } from "./repository.js";
-import type { CreateDepartmentDTO, CreateTeamDTO, CreateDesignationDTO, CreateEmployeeProfileDTO, UpsertDesignationAttendancePolicyDTO } from "./types.js";
+import type { 
+  CreateDepartmentDTO, 
+  CreateTeamDTO, 
+  CreateDesignationDTO,  
+  UpsertDesignationAttendancePolicyDTO 
+} from "./types.js";
 
 const repo = new OrganizationRepository();
 
@@ -103,77 +108,77 @@ export class OrganizationService {
   }
   // ---------- EmployeeProfile ----------
 
-  async createEmployeeProfile(dto: CreateEmployeeProfileDTO) {
-    if (!dto.firstName.trim() || !dto.lastName.trim()) {
-      throw new Error("First name and last name are required");
-    }
+  // async createEmployeeProfile(dto: CreateEmployeeProfileDTO) {
+  //   if (!dto.firstName.trim() || !dto.lastName.trim()) {
+  //     throw new Error("First name and last name are required");
+  //   }
 
-    const joiningDate = new Date(dto.joiningDate);
-    if (Number.isNaN(joiningDate.getTime())) {
-      throw new Error("Invalid joining date");
-    }
+  //   const joiningDate = new Date(dto.joiningDate);
+  //   if (Number.isNaN(joiningDate.getTime())) {
+  //     throw new Error("Invalid joining date");
+  //   }
 
-    const displayName =
-      dto.displayName?.trim() ||
-      [dto.firstName, dto.middleName, dto.lastName]
-        .filter(Boolean)
-        .join(" ");
+  //   const displayName =
+  //     dto.displayName?.trim() ||
+  //     [dto.firstName, dto.middleName, dto.lastName]
+  //       .filter(Boolean)
+  //       .join(" ");
 
-    // 🔑 generate next employeeCode
-    const lastEmployee = await repo.getLastEmployeeCode(dto.companyId);
-    const nextEmployeeCode = (lastEmployee?.employeeCode ?? 0) + 1;
+  //   // 🔑 generate next employeeCode
+  //   const lastEmployee = await repo.getLastEmployeeCode(dto.companyId);
+  //   const nextEmployeeCode = (lastEmployee?.employeeCode ?? 0) + 1;
 
-    return repo.createEmployeeProfile({
-      userId: dto.userId,
-      companyId: dto.companyId,
-      teamId: dto.teamId,
-      designationId: dto.designationId,
+  //   return repo.createEmployeeProfile({
+  //     userId: dto.userId,
+  //     companyId: dto.companyId,
+  //     teamId: dto.teamId,
+  //     designationId: dto.designationId,
 
-      employeeCode: nextEmployeeCode,
+  //     employeeCode: nextEmployeeCode,
 
-      firstName: dto.firstName.trim(),
-      lastName: dto.lastName.trim(),
-      displayName,
+  //     firstName: dto.firstName.trim(),
+  //     lastName: dto.lastName.trim(),
+  //     displayName,
 
-      ...(dto.middleName?.trim() && { middleName: dto.middleName.trim() }),
-      ...(dto.managerId && { managerId: dto.managerId }),
-      joiningDate,
-    });
-  }
+  //     ...(dto.middleName?.trim() && { middleName: dto.middleName.trim() }),
+  //     ...(dto.managerId && { managerId: dto.managerId }),
+  //     joiningDate,
+  //   });
+  // }
 
-  async listEmployees(companyId: string) {
-    return repo.listEmployees(companyId);
-  }
+  // async listEmployees(companyId: string) {
+  //   return repo.listEmployees(companyId);
+  // }
 
-  async updateEmployee(
-    employeeId: string,
-    companyId: string,
-    data: {
-      designationId?: string;
-      teamId?: string | null;
-      firstName?: string;
-      middleName?: string | null;
-      lastName?: string;
-      joiningDate?: string;
-    }
-  ) {
-    if (data.firstName && !data.firstName.trim()) {
-      throw new Error("First name cannot be empty");
-    }
+  // async updateEmployee(
+  //   employeeId: string,
+  //   companyId: string,
+  //   data: {
+  //     designationId?: string;
+  //     teamId?: string | null;
+  //     firstName?: string;
+  //     middleName?: string | null;
+  //     lastName?: string;
+  //     joiningDate?: string;
+  //   }
+  // ) {
+  //   if (data.firstName && !data.firstName.trim()) {
+  //     throw new Error("First name cannot be empty");
+  //   }
 
-    return repo.updateEmployee(employeeId, companyId, {
-      ...(data.designationId && { designationId: data.designationId }),
-      ...(data.teamId !== undefined && { teamId: data.teamId }),
-      ...(data.firstName && { firstName: data.firstName.trim() }),
-      ...(data.middleName !== undefined && { middleName: data.middleName }),
-      ...(data.lastName && { lastName: data.lastName.trim() }),
-      ...(data.joiningDate && { joiningDate: new Date(data.joiningDate) }),
-    });
-  }
+  //   return repo.updateEmployee(employeeId, companyId, {
+  //     ...(data.designationId && { designationId: data.designationId }),
+  //     ...(data.teamId !== undefined && { teamId: data.teamId }),
+  //     ...(data.firstName && { firstName: data.firstName.trim() }),
+  //     ...(data.middleName !== undefined && { middleName: data.middleName }),
+  //     ...(data.lastName && { lastName: data.lastName.trim() }),
+  //     ...(data.joiningDate && { joiningDate: new Date(data.joiningDate) }),
+  //   });
+  // }
 
-  async deactivateEmployee(employeeId: string, companyId: string) {
-    return repo.deactivateEmployee(employeeId, companyId);
-  }
+  // async deactivateEmployee(employeeId: string, companyId: string) {
+  //   return repo.deactivateEmployee(employeeId, companyId);
+  // }
 
   // ----setOffice Location----
   async setOfficeLocation(
