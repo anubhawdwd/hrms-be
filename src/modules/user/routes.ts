@@ -19,7 +19,7 @@ router.post(
 router.get(
     "/",
     authenticateJWT,
-    requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+    requireRole(UserRole.COMPANY_ADMIN, UserRole.HR, UserRole.SUPER_ADMIN),
     listUsers
 );
 

@@ -6,7 +6,7 @@ const doc = {
     title: "HRMS Backend APIs",
     description: "Auto-generated Swagger Docs",
   },
-  host: `http://localhost:${PORT}`,
+  host: `localhost:${PORT}`,
   schemes: ["http"],
 };
 
