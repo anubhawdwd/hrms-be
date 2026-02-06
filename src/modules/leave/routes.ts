@@ -40,7 +40,7 @@ import {
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/requireRole.js";
 import { UserRole } from "../../generated/prisma/enums.js";
-import { requireSelfOrHR } from "../../middlewares/requireSelfOrHR.js";
+import { requireSelfUser } from "../../middlewares/requireSelfUser.js";
 
 
 const router = Router();
@@ -80,21 +80,21 @@ router.get("/policies",
 router.post(
    "/requests",
    authenticateJWT,
-   requireSelfOrHR("employeeId"),
+   requireSelfUser(),
    applyLeave
 );
 
 router.get(
    "/requests/my",
    authenticateJWT,
-   requireSelfOrHR("employeeId"),
+   requireSelfUser(),
    listMyLeaveRequests
 );
 
 router.patch(
   "/requests/:requestId/cancel",
   authenticateJWT,
-  requireSelfOrHR("employeeId"),
+  requireSelfUser(),
   cancelLeaveRequest
 );
 
@@ -118,7 +118,7 @@ router.patch("/requests/:requestId/hr-cancel",
    // LEAVE BALANCE
 router.get("/balances/my",
    authenticateJWT,
-   requireSelfOrHR("employeeId"),
+   requireSelfUser(),
    getMyLeaveBalances); // ?employeeId=xxx&year=2026
 
 
@@ -126,7 +126,7 @@ router.get("/balances/my",
 router.post("/encashments",
    authenticateJWT,
    // requireRole(UserRole.EMPLOYEE, UserRole.HR, UserRole.COMPANY_ADMIN),
-   requireSelfOrHR("employeeId"),
+   requireSelfUser(),
    requestLeaveEncashment);
 
 router.patch("/encashments/:encashmentId/approve",

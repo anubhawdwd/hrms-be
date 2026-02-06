@@ -1,3 +1,4 @@
+// src/middlewares/requireRole.ts
 import type { Request, Response, NextFunction } from "express";
 import { UserRole } from "../generated/prisma/enums.js";
 

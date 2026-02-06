@@ -14,8 +14,9 @@ import {
   deactivateEmployee,
   updateMyProfile,
   updateEmployeeAdmin,
+  getMyEmployeeProfile,
 } from "./controller.js";
-import { requireSelfOrHR } from "../../middlewares/requireSelfOrHR.js";
+import { requireSelfUser } from "../../middlewares/requireSelfUser.js";
 
 const router = Router();
 
@@ -34,25 +35,25 @@ router.get(
 );
 
 router.get(
+  "/me",
+  authenticateJWT,
+  requireSelfUser(),
+  getMyEmployeeProfile
+);
+
+
+router.get(
   "/:employeeId",
   authenticateJWT,
-  requireSelfOrHR("employeeId"),
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   getEmployeeById
 );
 
-// router.put(
-//   "/:employeeId",
-//   authenticateJWT,
-//   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
-//     // requireSelfOrHR("employeeId"),
-//   updateEmployee
-// );
-
 // SELF UPDATE
 router.put(
-  "/:employeeId/profile",
+  "/me/profile",
   authenticateJWT,
-  requireSelfOrHR("employeeId"),
+  requireSelfUser(),
   updateMyProfile
 );
 

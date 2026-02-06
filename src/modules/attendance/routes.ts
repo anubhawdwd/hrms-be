@@ -14,27 +14,27 @@ import {
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/requireRole.js";
 import { UserRole } from "../../generated/prisma/enums.js";
-import { requireSelfOrHR } from "../../middlewares/requireSelfOrHR.js";
+import { requireSelfUser } from "../../middlewares/requireSelfUser.js";
 
 const router = Router();
 
 router.post("/check-in",
   authenticateJWT,
-  requireSelfOrHR("employeeId"),
+  requireSelfUser(),
   checkIn);
 router.post("/check-out",
   authenticateJWT,
-  requireSelfOrHR("employeeId"),
+  requireSelfUser(),
   checkOut);
 
 router.get("/day",
   authenticateJWT,
-  requireSelfOrHR("employeeId"),
+  requireSelfUser(),
   getAttendanceDay);
 
 router.get("/range",
   authenticateJWT,
-  requireSelfOrHR("employeeId"),
+  requireSelfUser(),
   getAttendanceRange);
 
 router.get("/violations",

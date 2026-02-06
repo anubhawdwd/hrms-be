@@ -1956,6 +1956,7 @@ export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeo
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  personalEmail: 'personalEmail',
   passwordHash: 'passwordHash',
   authProvider: 'authProvider',
   providerId: 'providerId',

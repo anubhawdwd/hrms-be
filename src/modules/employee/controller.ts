@@ -53,35 +53,17 @@ export async function getEmployeeById(req: Request, res: Response) {
   }
 }
 
-// export async function updateEmployee(req: Request, res: Response) {
-//   try {
-//     const companyId = req.header("x-company-id");
-//     const { employeeId } = req.params;
 
-//     if (!companyId || !employeeId || Array.isArray(employeeId)) {
-//       return res.status(400).json({ message: "Invalid input" });
-//     }
-
-//     const employee = await service.updateEmployee(
-//       employeeId,
-//       companyId,
-//       req.body
-//     );
-
-//     res.json(employee);
-//   } catch (err: any) {
-//     res.status(400).json({ message: err.message });
-//   }
-// }
 
 export async function updateMyProfile(req: Request, res: Response) {
   try {
     const companyId = req.header("x-company-id");
-    const { employeeId } = req.params;
-    if (!companyId || !employeeId || Array.isArray(employeeId)) {
+    const userId = req.user!.userId;
+
+    if (!companyId || !userId ) {
       return res.status(400).json({ message: "Invalid input" });
     }
-    const result = await service.updateMyProfile(employeeId, companyId, req.body);
+    const result = await service.updateMyProfile(userId, companyId, req.body);
     res.json(result);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
@@ -139,4 +121,12 @@ export async function changeManager(req: Request, res: Response) {
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
+}
+
+export async function getMyEmployeeProfile(req: Request, res: Response) {
+  const companyId = req.header("x-company-id");
+  const userId = req.user!.userId;
+
+  const employee = await service.getEmployeeByUserId(userId, companyId!);
+  res.json(employee);
 }

@@ -186,4 +186,15 @@ export class EmployeeRepository {
     });
   }
 
+  findByUserId(userId: string, companyId: string) {
+    return prisma.employeeProfile.findFirst({
+      where: { userId, companyId },
+      include: {
+        user: { select: { email: true } },
+        team: true,
+        designation: true,
+      }
+    });
+  }
+
 }

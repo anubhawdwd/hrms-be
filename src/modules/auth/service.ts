@@ -15,7 +15,7 @@ import {
   JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET,
 } from "../../config/auth.js";
-import type { UserRole } from "../../generated/prisma/enums.js";
+import { AuthProvider, type UserRole } from "../../generated/prisma/enums.js";
 
 const repo = new AuthRepository();
 
@@ -132,6 +132,10 @@ export class AuthService {
       throw new Error("User not found in company");
     }
 
+    if (user.authProvider !== AuthProvider.GOOGLE) {
+      throw new Error("Use your configured login method");
+    }
+
     const accessToken = this.generateAccessToken({
       id: user.id,
       companyId: user.companyId,
@@ -163,56 +167,60 @@ export class AuthService {
   // MICROSOFT LOGIN (placeholder)
 
 
- async microsoftLogin(dto: MicrosoftLoginDTO) {
-  const res = await axios.get(
-    "https://graph.microsoft.com/v1.0/me",
-    {
-      headers: {
-        Authorization: `Bearer ${dto.accessToken}`,
-      },
+  async microsoftLogin(dto: MicrosoftLoginDTO) {
+    const res = await axios.get(
+      "https://graph.microsoft.com/v1.0/me",
+      {
+        headers: {
+          Authorization: `Bearer ${dto.accessToken}`,
+        },
+      }
+    );
+
+    const email =
+      res.data.mail ||
+      res.data.userPrincipalName;
+
+    if (!email) {
+      throw new Error("Microsoft account has no email");
     }
-  );
+    
+    const user = await repo.findUserByEmail(email);
+    
+    if (!user) {
+      throw new Error("User not found in company");
+    }
+    
+    if (user.authProvider !==  AuthProvider.MICROSOFT) {
+      throw new Error("Use your configured login method");
+    }
 
-  const email =
-    res.data.mail ||
-    res.data.userPrincipalName;
-
-  if (!email) {
-    throw new Error("Microsoft account has no email");
-  }
-
-  const user = await repo.findUserByEmail(email);
-
-  if (!user) {
-    throw new Error("User not found in company");
-  }
-
-  const accessToken = this.generateAccessToken({
-    id: user.id,
-    companyId: user.companyId,
-    role: user.role,
-  });
-
-  const refreshToken = this.generateRefreshToken({
-    id: user.id,
-  });
-
-  await repo.createRefreshToken({
-    userId: user.id,
-    token: refreshToken,
-    expiresAt: this.getRefreshExpiryDate(),
-  });
-
-  return {
-    accessToken,
-    refreshToken,
-    user: {
+    const accessToken = this.generateAccessToken({
       id: user.id,
-      email: user.email,
       companyId: user.companyId,
-    },
-  };
-}
+      role: user.role,
+    });
+
+    const refreshToken = this.generateRefreshToken({
+      id: user.id,
+    });
+
+    await repo.createRefreshToken({
+      userId: user.id,
+      token: refreshToken,
+      expiresAt: this.getRefreshExpiryDate(),
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        companyId: user.companyId,
+      },
+    };
+  }
 
 
 
@@ -225,7 +233,7 @@ export class AuthService {
     role: UserRole;
   }) {
     return jwt.sign(
-      { sub: user.id, companyId: user.companyId, role: user.role  },
+      { sub: user.id, companyId: user.companyId, role: user.role },
       JWT_ACCESS_SECRET,
       { expiresIn: ACCESS_TOKEN_TTL }
     );

@@ -8,12 +8,16 @@ hrms-be/
 ├─ src/
 │  ├─ app.ts                 # express app setup
 │  ├─ server.ts              
-│
+│  │ 
 │  ├─ config/
-│  │  ├─ env.ts              # env validation (zod Not Implemented Yet)
 │  │  ├─ prisma.ts           # PrismaClient singleton
 │  │  └─ auth.ts             # JWT / OAuth config (Not Implemented yet)
-│
+│  │ 
+│  ├─ middlewares/
+│  │  ├─ auth.middleware.ts          #(unused for now)
+│  │  ├─ requireRole.ts
+│  │  └─ requireSelfUser.ts            #(unused for now)
+│  │ 
 │  ├─ modules/               
 │  │  ├─ auth/               
 │  │  ├─ company/   
@@ -56,12 +60,12 @@ hrms-be/
 │  │       
 │  ├─ routes/
 │  │  └─ index.ts            # (mounts module routes only)
-│
+│  │ 
 │  ├─ utils/
 │  │  ├─ logger.ts          #(unused for now)
 │  │  ├─ geo.ts
 │  │  └─ date.ts            #(unused for now)
-│
+│  │ 
 │  └─ generated/
 │     └─ prisma/      # prisma generated (unchanged)
 │

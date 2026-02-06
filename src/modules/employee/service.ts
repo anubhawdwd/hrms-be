@@ -69,65 +69,20 @@ export class EmployeeService {
         return repo.listEmployees(companyId);
     }
 
-    // async updateEmployee(
-    //     employeeId: string,
-    //     companyId: string,
-    //     dto: UpdateEmployeeDTO
-    // ) {
-    //     // Fetch existing employee
-    //     const existing = await repo.findById(employeeId, companyId);
+    async updateMyProfile(
+        userId: string,
+        companyId: string,
+        dto: {
+            firstName?: string;
+            middleName?: string;
+            lastName?: string;
+            displayName?: string;
+        }
+    ) {
+        const emp = await repo.findByUserId(userId, companyId);
+        if (!emp) throw new Error("Employee not found");
 
-    //     if (!existing) {
-    //         throw new Error("Employee not found");
-    //     }
-
-    //     const updateData: any = {};
-
-    //     if (dto.firstName) updateData.firstName = dto.firstName.trim();
-    //     if (dto.middleName !== undefined) updateData.middleName = dto.middleName;
-    //     if (dto.lastName) updateData.lastName = dto.lastName.trim();
-    //     if (dto.displayName) updateData.displayName = dto.displayName.trim();
-    //     if (dto.teamId) updateData.teamId = dto.teamId;
-    //     if (dto.designationId) updateData.designationId = dto.designationId;
-
-
-    //     if (typeof dto.isProbation === "boolean") {
-    //         updateData.isProbation = dto.isProbation;
-    //     }
-
-    //     if (dto.joiningDate) {
-    //         const date = new Date(dto.joiningDate);
-    //         if (Number.isNaN(date.getTime())) {
-    //             throw new Error("Invalid joining date");
-    //         }
-    //         updateData.joiningDate = date;
-    //     }
-
-    //     // Perform update
-    //     const updated = await repo.updateEmployee(
-    //         employeeId,
-    //         companyId,
-    //         updateData
-    //     );
-
-    //     //  Probation → Confirmed transition
-    //     if (
-    //         existing.isProbation === true &&
-    //         dto.isProbation === false
-    //     ) {
-    //         await this.topUpLeaveAfterProbation(existing);
-    //     }
-
-    //     return updated;
-    // }
-
-    async updateMyProfile(employeeId: string, companyId: string, dto: {
-        firstName?: string;
-        middleName?: string;
-        lastName?: string;
-        displayName?: string;
-    }) {
-        return repo.updateEmployee(employeeId, companyId, {
+        return repo.updateEmployee(emp.id, companyId, {
             ...(dto.firstName && { firstName: dto.firstName }),
             ...(dto.middleName !== undefined && { middleName: dto.middleName }),
             ...(dto.lastName && { lastName: dto.lastName }),
@@ -135,7 +90,8 @@ export class EmployeeService {
         });
     }
 
-    async updateEmployeeAdmin(employeeId: string, companyId:string, dto: {
+    
+    async updateEmployeeAdmin(employeeId: string, companyId: string, dto: {
         teamId?: string;
         designationId?: string;
         joiningDate?: string;
@@ -247,6 +203,12 @@ export class EmployeeService {
                 await repo.incrementLeaveBalance(balance.id, delta);
             }
         }
+    }
+
+    async getEmployeeByUserId(userId: string, companyId: string) {
+        const emp = await repo.findByUserId(userId, companyId);
+        if (!emp) throw new Error("Employee not found");
+        return emp;
     }
 
 }
