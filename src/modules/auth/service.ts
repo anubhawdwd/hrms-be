@@ -23,14 +23,43 @@ const repo = new AuthRepository();
 const ACCESS_TOKEN_TTL = "15m";
 const REFRESH_TOKEN_TTL = "30d";
 
+
 export class AuthService {
+  // get me auth verification
+
+  async me(userId: string) {
+    const user = await repo.findUserById(userId);
+
+    if (!user || !user.isActive) {
+      throw new Error("User inactive");
+    }
+    const company = await repo.findCompanyById(user.companyId)
+
+    if (!company || !company.isActive) {
+      throw new Error("Company inactive");
+    }
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      companyId: user.companyId,
+    };
+  }
 
   //      EMAIL + PASSWORD LOGIN
   async login(dto: LoginDTO) {
     const user = await repo.findUserByEmail(dto.email);
-
+    
     if (!user) {
       throw new Error("Invalid credentials");
+    }
+    if (!user.isActive) {
+      throw new Error("Inactive Users not allowed");
+    }
+    
+    const company = await repo.findCompanyById(user.companyId);
+    if (!company || !company.isActive) {
+      throw new Error("Company inactive");
     }
 
     if (!user.passwordHash) {
@@ -184,14 +213,14 @@ export class AuthService {
     if (!email) {
       throw new Error("Microsoft account has no email");
     }
-    
+
     const user = await repo.findUserByEmail(email);
-    
+
     if (!user) {
       throw new Error("User not found in company");
     }
-    
-    if (user.authProvider !==  AuthProvider.MICROSOFT) {
+
+    if (user.authProvider !== AuthProvider.MICROSOFT) {
       throw new Error("Use your configured login method");
     }
 

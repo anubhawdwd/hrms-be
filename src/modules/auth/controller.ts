@@ -1,8 +1,20 @@
+// src/modules/auth/controller.ts
 import type { Request, Response } from "express";
 import { AuthService } from "./service.js";
 import { REFRESH_TOKEN_COOKIE } from "../../config/auth.js";
 
 const service = new AuthService();
+
+// GET /auth/me
+
+export async function me(req: Request, res: Response) {
+  try {
+    const data = await service.me(req.user!.userId);
+    res.json(data);
+  } catch {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+}
 
 
 //    POST /auth/login

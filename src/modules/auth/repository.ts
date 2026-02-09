@@ -1,6 +1,16 @@
 import { prisma } from "../../config/prisma.js";
 
 export class AuthRepository {
+  // ---------Company---------
+   async findCompanyById(companyId: string) {
+    return prisma.company.findUnique({
+      where: { id: companyId },
+      select: {
+        id: true,
+        isActive: true,
+      },
+    });
+  }
 
   // ---------- USERS ----------
 
