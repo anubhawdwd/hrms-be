@@ -277,5 +277,3 @@ All follow standard CRUD patterns:
 * **Token Handling**: Store access token in memory; handle `401` errors by hitting `/api/auth/refresh`.
 * **State Management**: Call `/auth/me` on initial app load to establish user context and role.
 * **Tenant Safety**: Ensure the `x-company-id` header is consistently applied to all organization and attendance calls.
-
-Would you like me to generate a **Zod or Typescript Interface schema** for these request bodies to help your frontend developers?
