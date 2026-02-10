@@ -143,6 +143,92 @@ Check backend availability.
 
 ---
 
+## 🏖 LEAVE MANAGEMENT
+
+### Leave Configuration
+
+* **GET** `/api/leave/types` — List all leave types for the company.
+* **POST** `/api/leave/types`
+**Body:** `{ "name": "Sick Leave", "code": "SL", "isPaid": true }`
+* **PATCH** `/api/leave/types/{leaveTypeId}`
+**Body:** `{ "name": "any", "isPaid": "any", "isActive": "any" }`
+
+### Yearly Policies
+
+#### POST `/api/leave/policies`
+
+**Body**
+
+```json
+{
+  "leaveTypeId": "uuid",
+  "year": "2024",
+  "yearlyAllocation": 12,
+  "allowCarryForward": true,
+  "maxCarryForward": 5,
+  "allowEncashment": false,
+  "probationAllowed": true,
+  "sandwichRule": true
+}
+
+```
+
+* **GET** `/api/leave/policies?year=YYYY` — Retrieve policies by year.
+
+### Employee Requests & Balances
+
+* **POST** `/api/leave/requests` — Submit a leave application.
+**Body:** `{ "employeeId": "uuid", "leaveTypeId": "uuid", "fromDate": "YYYY-MM-DD", "toDate": "YYYY-MM-DD", "durationType": "FULL_DAY", "reason": "any" }`
+* **GET** `/api/leave/requests/my?employeeId=uuid` — View own requests.
+* **GET** `/api/leave/balances/my?employeeId=uuid&year=YYYY` — View current leave quota status.
+
+### Approvals & Cancellations
+
+* **PATCH** `/api/leave/requests/{requestId}/approve`
+**Body:** `{ "approvedById": "uuid" }`
+* **PATCH** `/api/leave/requests/{requestId}/reject`
+**Body:** `{ "approvedById": "uuid" }`
+* **PATCH** `/api/leave/requests/{requestId}/cancel` — Self-cancel by employee.
+* **PATCH** `/api/leave/requests/{requestId}/hr-cancel` — Force cancel by HR.
+**Body:** `{ "reason": "any" }`
+
+### Holiday Management
+
+* **POST** `/api/leave/holidays`
+**Body:** `{ "companyId": "uuid", "name": "any", "date": "YYYY-MM-DD" }`
+* **GET** `/api/leave/holidays/{companyId}` — Get all holidays for a company.
+* **DELETE** `/api/leave/holidays/{holidayId}` — Remove a holiday.
+
+---
+
+### Real-time Visibility
+
+#### GET `/api/leave/today`
+
+Retrieve a list of employees currently on leave for the current date.
+
+**Parameters**
+
+* `scope` (query): Filter the list (e.g., `company`, `department`, or `team`).
+
+**Headers**
+
+* `Authorization`: Bearer `<token>`
+* `x-company-id`: `<company_uuid>`
+
+**Example Request**
+`GET /api/leave/today?scope=department`
+
+
+---
+
+### Overrides & Encashments
+
+* **POST** `/api/leave/encashments` — Request leave payout.
+* **POST** `/api/leave/employee-override` — Override specific employee leave limits.
+**Body:** `{ "employeeId": "uuid", "leaveTypeId": "uuid", "year": "YYYY", "extraAllocation": 2, "reason": "any" }`
+
+---
 ## 🧑‍💼 EMPLOYEES
 
 ### Employee Records

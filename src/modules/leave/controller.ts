@@ -288,6 +288,37 @@ export async function getMyLeaveBalances(req: Request, res: Response) {
   }
 }
 
+/* ======================================================
+   EMPLOYEE ON LEAVE HIERARCHY
+   ====================================================== */
+
+export async function listTodayLeaves(req: Request, res: Response) {
+  try {
+    const scope = req.query.scope as "team" | "hierarchy" | "company";
+
+    if (!scope || !["team", "hierarchy", "company"].includes(scope)) {
+      return res.status(400).json({ message: "Invalid scope" });
+    }
+
+    const companyId = req.header("x-company-id");
+    if (!companyId) {
+      return res.status(400).json({ message: "Missing companyId" });
+    }
+
+    const result = await service.getTodayLeaves({
+      userId: req.user!.userId,
+      companyId,
+      scope,
+      date: new Date(),
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(403).json({ message: err.message });
+  }
+}
+
+
 /* =========================================================
    LEAVE ENCASHMENT
 ========================================================= */

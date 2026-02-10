@@ -35,6 +35,7 @@ import {
    createHoliday,
    listHolidays,
    deleteHoliday,
+   listTodayLeaves,
 } from "./controller.js";
 
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
@@ -120,6 +121,18 @@ router.get("/balances/my",
    authenticateJWT,
    requireSelfUser(),
    getMyLeaveBalances); // ?employeeId=xxx&year=2026
+   
+// Leave visibility (read-only)
+router.get(
+  "/today",
+  authenticateJWT,
+  requireRole(
+    UserRole.EMPLOYEE,
+    UserRole.HR,
+    UserRole.COMPANY_ADMIN
+  ),
+  listTodayLeaves
+);
 
 
    // LEAVE ENCASHMENT

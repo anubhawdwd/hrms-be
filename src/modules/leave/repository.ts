@@ -262,6 +262,66 @@ export class LeaveRepository {
       },
     });
   }
+  /* ======================================================
+     EMPLOYEE ON LEAVE TODAY HIERARCHY
+     ====================================================== */
+
+  findApprovedLeavesForEmployees(params: {
+    employeeIds: string[];
+    date: Date;
+  }) {
+    return prisma.leaveRequest.findMany({
+      where: {
+        employeeId: { in: params.employeeIds },
+        status: LeaveRequestStatus.APPROVED,
+        fromDate: { lte: params.date },
+        toDate: { gte: params.date },
+      },
+      include: {
+        employee: {
+          select: {
+            id: true,
+            displayName: true,
+            team: { select: { name: true } },
+            designation: { select: { name: true } },
+          },
+        },
+        leaveType: {
+          select: { name: true },
+        },
+      },
+    });
+  }
+
+// Resolve employees by scope
+
+  getEmployeeByUserId(userId: string) {
+    return prisma.employeeProfile.findUnique({
+      where: { userId },
+    });
+  }
+
+  getTeamEmployeeIds(teamId: string) {
+    return prisma.employeeProfile.findMany({
+      where: { teamId, isActive: true },
+      select: { id: true },
+    });
+  }
+
+  getHierarchyEmployeeIds(managerId: string) {
+    return prisma.employeeProfile.findMany({
+      where: { managerId, isActive: true },
+      select: { id: true },
+    });
+  }
+
+  getCompanyEmployeeIds(companyId: string) {
+    return prisma.employeeProfile.findMany({
+      where: { companyId, isActive: true },
+      select: { id: true },
+    });
+  }
+
 
   // =====================================================
   // LEAVE ENCASHMENT

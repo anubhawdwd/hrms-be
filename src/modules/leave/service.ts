@@ -163,12 +163,6 @@ export class LeaveService {
       throw new Error("Employee not found");
     }
 
-    // const balance = employee.leaveBalances[0];
-    // if (!balance || balance.remaining < params.durationValue) {
-    //   throw new Error("Insufficient leave balance");
-    // }
-
-
     const balance = employee.leaveBalances[0];
     if (!balance) {
       throw new Error("Leave balance not found");
@@ -502,6 +496,66 @@ export class LeaveService {
     }
 
     return count;
+  }
+
+  /* ======================================================
+     EMPLOYEE ON LEAVE HIERARCHY
+     ====================================================== */
+
+  async getTodayLeaves(params: {
+    userId: string;
+    companyId: string;
+    scope: "team" | "hierarchy" | "company";
+    date: Date;
+  }) {
+    const employee = await repo.getEmployeeByUserId(params.userId);
+
+    if (!employee) {
+      throw new Error("Employee not found");
+    }
+
+    let employeeIds: string[] = [];
+
+    switch (params.scope) {
+      case "team":
+        if (!employee.teamId) {
+          return { date: params.date, scope: "team", employees: [] };
+        }
+        employeeIds = (
+          await repo.getTeamEmployeeIds(employee.teamId)
+        ).map(e => e.id);
+        break;
+
+      case "hierarchy":
+        employeeIds = (
+          await repo.getHierarchyEmployeeIds(employee.id)
+        ).map(e => e.id);
+        break;
+
+      case "company":
+        employeeIds = (
+          await repo.getCompanyEmployeeIds(params.companyId)
+        ).map(e => e.id);
+        break;
+    }
+
+    const leaves = await repo.findApprovedLeavesForEmployees({
+      employeeIds,
+      date: params.date,
+    });
+
+    return {
+      date: params.date.toISOString().slice(0, 10),
+      scope: params.scope,
+      employees: leaves.map(l => ({
+        employeeId: l.employee.id,
+        displayName: l.employee.displayName,
+        designation: l.employee.designation.name,
+        team: l.employee.team?.name ?? null,
+        leaveType: l.leaveType.name,
+        durationType: l.durationType,
+      })),
+    };
   }
 
 }

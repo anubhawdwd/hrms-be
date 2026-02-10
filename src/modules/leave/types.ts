@@ -117,3 +117,18 @@ export interface UpsertEmployeeLeaveOverrideDTO {
 
   reason?: string | null;
 }
+
+/* ======================================================
+   EMPLOYEE ON LEAVE HIERARCHY
+   ====================================================== */
+export type LeaveTodayScope =
+  | "team"
+  | "hierarchy"
+  | "company";
+
+export interface GetTodayLeavesDTO {
+  userId: string;
+  companyId: string;
+  scope: LeaveTodayScope;
+  date: Date;
+}
