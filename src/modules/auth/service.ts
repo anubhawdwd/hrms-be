@@ -49,14 +49,14 @@ export class AuthService {
   //      EMAIL + PASSWORD LOGIN
   async login(dto: LoginDTO) {
     const user = await repo.findUserByEmail(dto.email);
-    
+
     if (!user) {
       throw new Error("Invalid credentials");
     }
     if (!user.isActive) {
       throw new Error("Inactive Users not allowed");
     }
-    
+
     const company = await repo.findCompanyById(user.companyId);
     if (!company || !company.isActive) {
       throw new Error("Company inactive");
@@ -85,10 +85,17 @@ export class AuthService {
       id: user.id,
     });
 
+    // await repo.createRefreshToken({
+    //   userId: user.id,
+    //   token: refreshToken,
+    //   expiresAt: this.getRefreshExpiryDate(),
+    // });
     await repo.createRefreshToken({
       userId: user.id,
       token: refreshToken,
       expiresAt: this.getRefreshExpiryDate(),
+      ...(dto.userAgent && {userAgent: dto.userAgent}),
+      ...(dto.ipAddress && {ipAddress: dto.ipAddress}),
     });
 
     return {
@@ -107,15 +114,19 @@ export class AuthService {
 
   async refreshToken(dto: RefreshTokenDTO) {
     const stored = await repo.findRefreshToken(dto.refreshToken);
-
     if (!stored) {
       throw new Error("Invalid refresh token");
     }
-
     try {
-      jwt.verify(dto.refreshToken, JWT_REFRESH_SECRET);
+      const decoded = jwt.verify(dto.refreshToken, JWT_REFRESH_SECRET) as jwt.JwtPayload;
+      if (!decoded.sub || decoded.sub !== stored.user.id) throw Error
     } catch {
       throw new Error("Invalid refresh token");
+    }
+    // expiry check 
+    if (stored.expiresAt < new Date()) {
+      await repo.deleteRefreshToken(stored.token);
+      throw new Error("Refresh token expired");
     }
 
     const accessToken = this.generateAccessToken({
@@ -148,7 +159,10 @@ export class AuthService {
   async logout(refreshToken: string) {
     await repo.deleteRefreshToken(refreshToken);
   }
-
+// admin can logout All devices
+  async logoutAllDevices(userId: string) {
+    await repo.deleteAllRefreshTokensByUser(userId);
+  }
 
   // GOOGLE LOGIN
 

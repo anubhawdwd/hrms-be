@@ -2,7 +2,7 @@ import { prisma } from "../../config/prisma.js";
 
 export class AuthRepository {
   // ---------Company---------
-   async findCompanyById(companyId: string) {
+  async findCompanyById(companyId: string) {
     return prisma.company.findUnique({
       where: { id: companyId },
       select: {
@@ -32,12 +32,16 @@ export class AuthRepository {
     userId: string;
     token: string;
     expiresAt: Date;
+    userAgent?: string
+    ipAddress?: string
   }) {
     return prisma.refreshToken.create({
       data: {
         userId: params.userId,
         token: params.token,
         expiresAt: params.expiresAt,
+        userAgent: params.userAgent ?? null,
+        ipAddress: params.ipAddress ?? null,
       },
     });
   }
@@ -62,4 +66,11 @@ export class AuthRepository {
       where: { userId },
     });
   }
+
+  async deleteAllRefreshTokensByUser(userId: string) {
+  return prisma.refreshToken.deleteMany({
+    where: { userId },
+  })
+}
+
 }

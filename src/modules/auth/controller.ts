@@ -8,12 +8,12 @@ const service = new AuthService();
 // GET /auth/me
 
 export async function me(req: Request, res: Response) {
-  try {
-    const data = await service.me(req.user!.userId);
-    res.json(data);
-  } catch {
-    res.status(401).json({ message: "Unauthorized" });
-  }
+    try {
+        const data = await service.me(req.user!.userId);
+        res.json(data);
+    } catch {
+        res.status(401).json({ message: "Unauthorized" });
+    }
 }
 
 
@@ -29,6 +29,12 @@ export async function login(req: Request, res: Response) {
         const result = await service.login({
             email,
             password,
+            ...(req.headers["user-agent"] && {
+                userAgent: req.headers["user-agent"],
+            }),
+            ...(req.ip && {
+                ipAddress: req.ip,
+            })
         });
 
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
@@ -55,7 +61,15 @@ export async function googleLogin(req: Request, res: Response) {
             return res.status(400).json({ message: "idToken required" });
         }
 
-        const result = await service.googleLogin({ idToken });
+        const result = await service.googleLogin({
+            idToken,
+            ...(req.headers["user-agent"] && {
+                userAgent: req.headers["user-agent"],
+            }),
+            ...(req.ip && {
+                ipAddress: req.ip,
+            }),
+        });
 
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
             httpOnly: true,
@@ -81,7 +95,15 @@ export async function microsoftLogin(req: Request, res: Response) {
             return res.status(400).json({ message: "accessToken required" });
         }
 
-        const result = await service.microsoftLogin({ accessToken });
+        const result = await service.microsoftLogin({
+            accessToken,
+            ...(req.headers["user-agent"] && {
+                userAgent: req.headers["user-agent"],
+            }),
+            ...(req.ip && {
+                ipAddress: req.ip,
+            }),
+        });
 
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
             httpOnly: true,
@@ -107,11 +129,22 @@ export async function refreshToken(req: Request, res: Response) {
             return res.status(401).json({ message: "Missing refresh token" });
         }
 
-        const result = await service.refreshToken({ refreshToken: token });
+        // const result = await service.refreshToken({ refreshToken: token });
+        const result = await service.refreshToken({
+            refreshToken: token,
+            ...(req.headers["user-agent"] && {
+                userAgent: req.headers["user-agent"],
+            }),
+            ...(req.ip && {
+                ipAddress: req.ip,
+            })
+        });
 
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
             httpOnly: true,
             sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
 
         return res.json({

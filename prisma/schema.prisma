@@ -33,26 +33,26 @@ model Company {
 }
 
 model User {
-  id           String       @id @default(uuid())
-  email        String       @unique
+  id            String       @id @default(uuid())
+  email         String       @unique
   personalEmail String?
-  passwordHash String?
-  authProvider AuthProvider
-  providerId   String?
-  isActive     Boolean      @default(true)
-  
-  role UserRole @default(EMPLOYEE) 
-  
+  passwordHash  String?
+  authProvider  AuthProvider
+  providerId    String?
+  isActive      Boolean      @default(true)
+
+  role UserRole @default(EMPLOYEE)
+
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
 
   employee EmployeeProfile?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  refreshTokens RefreshToken[]
 
   @@index([companyId])
-  refreshTokens RefreshToken[]
 }
 
 // ---------ORGANIZATION-----------
@@ -447,7 +447,10 @@ model RefreshToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
 
-  @@index([userId])
+  userAgent String?
+  ipAddress String?
+
+  @@index([userId, expiresAt])
 }
 
 // ---------ENUMS------
@@ -500,6 +503,7 @@ enum GenderRestriction {
   FEMALE
   OTHER
 }
+
 enum UserRole {
   SUPER_ADMIN
   COMPANY_ADMIN

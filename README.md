@@ -1,3 +1,11 @@
+docker compose up -d
+npm run dev
+to close docker container -
+docker compose down
+backend : localhost:4000/    
+swagger: localhost:4000/api-doc
+adminer- view at localhost:8080
+
 # 📁 Project Folder Structure
 hrms-be/
 ├─ prisma/

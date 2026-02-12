@@ -1359,7 +1359,7 @@
         }
       }
     },
-    "/api/leaves/types": {
+    "/api/leave/types": {
       "get": {
         "description": "",
         "parameters": [
@@ -1426,7 +1426,7 @@
         }
       }
     },
-    "/api/leaves/types/{leaveTypeId}": {
+    "/api/leave/types/{leaveTypeId}": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1476,7 +1476,7 @@
         }
       }
     },
-    "/api/leaves/policies": {
+    "/api/leave/policies": {
       "post": {
         "description": "",
         "parameters": [
@@ -1580,7 +1580,7 @@
         }
       }
     },
-    "/api/leaves/requests": {
+    "/api/leave/requests": {
       "post": {
         "description": "",
         "parameters": [
@@ -1633,7 +1633,7 @@
         }
       }
     },
-    "/api/leaves/requests/my": {
+    "/api/leave/requests/my": {
       "get": {
         "description": "",
         "parameters": [
@@ -1661,7 +1661,7 @@
         }
       }
     },
-    "/api/leaves/requests/{requestId}/cancel": {
+    "/api/leave/requests/{requestId}/cancel": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1690,51 +1690,7 @@
         }
       }
     },
-    "/api/leaves/requests/{requestId}/approve": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "requestId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "approvedById": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/leaves/requests/{requestId}/reject": {
+    "/api/leave/requests/{requestId}/approve": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1778,7 +1734,51 @@
         }
       }
     },
-    "/api/leaves/requests/{requestId}/hr-cancel": {
+    "/api/leave/requests/{requestId}/reject": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "approvedById": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/requests/{requestId}/hr-cancel": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1822,7 +1822,7 @@
         }
       }
     },
-    "/api/leaves/balances/my": {
+    "/api/leave/balances/my": {
       "get": {
         "description": "",
         "parameters": [
@@ -1855,7 +1855,7 @@
         }
       }
     },
-    "/api/leaves/today": {
+    "/api/leave/today": {
       "get": {
         "description": "",
         "parameters": [
@@ -1891,7 +1891,7 @@
         }
       }
     },
-    "/api/leaves/encashments": {
+    "/api/leave/encashments": {
       "post": {
         "description": "",
         "parameters": [
@@ -1935,7 +1935,7 @@
         }
       }
     },
-    "/api/leaves/encashments/{encashmentId}/approve": {
+    "/api/leave/encashments/{encashmentId}/approve": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1967,7 +1967,7 @@
         }
       }
     },
-    "/api/leaves/encashments/{encashmentId}/reject": {
+    "/api/leave/encashments/{encashmentId}/reject": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1999,7 +1999,7 @@
         }
       }
     },
-    "/api/leaves/employee-override": {
+    "/api/leave/employee-override": {
       "post": {
         "description": "",
         "parameters": [
@@ -2055,7 +2055,7 @@
         }
       }
     },
-    "/api/leaves/holidays": {
+    "/api/leave/holidays": {
       "post": {
         "description": "",
         "parameters": [
@@ -2099,7 +2099,7 @@
         }
       }
     },
-    "/api/leaves/holidays/{companyId}": {
+    "/api/leave/holidays/{companyId}": {
       "get": {
         "description": "",
         "parameters": [
@@ -2131,7 +2131,7 @@
         }
       }
     },
-    "/api/leaves/holidays/{holidayId}": {
+    "/api/leave/holidays/{holidayId}": {
       "delete": {
         "description": "",
         "parameters": [
