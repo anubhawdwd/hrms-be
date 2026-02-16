@@ -13,55 +13,48 @@ import {
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/requireRole.js";
+import { validateCompanyHeader } from "../../middlewares/validateCompany.js";
 import { UserRole } from "../../generated/prisma/enums.js";
-import { requireSelfUser } from "../../middlewares/requireSelfUser.js";
 
 const router = Router();
 
-router.post("/check-in",
-  authenticateJWT,
-  requireSelfUser(),
-  checkIn);
-router.post("/check-out",
-  authenticateJWT,
-  requireSelfUser(),
-  checkOut);
+router.use(authenticateJWT, validateCompanyHeader);
 
-router.get("/day",
-  authenticateJWT,
-  requireSelfUser(),
-  getAttendanceDay);
+// Self-service
+router.post("/check-in", checkIn);
+router.post("/check-out", checkOut);
+router.get("/day", getAttendanceDay);
+router.get("/range", getAttendanceRange);
 
-router.get("/range",
-  authenticateJWT,
-  requireSelfUser(),
-  getAttendanceRange);
-
-router.get("/violations",
-  authenticateJWT,
+// HR only
+router.get(
+  "/violations",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
-  getAttendanceViolations);
+  getAttendanceViolations
+);
 
-// -------SpecialProvision-for-DefaultAttendance------
-router.post("/employee-override",
-  authenticateJWT,
+router.post(
+  "/employee-override",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
-  upsertEmployeeAttendanceOverride);
+  upsertEmployeeAttendanceOverride
+);
 
-// 🔑 HR APIs
-router.post("/hr/attendance-day",
-  authenticateJWT,
+router.post(
+  "/hr/attendance-day",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
-  hrUpsertAttendanceDay);
+  hrUpsertAttendanceDay
+);
 
-router.post("/hr/attendance-event",
-  authenticateJWT,
+router.post(
+  "/hr/attendance-event",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
-  hrAddAttendanceEvent);
+  hrAddAttendanceEvent
+);
 
-router.patch("/hr/attendance-day/:attendanceDayId",
-  authenticateJWT,
+router.patch(
+  "/hr/attendance-day/:attendanceDayId",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
-  hrUpdateAttendanceDay);
+  hrUpdateAttendanceDay
+);
 
 export default router;

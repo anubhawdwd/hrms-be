@@ -46,6 +46,7 @@ export type EmployeeProfileMinAggregateOutputType = {
   middleName: string | null
   lastName: string | null
   displayName: string | null
+  dateOfBirth: Date | null
   isActive: boolean | null
   isProbation: boolean | null
   joiningDate: Date | null
@@ -65,6 +66,7 @@ export type EmployeeProfileMaxAggregateOutputType = {
   middleName: string | null
   lastName: string | null
   displayName: string | null
+  dateOfBirth: Date | null
   isActive: boolean | null
   isProbation: boolean | null
   joiningDate: Date | null
@@ -84,6 +86,7 @@ export type EmployeeProfileCountAggregateOutputType = {
   middleName: number
   lastName: number
   displayName: number
+  dateOfBirth: number
   isActive: number
   isProbation: number
   joiningDate: number
@@ -113,6 +116,7 @@ export type EmployeeProfileMinAggregateInputType = {
   middleName?: true
   lastName?: true
   displayName?: true
+  dateOfBirth?: true
   isActive?: true
   isProbation?: true
   joiningDate?: true
@@ -132,6 +136,7 @@ export type EmployeeProfileMaxAggregateInputType = {
   middleName?: true
   lastName?: true
   displayName?: true
+  dateOfBirth?: true
   isActive?: true
   isProbation?: true
   joiningDate?: true
@@ -151,6 +156,7 @@ export type EmployeeProfileCountAggregateInputType = {
   middleName?: true
   lastName?: true
   displayName?: true
+  dateOfBirth?: true
   isActive?: true
   isProbation?: true
   joiningDate?: true
@@ -257,6 +263,7 @@ export type EmployeeProfileGroupByOutputType = {
   middleName: string | null
   lastName: string
   displayName: string
+  dateOfBirth: Date | null
   isActive: boolean
   isProbation: boolean
   joiningDate: Date
@@ -299,6 +306,7 @@ export type EmployeeProfileWhereInput = {
   middleName?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   lastName?: Prisma.StringFilter<"EmployeeProfile"> | string
   displayName?: Prisma.StringFilter<"EmployeeProfile"> | string
+  dateOfBirth?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   joiningDate?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
@@ -332,6 +340,7 @@ export type EmployeeProfileOrderByWithRelationInput = {
   middleName?: Prisma.SortOrderInput | Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isProbation?: Prisma.SortOrder
   joiningDate?: Prisma.SortOrder
@@ -369,6 +378,7 @@ export type EmployeeProfileWhereUniqueInput = Prisma.AtLeast<{
   middleName?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   lastName?: Prisma.StringFilter<"EmployeeProfile"> | string
   displayName?: Prisma.StringFilter<"EmployeeProfile"> | string
+  dateOfBirth?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   joiningDate?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
@@ -402,6 +412,7 @@ export type EmployeeProfileOrderByWithAggregationInput = {
   middleName?: Prisma.SortOrderInput | Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isProbation?: Prisma.SortOrder
   joiningDate?: Prisma.SortOrder
@@ -429,6 +440,7 @@ export type EmployeeProfileScalarWhereWithAggregatesInput = {
   middleName?: Prisma.StringNullableWithAggregatesFilter<"EmployeeProfile"> | string | null
   lastName?: Prisma.StringWithAggregatesFilter<"EmployeeProfile"> | string
   displayName?: Prisma.StringWithAggregatesFilter<"EmployeeProfile"> | string
+  dateOfBirth?: Prisma.DateTimeNullableWithAggregatesFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolWithAggregatesFilter<"EmployeeProfile"> | boolean
   joiningDate?: Prisma.DateTimeWithAggregatesFilter<"EmployeeProfile"> | Date | string
@@ -443,6 +455,7 @@ export type EmployeeProfileCreateInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -476,6 +489,7 @@ export type EmployeeProfileUncheckedCreateInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -499,6 +513,7 @@ export type EmployeeProfileUpdateInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -532,6 +547,7 @@ export type EmployeeProfileUncheckedUpdateInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -560,6 +576,7 @@ export type EmployeeProfileCreateManyInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -574,6 +591,7 @@ export type EmployeeProfileUpdateManyMutationInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -593,6 +611,7 @@ export type EmployeeProfileUncheckedUpdateManyInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -632,6 +651,7 @@ export type EmployeeProfileCountOrderByAggregateInput = {
   middleName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isProbation?: Prisma.SortOrder
   joiningDate?: Prisma.SortOrder
@@ -655,6 +675,7 @@ export type EmployeeProfileMaxOrderByAggregateInput = {
   middleName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isProbation?: Prisma.SortOrder
   joiningDate?: Prisma.SortOrder
@@ -674,6 +695,7 @@ export type EmployeeProfileMinOrderByAggregateInput = {
   middleName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isProbation?: Prisma.SortOrder
   joiningDate?: Prisma.SortOrder
@@ -876,6 +898,10 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type EmployeeProfileUpdateOneWithoutSubordinatesNestedInput = {
   create?: Prisma.XOR<Prisma.EmployeeProfileCreateWithoutSubordinatesInput, Prisma.EmployeeProfileUncheckedCreateWithoutSubordinatesInput>
   connectOrCreate?: Prisma.EmployeeProfileCreateOrConnectWithoutSubordinatesInput
@@ -1035,6 +1061,7 @@ export type EmployeeProfileCreateWithoutCompanyInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1066,6 +1093,7 @@ export type EmployeeProfileUncheckedCreateWithoutCompanyInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1123,6 +1151,7 @@ export type EmployeeProfileScalarWhereInput = {
   middleName?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   lastName?: Prisma.StringFilter<"EmployeeProfile"> | string
   displayName?: Prisma.StringFilter<"EmployeeProfile"> | string
+  dateOfBirth?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   joiningDate?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
@@ -1137,6 +1166,7 @@ export type EmployeeProfileCreateWithoutUserInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1168,6 +1198,7 @@ export type EmployeeProfileUncheckedCreateWithoutUserInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1207,6 +1238,7 @@ export type EmployeeProfileUpdateWithoutUserInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1238,6 +1270,7 @@ export type EmployeeProfileUncheckedUpdateWithoutUserInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1261,6 +1294,7 @@ export type EmployeeProfileCreateWithoutTeamInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1292,6 +1326,7 @@ export type EmployeeProfileUncheckedCreateWithoutTeamInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1341,6 +1376,7 @@ export type EmployeeProfileCreateWithoutDesignationInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1372,6 +1408,7 @@ export type EmployeeProfileUncheckedCreateWithoutDesignationInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1421,6 +1458,7 @@ export type EmployeeProfileCreateWithoutSubordinatesInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1453,6 +1491,7 @@ export type EmployeeProfileUncheckedCreateWithoutSubordinatesInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1480,6 +1519,7 @@ export type EmployeeProfileCreateWithoutManagerInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1511,6 +1551,7 @@ export type EmployeeProfileUncheckedCreateWithoutManagerInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1555,6 +1596,7 @@ export type EmployeeProfileUpdateWithoutSubordinatesInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1587,6 +1629,7 @@ export type EmployeeProfileUncheckedUpdateWithoutSubordinatesInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1625,6 +1668,7 @@ export type EmployeeProfileCreateWithoutAttendanceDaysInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1657,6 +1701,7 @@ export type EmployeeProfileUncheckedCreateWithoutAttendanceDaysInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1695,6 +1740,7 @@ export type EmployeeProfileUpdateWithoutAttendanceDaysInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1727,6 +1773,7 @@ export type EmployeeProfileUncheckedUpdateWithoutAttendanceDaysInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1749,6 +1796,7 @@ export type EmployeeProfileCreateWithoutAttendanceViolationsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1781,6 +1829,7 @@ export type EmployeeProfileUncheckedCreateWithoutAttendanceViolationsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1819,6 +1868,7 @@ export type EmployeeProfileUpdateWithoutAttendanceViolationsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1851,6 +1901,7 @@ export type EmployeeProfileUncheckedUpdateWithoutAttendanceViolationsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1873,6 +1924,7 @@ export type EmployeeProfileCreateWithoutEmployeeAttendanceOverridesInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1905,6 +1957,7 @@ export type EmployeeProfileUncheckedCreateWithoutEmployeeAttendanceOverridesInpu
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -1943,6 +1996,7 @@ export type EmployeeProfileUpdateWithoutEmployeeAttendanceOverridesInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1975,6 +2029,7 @@ export type EmployeeProfileUncheckedUpdateWithoutEmployeeAttendanceOverridesInpu
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1997,6 +2052,7 @@ export type EmployeeProfileCreateWithoutLeaveBalancesInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2029,6 +2085,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveBalancesInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2067,6 +2124,7 @@ export type EmployeeProfileUpdateWithoutLeaveBalancesInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2099,6 +2157,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveBalancesInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2121,6 +2180,7 @@ export type EmployeeProfileCreateWithoutLeaveRequestsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2153,6 +2213,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveRequestsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2180,6 +2241,7 @@ export type EmployeeProfileCreateWithoutApprovedLeaveRequestsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2212,6 +2274,7 @@ export type EmployeeProfileUncheckedCreateWithoutApprovedLeaveRequestsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2250,6 +2313,7 @@ export type EmployeeProfileUpdateWithoutLeaveRequestsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2282,6 +2346,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveRequestsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2315,6 +2380,7 @@ export type EmployeeProfileUpdateWithoutApprovedLeaveRequestsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2347,6 +2413,7 @@ export type EmployeeProfileUncheckedUpdateWithoutApprovedLeaveRequestsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2369,6 +2436,7 @@ export type EmployeeProfileCreateWithoutLeaveEncashmentsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2401,6 +2469,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveEncashmentsInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2439,6 +2508,7 @@ export type EmployeeProfileUpdateWithoutLeaveEncashmentsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2471,6 +2541,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveEncashmentsInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2493,6 +2564,7 @@ export type EmployeeProfileCreateWithoutEmployeeLeaveOverridesInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2525,6 +2597,7 @@ export type EmployeeProfileUncheckedCreateWithoutEmployeeLeaveOverridesInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2563,6 +2636,7 @@ export type EmployeeProfileUpdateWithoutEmployeeLeaveOverridesInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2595,6 +2669,7 @@ export type EmployeeProfileUncheckedUpdateWithoutEmployeeLeaveOverridesInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2621,6 +2696,7 @@ export type EmployeeProfileCreateManyCompanyInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2635,6 +2711,7 @@ export type EmployeeProfileUpdateWithoutCompanyInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2666,6 +2743,7 @@ export type EmployeeProfileUncheckedUpdateWithoutCompanyInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2693,6 +2771,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutCompanyInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2711,6 +2790,7 @@ export type EmployeeProfileCreateManyTeamInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2725,6 +2805,7 @@ export type EmployeeProfileUpdateWithoutTeamInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2756,6 +2837,7 @@ export type EmployeeProfileUncheckedUpdateWithoutTeamInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2783,6 +2865,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutTeamInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2801,6 +2884,7 @@ export type EmployeeProfileCreateManyDesignationInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2815,6 +2899,7 @@ export type EmployeeProfileUpdateWithoutDesignationInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2846,6 +2931,7 @@ export type EmployeeProfileUncheckedUpdateWithoutDesignationInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2873,6 +2959,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutDesignationInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2891,6 +2978,7 @@ export type EmployeeProfileCreateManyManagerInput = {
   middleName?: string | null
   lastName: string
   displayName: string
+  dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
   joiningDate: Date | string
@@ -2905,6 +2993,7 @@ export type EmployeeProfileUpdateWithoutManagerInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2936,6 +3025,7 @@ export type EmployeeProfileUncheckedUpdateWithoutManagerInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2963,6 +3053,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutManagerInput = {
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3085,6 +3176,7 @@ export type EmployeeProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   middleName?: boolean
   lastName?: boolean
   displayName?: boolean
+  dateOfBirth?: boolean
   isActive?: boolean
   isProbation?: boolean
   joiningDate?: boolean
@@ -3119,6 +3211,7 @@ export type EmployeeProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   middleName?: boolean
   lastName?: boolean
   displayName?: boolean
+  dateOfBirth?: boolean
   isActive?: boolean
   isProbation?: boolean
   joiningDate?: boolean
@@ -3143,6 +3236,7 @@ export type EmployeeProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   middleName?: boolean
   lastName?: boolean
   displayName?: boolean
+  dateOfBirth?: boolean
   isActive?: boolean
   isProbation?: boolean
   joiningDate?: boolean
@@ -3167,6 +3261,7 @@ export type EmployeeProfileSelectScalar = {
   middleName?: boolean
   lastName?: boolean
   displayName?: boolean
+  dateOfBirth?: boolean
   isActive?: boolean
   isProbation?: boolean
   joiningDate?: boolean
@@ -3174,7 +3269,7 @@ export type EmployeeProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type EmployeeProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeCode" | "userId" | "companyId" | "designationId" | "teamId" | "managerId" | "firstName" | "middleName" | "lastName" | "displayName" | "isActive" | "isProbation" | "joiningDate" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeProfile"]>
+export type EmployeeProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeCode" | "userId" | "companyId" | "designationId" | "teamId" | "managerId" | "firstName" | "middleName" | "lastName" | "displayName" | "dateOfBirth" | "isActive" | "isProbation" | "joiningDate" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeProfile"]>
 export type EmployeeProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -3237,6 +3332,7 @@ export type $EmployeeProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     middleName: string | null
     lastName: string
     displayName: string
+    dateOfBirth: Date | null
     isActive: boolean
     isProbation: boolean
     joiningDate: Date
@@ -3690,6 +3786,7 @@ export interface EmployeeProfileFieldRefs {
   readonly middleName: Prisma.FieldRef<"EmployeeProfile", 'String'>
   readonly lastName: Prisma.FieldRef<"EmployeeProfile", 'String'>
   readonly displayName: Prisma.FieldRef<"EmployeeProfile", 'String'>
+  readonly dateOfBirth: Prisma.FieldRef<"EmployeeProfile", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"EmployeeProfile", 'Boolean'>
   readonly isProbation: Prisma.FieldRef<"EmployeeProfile", 'Boolean'>
   readonly joiningDate: Prisma.FieldRef<"EmployeeProfile", 'DateTime'>

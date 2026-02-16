@@ -1,3 +1,4 @@
+// src/modules/organization/types.ts
 export interface CreateDepartmentDTO {
   name: string;
   companyId: string;

@@ -7,38 +7,26 @@ export interface GeoLocation {
 }
 
 export interface CheckInDTO {
-  employeeId: string;
+  userId: string;
   companyId: string;
   source: "WEB" | "PWA";
   location: GeoLocation;
 }
 
 export interface CheckOutDTO {
-  employeeId: string;
+  userId: string;
   companyId: string;
   source: "WEB" | "PWA";
   location: GeoLocation;
-}
-export interface GetAttendanceDayQuery {
-  employeeId: string;
-  companyId: string;
-  date: string; // ISO date (YYYY-MM-DD)
-}
-
-export interface GetAttendanceRangeQuery {
-  employeeId: string;
-  companyId: string;
-  from: string; // YYYY-MM-DD
-  to: string;   // YYYY-MM-DD
 }
 
 export interface HrUpsertAttendanceDayDTO {
   employeeId: string;
   companyId: string;
-  date: string; // YYYY-MM-DD
+  date: string;
   status: "PRESENT" | "ABSENT" | "PARTIAL" | "LEAVE";
   totalMinutes?: number;
-  reason: string; // mandatory
+  reason: string;
 }
 
 export interface HrAddAttendanceEventDTO {
@@ -46,7 +34,16 @@ export interface HrAddAttendanceEventDTO {
   companyId: string;
   date: string;
   type: "CHECK_IN" | "CHECK_OUT";
-  timestamp: string; // ISO
+  timestamp: string;
   source: "WEB" | "PWA";
   reason: string;
+}
+
+export interface UpsertEmployeeAttendanceOverrideDTO {
+  employeeId: string;
+  autoPresent: boolean;
+  attendanceExempt: boolean;
+  reason?: string;
+  validFrom: string;
+  validTo?: string;
 }

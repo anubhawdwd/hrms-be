@@ -142,9 +142,10 @@ model EmployeeProfile {
   middleName  String?
   lastName    String
   displayName String
-
-  isActive    Boolean  @default(true)
-  isProbation Boolean  @default(true)
+  dateOfBirth DateTime?
+  
+  isActive    Boolean   @default(true)
+  isProbation Boolean   @default(true)
   joiningDate DateTime
 
   createdAt DateTime @default(now())

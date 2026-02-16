@@ -1,6 +1,6 @@
 // src/modules/leave/repository.ts
-
 import { prisma } from "../../config/prisma.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import {
   LeaveDurationType,
   LeaveRequestStatus,
@@ -8,10 +8,13 @@ import {
   GenderRestriction,
 } from "../../generated/prisma/enums.js";
 
+type TxClient = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>;
+
 export class LeaveRepository {
-  // =====================================================
-  // LEAVE TYPE
-  // =====================================================
+  // =================== LEAVE TYPE ===================
 
   createLeaveType(params: {
     companyId: string;
@@ -19,14 +22,7 @@ export class LeaveRepository {
     code: string;
     isPaid: boolean;
   }) {
-    return prisma.leaveType.create({
-      data: {
-        companyId: params.companyId,
-        name: params.name,
-        code: params.code,
-        isPaid: params.isPaid,
-      },
-    });
+    return prisma.leaveType.create({ data: params });
   }
 
   updateLeaveType(params: {
@@ -35,13 +31,10 @@ export class LeaveRepository {
     isPaid?: boolean;
     isActive?: boolean;
   }) {
+    const { leaveTypeId, ...data } = params;
     return prisma.leaveType.update({
-      where: { id: params.leaveTypeId },
-      data: {
-        ...(params.name !== undefined && { name: params.name }),
-        ...(params.isPaid !== undefined && { isPaid: params.isPaid }),
-        ...(params.isActive !== undefined && { isActive: params.isActive }),
-      },
+      where: { id: leaveTypeId },
+      data,
     });
   }
 
@@ -52,9 +45,7 @@ export class LeaveRepository {
     });
   }
 
-  // =====================================================
-  // LEAVE POLICY (UPSERT)
-  // =====================================================
+  // =================== LEAVE POLICY ===================
 
   upsertLeavePolicy(params: {
     companyId: string;
@@ -69,49 +60,22 @@ export class LeaveRepository {
     monthlyAccrual: boolean;
     sandwichRule: boolean;
   }) {
-    const {
-      companyId,
-      leaveTypeId,
-      year,
-      yearlyAllocation,
-      allowCarryForward,
-      maxCarryForward,
-      allowEncashment,
-      probationAllowed,
-      genderRestriction,
-      monthlyAccrual,
-      sandwichRule,
-    } = params;
+    const { companyId, leaveTypeId, year, ...rest } = params;
 
     return prisma.leavePolicy.upsert({
-      where: {
-        leaveTypeId_year: {
-          leaveTypeId,
-          year,
-        },
-      },
+      where: { leaveTypeId_year: { leaveTypeId, year } },
       update: {
-        yearlyAllocation,
-        allowCarryForward,
-        maxCarryForward: maxCarryForward ?? null,
-        allowEncashment,
-        probationAllowed,
-        genderRestriction: genderRestriction ?? null,
-        monthlyAccrual,
-        sandwichRule,
+        ...rest,
+        maxCarryForward: rest.maxCarryForward ?? null,
+        genderRestriction: rest.genderRestriction ?? null,
       },
       create: {
         companyId,
         leaveTypeId,
         year,
-        yearlyAllocation,
-        allowCarryForward,
-        maxCarryForward: maxCarryForward ?? null,
-        allowEncashment,
-        probationAllowed,
-        genderRestriction: genderRestriction ?? null,
-        monthlyAccrual,
-        sandwichRule,
+        ...rest,
+        maxCarryForward: rest.maxCarryForward ?? null,
+        genderRestriction: rest.genderRestriction ?? null,
       },
     });
   }
@@ -120,18 +84,12 @@ export class LeaveRepository {
     return prisma.leavePolicy.findMany({
       where: { companyId, year },
       include: {
-        leaveType: {
-          select: {
-            name: true,
-            code: true,
-            isPaid: true,
-          },
-        },
+        leaveType: { select: { name: true, code: true, isPaid: true } },
       },
       orderBy: { createdAt: "asc" },
     });
   }
-  // --sandwich--
+
   getLeavePolicy(params: {
     companyId: string;
     leaveTypeId: string;
@@ -147,9 +105,7 @@ export class LeaveRepository {
     });
   }
 
-  // =====================================================
-  // LEAVE REQUEST
-  // =====================================================
+  // =================== LEAVE REQUEST ===================
 
   createLeaveRequest(params: {
     employeeId: string;
@@ -173,16 +129,22 @@ export class LeaveRepository {
     });
   }
 
+  findLeaveRequestById(requestId: string) {
+    return prisma.leaveRequest.findUnique({
+      where: { id: requestId },
+    });
+  }
+
   updateLeaveRequestStatus(params: {
     requestId: string;
     status: LeaveRequestStatus;
-    approvedById: string;
+    approvedById?: string;
   }) {
     return prisma.leaveRequest.update({
       where: { id: params.requestId },
       data: {
         status: params.status,
-        approvedById: params.approvedById,
+        ...(params.approvedById && { approvedById: params.approvedById }),
       },
     });
   }
@@ -197,22 +159,22 @@ export class LeaveRepository {
     });
   }
 
-  updateLeaveRequestStatusSimple(params: {
-    requestId: string;
-    status: LeaveRequestStatus;
+  findOverlappingLeaveRequest(params: {
+    employeeId: string;
+    from: Date;
+    to: Date;
   }) {
-    return prisma.leaveRequest.update({
-      where: { id: params.requestId },
-      data: {
-        status: params.status,
+    return prisma.leaveRequest.findFirst({
+      where: {
+        employeeId: params.employeeId,
+        status: { in: ["PENDING", "APPROVED"] },
+        fromDate: { lte: params.to },
+        toDate: { gte: params.from },
       },
     });
   }
 
-
-  // =====================================================
-  // LEAVE BALANCE
-  // =====================================================
+  // =================== LEAVE BALANCE ===================
 
   getLeaveBalances(employeeId: string, year: number) {
     return prisma.leaveBalance.findMany({
@@ -223,8 +185,40 @@ export class LeaveRepository {
     });
   }
 
+  getLeaveBalance(employeeId: string, leaveTypeId: string, year: number) {
+    return prisma.leaveBalance.findUnique({
+      where: {
+        employeeId_leaveTypeId_year: { employeeId, leaveTypeId, year },
+      },
+    });
+  }
+
+  deductLeaveBalance(
+    tx: TxClient,
+    params: {
+      employeeId: string;
+      leaveTypeId: string;
+      year: number;
+      days: number;
+    }
+  ) {
+    return tx.leaveBalance.update({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId: params.employeeId,
+          leaveTypeId: params.leaveTypeId,
+          year: params.year,
+        },
+      },
+      data: {
+        used: { increment: params.days },
+        remaining: { decrement: params.days },
+      },
+    });
+  }
+
   revertLeaveBalance(
-    tx: any,
+    tx: TxClient,
     params: {
       employeeId: string;
       leaveTypeId: string;
@@ -247,24 +241,132 @@ export class LeaveRepository {
     });
   }
 
-  updateLeaveRequestAfterHrCancel(
-    tx: any,
-    params: {
-      requestId: string;
-      reason: string | null;
-    }
+  // =================== LEAVE ENCASHMENT ===================
+
+  createLeaveEncashment(params: {
+    employeeId: string;
+    leaveTypeId: string;
+    year: number;
+    days: number;
+  }) {
+    return prisma.leaveEncashment.create({ data: params });
+  }
+
+  findLeaveEncashmentById(encashmentId: string) {
+    return prisma.leaveEncashment.findUnique({
+      where: { id: encashmentId },
+    });
+  }
+
+  updateLeaveEncashmentStatus(
+    tx: TxClient,
+    encashmentId: string,
+    status: LeaveEncashmentStatus
   ) {
-    return tx.leaveRequest.update({
-      where: { id: params.requestId },
-      data: {
-        status: LeaveRequestStatus.CANCELLED,
-        reason: params.reason,
+    return tx.leaveEncashment.update({
+      where: { id: encashmentId },
+      data: { status },
+    });
+  }
+
+  // =================== HR -> EMPLOYEE LEAVE OVERRIDE ===================
+
+  upsertEmployeeLeaveOverride(params: {
+    employeeId: string;
+    leaveTypeId: string;
+    year: number;
+    allowSandwich?: boolean | null;
+    allowEncashment?: boolean | null;
+    extraAllocation?: number | null;
+    reason?: string | null;
+  }) {
+    const { employeeId, leaveTypeId, year, ...rest } = params;
+
+    return prisma.employeeLeaveOverride.upsert({
+      where: {
+        employeeId_leaveTypeId_year: { employeeId, leaveTypeId, year },
+      },
+      update: {
+        allowSandwich: rest.allowSandwich ?? null,
+        allowEncashment: rest.allowEncashment ?? null,
+        extraAllocation: rest.extraAllocation ?? null,
+        reason: rest.reason ?? null,
+      },
+      create: {
+        employeeId,
+        leaveTypeId,
+        year,
+        allowSandwich: rest.allowSandwich ?? null,
+        allowEncashment: rest.allowEncashment ?? null,
+        extraAllocation: rest.extraAllocation ?? null,
+        reason: rest.reason ?? null,
       },
     });
   }
-  /* ======================================================
-     EMPLOYEE ON LEAVE TODAY HIERARCHY
-     ====================================================== */
+
+  getEmployeeLeaveOverride(params: {
+    employeeId: string;
+    leaveTypeId: string;
+    year: number;
+  }) {
+    return prisma.employeeLeaveOverride.findUnique({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId: params.employeeId,
+          leaveTypeId: params.leaveTypeId,
+          year: params.year,
+        },
+      },
+    });
+  }
+
+  // =================== PendingLeaveRequests ===================
+  listPendingLeaveRequests(companyId: string) {
+    return prisma.leaveRequest.findMany({
+      where: {
+        status: 'PENDING',
+        employee: { companyId },
+      },
+      include: {
+        leaveType: { select: { name: true, code: true } },
+        employee: {
+          select: {
+            id: true,
+            displayName: true,
+            designation: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+  // =================== HOLIDAYS ===================
+
+  createHoliday(params: { companyId: string; name: string; date: Date }) {
+    return prisma.holiday.create({ data: params });
+  }
+
+  listHolidays(companyId: string) {
+    return prisma.holiday.findMany({
+      where: { companyId },
+      orderBy: { date: "asc" },
+    });
+  }
+
+  deleteHoliday(holidayId: string) {
+    return prisma.holiday.delete({ where: { id: holidayId } });
+  }
+
+  getHolidaysForRange(params: { companyId: string; from: Date; to: Date }) {
+    return prisma.holiday.findMany({
+      where: {
+        companyId: params.companyId,
+        date: { gte: params.from, lte: params.to },
+      },
+    });
+  }
+
+  // =================== TODAY LEAVES ===================
 
   findApprovedLeavesForEmployees(params: {
     employeeIds: string[];
@@ -286,17 +388,13 @@ export class LeaveRepository {
             designation: { select: { name: true } },
           },
         },
-        leaveType: {
-          select: { name: true },
-        },
+        leaveType: { select: { name: true } },
       },
     });
   }
 
-// Resolve employees by scope
-
   getEmployeeByUserId(userId: string) {
-    return prisma.employeeProfile.findUnique({
+    return prisma.employeeProfile.findFirst({
       where: { userId },
     });
   }
@@ -321,183 +419,4 @@ export class LeaveRepository {
       select: { id: true },
     });
   }
-
-
-  // =====================================================
-  // LEAVE ENCASHMENT
-  // =====================================================
-
-  createLeaveEncashment(params: {
-    employeeId: string;
-    leaveTypeId: string;
-    year: number;
-    days: number;
-  }) {
-    return prisma.leaveEncashment.create({
-      data: {
-        employeeId: params.employeeId,
-        leaveTypeId: params.leaveTypeId,
-        year: params.year,
-        days: params.days,
-      },
-    });
-  }
-
-  updateLeaveEncashmentStatus(params: {
-    encashmentId: string;
-    status: LeaveEncashmentStatus;
-  }) {
-    return prisma.leaveEncashment.update({
-      where: { id: params.encashmentId },
-      data: {
-        status: params.status,
-      },
-    });
-  }
-
-  deductLeaveBalanceForEncashment(
-    tx: any,
-    params: {
-      employeeId: string;
-      leaveTypeId: string;
-      year: number;
-      days: number;
-    }
-  ) {
-    return tx.leaveBalance.update({
-      where: {
-        employeeId_leaveTypeId_year: {
-          employeeId: params.employeeId,
-          leaveTypeId: params.leaveTypeId,
-          year: params.year,
-        },
-      },
-      data: {
-        used: { increment: params.days },
-        remaining: { decrement: params.days },
-      },
-    });
-  }
-
-  // =====================================================
-  // EMPLOYEE LEAVE OVERRIDE (HR)
-  // =====================================================
-
-  upsertEmployeeLeaveOverride(params: {
-    employeeId: string;
-    leaveTypeId: string;
-    year: number;
-    allowSandwich?: boolean | null;
-    allowEncashment?: boolean | null;
-    extraAllocation?: number | null;
-    reason?: string | null;
-  }) {
-    return prisma.employeeLeaveOverride.upsert({
-      where: {
-        employeeId_leaveTypeId_year: {
-          employeeId: params.employeeId,
-          leaveTypeId: params.leaveTypeId,
-          year: params.year,
-        },
-      },
-      update: {
-        allowSandwich: params.allowSandwich ?? null,
-        allowEncashment: params.allowEncashment ?? null,
-        extraAllocation: params.extraAllocation ?? null,
-        reason: params.reason ?? null,
-      },
-      create: {
-        employeeId: params.employeeId,
-        leaveTypeId: params.leaveTypeId,
-        year: params.year,
-        allowSandwich: params.allowSandwich ?? null,
-        allowEncashment: params.allowEncashment ?? null,
-        extraAllocation: params.extraAllocation ?? null,
-        reason: params.reason ?? null,
-      },
-    });
-  }
-  getEmployeeLeaveOverride(params: {
-    employeeId: string;
-    leaveTypeId: string;
-    year: number;
-  }) {
-    return prisma.employeeLeaveOverride.findUnique({
-      where: {
-        employeeId_leaveTypeId_year: {
-          employeeId: params.employeeId,
-          leaveTypeId: params.leaveTypeId,
-          year: params.year,
-        },
-      },
-    });
-  }
-
-  // -------------Holiday Calendar-------------
-  createHoliday(params: {
-    companyId: string;
-    name: string;
-    date: Date;
-  }) {
-    return prisma.holiday.create({
-      data: params,
-    });
-  }
-
-  listHolidays(companyId: string) {
-    return prisma.holiday.findMany({
-      where: { companyId },
-      orderBy: { date: "asc" },
-    });
-  }
-
-  deleteHoliday(holidayId: string) {
-    return prisma.holiday.delete({
-      where: { id: holidayId },
-    });
-  }
-  // --sandwich--
-  getHolidaysForRange(params: {
-    companyId: string;
-    from: Date;
-    to: Date;
-  }) {
-    return prisma.holiday.findMany({
-      where: {
-        companyId: params.companyId,
-        date: {
-          gte: params.from,
-          lte: params.to,
-        },
-      },
-    });
-  }
-
-  findOverlappingLeaveRequest(params: {
-    employeeId: string;
-    from: Date;
-    to: Date;
-  }) {
-    return prisma.leaveRequest.findFirst({
-      where: {
-        employeeId: params.employeeId,
-        status: {
-          in: ["PENDING", "APPROVED"],
-        },
-        AND: [
-          {
-            fromDate: {
-              lte: params.to,
-            },
-          },
-          {
-            toDate: {
-              gte: params.from,
-            },
-          },
-        ],
-      },
-    });
-  }
-
 }

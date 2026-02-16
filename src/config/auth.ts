@@ -1,3 +1,4 @@
+// src/config/auth.ts
 if (!process.env.JWT_ACCESS_SECRET) {
   throw new Error("JWT_ACCESS_SECRET is not defined in env");
 }

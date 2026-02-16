@@ -2028,6 +2028,7 @@ export const EmployeeProfileScalarFieldEnum = {
   middleName: 'middleName',
   lastName: 'lastName',
   displayName: 'displayName',
+  dateOfBirth: 'dateOfBirth',
   isActive: 'isActive',
   isProbation: 'isProbation',
   joiningDate: 'joiningDate',

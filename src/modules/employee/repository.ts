@@ -1,9 +1,20 @@
 // src/modules/employee/repository.ts
-
 import { prisma } from "../../config/prisma.js";
 
+export interface UpdateEmployeeData {
+  teamId?: string;
+  designationId?: string;
+  firstName?: string;
+  middleName?: string | null;
+  lastName?: string;
+  displayName?: string;
+  dateOfBirth?: Date | null;
+  joiningDate?: Date;
+  isProbation?: boolean;
+}
+
 export class EmployeeRepository {
-  async getLastEmployeeCode(companyId: string) {
+  getLastEmployeeCode(companyId: string) {
     return prisma.employeeProfile.findFirst({
       where: { companyId },
       orderBy: { employeeCode: "desc" },
@@ -11,20 +22,18 @@ export class EmployeeRepository {
     });
   }
 
-  async createEmployee(data: {
+  createEmployee(data: {
     userId: string;
     companyId: string;
-    teamId: string;
+    teamId?: string;
     designationId: string;
     managerId?: string;
-
     employeeCode: number;
-
     firstName: string;
     middleName?: string;
     lastName: string;
     displayName: string;
-
+    dateOfBirth?: Date;
     joiningDate: Date;
     isProbation?: boolean;
   }) {
@@ -32,25 +41,20 @@ export class EmployeeRepository {
       data: {
         user: { connect: { id: data.userId } },
         company: { connect: { id: data.companyId } },
-        ...(data.teamId && {
-          team: { connect: { id: data.teamId } },
-        }),
+        ...(data.teamId && { team: { connect: { id: data.teamId } } }),
         designation: { connect: { id: data.designationId } },
-
         ...(data.managerId && {
           manager: { connect: { id: data.managerId } },
         }),
-
         employeeCode: data.employeeCode,
         firstName: data.firstName,
         ...(data.middleName !== undefined && {
           middleName: data.middleName,
         }),
-
         lastName: data.lastName,
         displayName: data.displayName,
+        ...(data.dateOfBirth && { dateOfBirth: data.dateOfBirth }),
         joiningDate: data.joiningDate,
-
         ...(data.isProbation !== undefined && {
           isProbation: data.isProbation,
         }),
@@ -58,33 +62,20 @@ export class EmployeeRepository {
     });
   }
 
-  async findById(employeeId: string, companyId: string) {
+  findById(employeeId: string, companyId: string) {
     return prisma.employeeProfile.findFirst({
-      where: {
-        id: employeeId,
-        companyId,
-      },
+      where: { id: employeeId, companyId },
       include: {
         user: { select: { email: true } },
         team: { select: { name: true } },
         designation: { select: { name: true } },
-        manager: {
-          select: {
-            id: true,
-            displayName: true,
-          },
-        },
-        subordinates: {
-          select: {
-            id: true,
-            displayName: true,
-          },
-        },
+        manager: { select: { id: true, displayName: true } },
+        subordinates: { select: { id: true, displayName: true } },
       },
     });
   }
 
-  async listEmployees(companyId: string) {
+  listEmployees(companyId: string) {
     return prisma.employeeProfile.findMany({
       where: { companyId },
       orderBy: { employeeCode: "asc" },
@@ -92,17 +83,15 @@ export class EmployeeRepository {
         user: { select: { email: true } },
         team: { select: { name: true } },
         designation: { select: { name: true } },
-        manager: {
-          select: { id: true, displayName: true },
-        },
+        manager: { select: { id: true, displayName: true } },
       },
     });
   }
 
-  async updateEmployee(
+  updateEmployee(
     employeeId: string,
     companyId: string,
-    data: any
+    data: UpdateEmployeeData
   ) {
     return prisma.employeeProfile.update({
       where: { id: employeeId },
@@ -110,40 +99,21 @@ export class EmployeeRepository {
     });
   }
 
-  // updateEmployee(employeeId: string, data: any) {
-  //   return prisma.employeeProfile.update({
-  //     where: { id: employeeId },
-  //     data
-  //   });
-  // }
-
-
-  async deactivateEmployee(
-    employeeId: string,
-    companyId: string
-  ) {
+  deactivateEmployee(employeeId: string, companyId: string) {
     return prisma.employeeProfile.updateMany({
-      where: {
-        id: employeeId,
-        companyId,
-      },
-      data: {
-        isActive: false,
-      },
+      where: { id: employeeId, companyId },
+      data: { isActive: false },
     });
   }
 
-
-  async changeManager(
+  changeManager(
     employeeId: string,
     companyId: string,
     managerId?: string
   ) {
     return prisma.employeeProfile.update({
       where: { id: employeeId },
-      data: {
-        managerId: managerId ?? null,
-      },
+      data: { managerId: managerId ?? null },
     });
   }
 
@@ -153,25 +123,24 @@ export class EmployeeRepository {
     });
   }
 
-  createManyLeaveBalances(data: any[]) {
-    return prisma.leaveBalance.createMany({
-      data,
-    });
+  createManyLeaveBalances(
+    data: {
+      employeeId: string;
+      leaveTypeId: string;
+      year: number;
+      allocated: number;
+      used: number;
+      carriedForward: number;
+      remaining: number;
+    }[]
+  ) {
+    return prisma.leaveBalance.createMany({ data });
   }
 
-
-  getLeaveBalance(
-    employeeId: string,
-    leaveTypeId: string,
-    year: number
-  ) {
+  getLeaveBalance(employeeId: string, leaveTypeId: string, year: number) {
     return prisma.leaveBalance.findUnique({
       where: {
-        employeeId_leaveTypeId_year: {
-          employeeId,
-          leaveTypeId,
-          year,
-        },
+        employeeId_leaveTypeId_year: { employeeId, leaveTypeId, year },
       },
     });
   }
@@ -193,8 +162,7 @@ export class EmployeeRepository {
         user: { select: { email: true } },
         team: true,
         designation: true,
-      }
+      },
     });
   }
-
 }

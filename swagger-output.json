@@ -46,6 +46,11 @@
         "description": "",
         "parameters": [
           {
+            "name": "user-agent",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -79,6 +84,11 @@
         "description": "",
         "parameters": [
           {
+            "name": "user-agent",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -109,6 +119,11 @@
         "description": "",
         "parameters": [
           {
+            "name": "user-agent",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -137,6 +152,13 @@
     "/api/auth/refresh": {
       "post": {
         "description": "",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -289,11 +311,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -317,13 +334,6 @@
       },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -342,11 +352,6 @@
             "name": "departmentId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
             "type": "string"
           },
           {
@@ -379,11 +384,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -400,11 +400,6 @@
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -433,11 +428,6 @@
       "get": {
         "description": "",
         "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "departmentId",
             "in": "query",
@@ -465,11 +455,6 @@
             "type": "string"
           },
           {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -502,11 +487,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -523,11 +503,6 @@
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -552,13 +527,6 @@
       },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -577,11 +545,6 @@
             "name": "designationId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
             "type": "string"
           },
           {
@@ -614,11 +577,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -635,11 +593,6 @@
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -670,13 +623,6 @@
       },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -689,11 +635,6 @@
       "put": {
         "description": "",
         "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -728,11 +669,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -762,13 +698,6 @@
       },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -788,11 +717,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -810,24 +734,11 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "employeeId": {
-                  "example": "any"
-                },
                 "source": {
                   "example": "any"
                 },
@@ -844,9 +755,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -856,24 +764,11 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "employeeId": {
-                  "example": "any"
-                },
                 "source": {
                   "example": "any"
                 },
@@ -890,9 +785,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -901,21 +793,6 @@
       "get": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "employeeId",
-            "in": "query",
-            "type": "string"
-          },
           {
             "name": "date",
             "in": "query",
@@ -928,9 +805,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -939,21 +813,6 @@
       "get": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "employeeId",
-            "in": "query",
-            "type": "string"
-          },
           {
             "name": "from",
             "in": "query",
@@ -971,9 +830,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -982,16 +838,6 @@
       "get": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "employeeId",
             "in": "query",
@@ -1028,16 +874,6 @@
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -1085,18 +921,6 @@
     "/api/attendance/hr/attendance-day": {
       "post": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1116,18 +940,6 @@
     "/api/attendance/hr/attendance-event": {
       "post": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1152,11 +964,6 @@
             "name": "attendanceDayId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
             "type": "string"
           },
           {
@@ -1196,16 +1003,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -1241,18 +1038,6 @@
       },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1277,16 +1062,6 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
             "type": "string"
           },
           {
@@ -1331,16 +1106,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -1362,13 +1127,6 @@
     "/api/leave/types": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1381,16 +1139,6 @@
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -1437,11 +1185,6 @@
             "type": "string"
           },
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -1480,16 +1223,6 @@
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -1549,16 +1282,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "year",
             "in": "query",
             "type": "string"
@@ -1585,19 +1308,11 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "employeeId": {
-                  "example": "any"
-                },
                 "leaveTypeId": {
                   "example": "any"
                 },
@@ -1626,9 +1341,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -1636,27 +1348,12 @@
     "/api/leave/requests/my": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "employeeId",
-            "in": "query",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -1670,11 +1367,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -1683,9 +1375,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -1699,23 +1388,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "approvedById": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
@@ -1743,23 +1415,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "approvedById": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
@@ -1786,11 +1441,6 @@
             "name": "requestId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
             "type": "string"
           },
           {
@@ -1827,16 +1477,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "employeeId",
-            "in": "query",
-            "type": "string"
-          },
-          {
             "name": "year",
             "in": "query",
             "type": "string"
@@ -1848,9 +1488,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -1859,16 +1496,6 @@
       "get": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "scope",
             "in": "query",
@@ -1881,12 +1508,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
         }
       }
@@ -1896,19 +1517,11 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "employeeId": {
-                  "example": "any"
-                },
                 "leaveTypeId": {
                   "example": "any"
                 },
@@ -1928,9 +1541,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -1943,11 +1553,6 @@
             "name": "encashmentId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
             "type": "string"
           }
         ],
@@ -1976,11 +1581,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -2003,11 +1603,6 @@
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -2055,24 +1650,35 @@
         }
       }
     },
+    "/api/leave/requests/pending": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
     "/api/leave/holidays": {
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "companyId": {
-                  "example": "any"
-                },
                 "name": {
                   "example": "any"
                 },
@@ -2097,36 +1703,15 @@
             "description": "Forbidden"
           }
         }
-      }
-    },
-    "/api/leave/holidays/{companyId}": {
+      },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "companyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
         }
       }
@@ -2139,11 +1724,6 @@
             "name": "holidayId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
             "type": "string"
           }
         ],
@@ -2166,18 +1746,6 @@
     "/api/employees/": {
       "post": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -2195,30 +1763,12 @@
       },
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
         }
       }
@@ -2226,24 +1776,12 @@
     "/api/employees/me": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
           },
-          "401": {
-            "description": "Unauthorized"
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -2256,16 +1794,6 @@
             "name": "employeeId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
             "type": "string"
           }
         ],
@@ -2295,16 +1823,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -2326,27 +1844,12 @@
     "/api/employees/me/profile": {
       "put": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -2359,16 +1862,6 @@
             "name": "employeeId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
             "type": "string"
           }
         ],
@@ -2396,16 +1889,6 @@
             "name": "employeeId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "x-company-id",
-            "in": "header",
             "type": "string"
           },
           {

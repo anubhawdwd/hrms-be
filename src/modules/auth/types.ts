@@ -1,3 +1,4 @@
+// src/modules/auth/types.ts
 //    AUTH - LOCAL LOGIN
 export interface LoginDTO {
     email: string;

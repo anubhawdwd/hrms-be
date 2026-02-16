@@ -1,3 +1,4 @@
+// src/utils/geo.ts
 export function haversineDistanceMeters(
   lat1: number,
   lon1: number,

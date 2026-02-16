@@ -1,3 +1,4 @@
+// src/modules/company/types.ts
 export interface CreateCompanyDTO {
   name: string;
 }

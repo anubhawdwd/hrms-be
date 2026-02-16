@@ -1,26 +1,20 @@
 // src/modules/leave/controller.ts
-
 import type { Request, Response } from "express";
 import { LeaveService } from "./service.js";
 import {
   LeaveDurationType,
-  LeaveEncashmentStatus,
   GenderRestriction,
 } from "../../generated/prisma/enums.js";
 
 const service = new LeaveService();
 
-/* =========================================================
-   LEAVE TYPES (HR / ADMIN)
-========================================================= */
+// =================== LEAVE TYPES ===================
 
 export async function createLeaveType(req: Request, res: Response) {
   try {
-    const companyId = req.header("x-company-id");
     const { name, code, isPaid } = req.body;
 
     if (
-      !companyId ||
       typeof name !== "string" ||
       typeof code !== "string" ||
       typeof isPaid !== "boolean"
@@ -29,7 +23,7 @@ export async function createLeaveType(req: Request, res: Response) {
     }
 
     const result = await service.createLeaveType({
-      companyId,
+      companyId: req.companyId!,
       name,
       code,
       isPaid,
@@ -65,28 +59,16 @@ export async function updateLeaveType(req: Request, res: Response) {
 
 export async function listLeaveTypes(req: Request, res: Response) {
   try {
-    const companyId = req.header("x-company-id");
-    if (!companyId) {
-      return res.status(400).json({ message: "Missing companyId" });
-    }
-
-    res.json(await service.listLeaveTypes(companyId));
+    res.json(await service.listLeaveTypes(req.companyId!));
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
 }
 
-/* =========================================================
-   LEAVE POLICY (HR / ADMIN)
-========================================================= */
+// =================== LEAVE POLICY ===================
 
 export async function upsertLeavePolicy(req: Request, res: Response) {
   try {
-    const companyId = req.header("x-company-id");
-    if (!companyId) {
-      return res.status(400).json({ message: "Missing companyId" });
-    }
-
     const {
       leaveTypeId,
       year,
@@ -114,7 +96,7 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
     }
 
     const result = await service.upsertLeavePolicy({
-      companyId,
+      companyId: req.companyId!,
       leaveTypeId,
       year,
       yearlyAllocation,
@@ -139,30 +121,32 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
 
 export async function listLeavePolicies(req: Request, res: Response) {
   try {
-    const companyId = req.header("x-company-id");
     const { year } = req.query;
 
-    if (!companyId || typeof year !== "string") {
-      return res.status(400).json({ message: "Invalid request" });
+    if (typeof year !== "string") {
+      return res.status(400).json({ message: "year query param required" });
     }
 
-    res.json(await service.listLeavePolicies(companyId, Number(year)));
+    res.json(await service.listLeavePolicies(req.companyId!, Number(year)));
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
 }
 
-/* =========================================================
-   LEAVE REQUEST (EMPLOYEE)
-========================================================= */
+// =================== LEAVE REQUEST ===================
 
 export async function applyLeave(req: Request, res: Response) {
   try {
-    const { employeeId, leaveTypeId, fromDate, toDate, durationType, durationValue, reason } =
-      req.body;
+    const {
+      leaveTypeId,
+      fromDate,
+      toDate,
+      durationType,
+      durationValue,
+      reason,
+    } = req.body;
 
     if (
-      !employeeId ||
       !leaveTypeId ||
       typeof fromDate !== "string" ||
       typeof toDate !== "string" ||
@@ -173,7 +157,8 @@ export async function applyLeave(req: Request, res: Response) {
     }
 
     const result = await service.applyLeave({
-      employeeId,
+      userId: req.user!.userId,
+      companyId: req.companyId!,
       leaveTypeId,
       fromDate,
       toDate,
@@ -190,13 +175,9 @@ export async function applyLeave(req: Request, res: Response) {
 
 export async function listMyLeaveRequests(req: Request, res: Response) {
   try {
-    const { employeeId } = req.query;
-
-    if (typeof employeeId !== "string") {
-      return res.status(400).json({ message: "Invalid employeeId" });
-    }
-
-    res.json(await service.listMyLeaveRequests(employeeId));
+    res.json(
+      await service.listMyLeaveRequests(req.user!.userId, req.companyId!)
+    );
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -205,31 +186,39 @@ export async function listMyLeaveRequests(req: Request, res: Response) {
 export async function cancelLeaveRequest(req: Request, res: Response) {
   try {
     const { requestId } = req.params;
-
     if (!requestId || Array.isArray(requestId)) {
       return res.status(400).json({ message: "Invalid requestId" });
     }
 
-    res.json(await service.cancelLeaveRequest(requestId));
+    res.json(
+      await service.cancelLeaveRequest(
+        requestId,
+        req.user!.userId,
+        req.companyId!
+      )
+    );
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
 }
 
-/* =========================================================
-   LEAVE APPROVAL (MANAGER / HR)
-========================================================= */
+// =================== LEAVE APPROVAL ===================
 
 export async function approveLeave(req: Request, res: Response) {
   try {
     const { requestId } = req.params;
-    const { approvedById } = req.body;
-
-    if (!requestId || Array.isArray(requestId) || !approvedById) {
+    if (!requestId || Array.isArray(requestId)) {
       return res.status(400).json({ message: "Invalid request" });
     }
 
-    res.json(await service.approveLeave({ requestId, approvedById }));
+    // approvedById is derived from JWT, not body
+    res.json(
+      await service.approveLeave({
+        requestId,
+         userId: req.user!.userId,
+        companyId: req.companyId!,
+      })
+    );
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -238,13 +227,17 @@ export async function approveLeave(req: Request, res: Response) {
 export async function rejectLeave(req: Request, res: Response) {
   try {
     const { requestId } = req.params;
-    const { approvedById } = req.body;
-
-    if (!requestId || Array.isArray(requestId) || !approvedById) {
+    if (!requestId || Array.isArray(requestId)) {
       return res.status(400).json({ message: "Invalid request" });
     }
 
-    res.json(await service.rejectLeave({ requestId, approvedById }));
+    res.json(
+      await service.rejectLeave({
+        requestId,
+         userId: req.user!.userId,
+        companyId: req.companyId!,
+      })
+    );
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -270,27 +263,29 @@ export async function hrCancelApprovedLeave(req: Request, res: Response) {
   }
 }
 
-/* =========================================================
-   LEAVE BALANCE
-========================================================= */
+// =================== LEAVE BALANCE ===================
 
 export async function getMyLeaveBalances(req: Request, res: Response) {
   try {
-    const { employeeId, year } = req.query;
+    const { year } = req.query;
 
-    if (typeof employeeId !== "string" || typeof year !== "string") {
-      return res.status(400).json({ message: "Invalid query" });
+    if (typeof year !== "string") {
+      return res.status(400).json({ message: "year query param required" });
     }
 
-    res.json(await service.getMyLeaveBalances(employeeId, Number(year)));
+    res.json(
+      await service.getMyLeaveBalances(
+        req.user!.userId,
+        req.companyId!,
+        Number(year)
+      )
+    );
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
 }
 
-/* ======================================================
-   EMPLOYEE ON LEAVE HIERARCHY
-   ====================================================== */
+// =================== TODAY LEAVES ===================
 
 export async function listTodayLeaves(req: Request, res: Response) {
   try {
@@ -300,35 +295,26 @@ export async function listTodayLeaves(req: Request, res: Response) {
       return res.status(400).json({ message: "Invalid scope" });
     }
 
-    const companyId = req.header("x-company-id");
-    if (!companyId) {
-      return res.status(400).json({ message: "Missing companyId" });
-    }
-
     const result = await service.getTodayLeaves({
       userId: req.user!.userId,
-      companyId,
+      companyId: req.companyId!,
       scope,
       date: new Date(),
     });
 
     res.json(result);
   } catch (err: any) {
-    res.status(403).json({ message: err.message });
+    res.status(400).json({ message: err.message });
   }
 }
 
-
-/* =========================================================
-   LEAVE ENCASHMENT
-========================================================= */
+// =================== LEAVE ENCASHMENT ===================
 
 export async function requestLeaveEncashment(req: Request, res: Response) {
   try {
-    const { employeeId, leaveTypeId, year, days } = req.body;
+    const { leaveTypeId, year, days } = req.body;
 
     if (
-      !employeeId ||
       !leaveTypeId ||
       typeof year !== "number" ||
       typeof days !== "number"
@@ -338,7 +324,8 @@ export async function requestLeaveEncashment(req: Request, res: Response) {
 
     res.status(201).json(
       await service.requestLeaveEncashment({
-        employeeId,
+        userId: req.user!.userId,
+        companyId: req.companyId!,
         leaveTypeId,
         year,
         days,
@@ -373,21 +360,24 @@ export async function rejectLeaveEncashment(req: Request, res: Response) {
   }
 }
 
+// =================== HR OVERRIDE ===================
 
-/* =========================================================
-   HR OVERRIDE
-========================================================= */
-
-export async function upsertEmployeeLeaveOverride(req: Request, res: Response) {
+export async function upsertEmployeeLeaveOverride(
+  req: Request,
+  res: Response
+) {
   try {
-    const { employeeId, leaveTypeId, year, allowSandwich, allowEncashment, extraAllocation, reason } =
-      req.body;
+    const {
+      employeeId,
+      leaveTypeId,
+      year,
+      allowSandwich,
+      allowEncashment,
+      extraAllocation,
+      reason,
+    } = req.body;
 
-    if (
-      !employeeId ||
-      !leaveTypeId ||
-      typeof year !== "number"
-    ) {
+    if (!employeeId || !leaveTypeId || typeof year !== "number") {
       return res.status(400).json({ message: "Invalid input" });
     }
 
@@ -409,19 +399,27 @@ export async function upsertEmployeeLeaveOverride(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
+// =================== PendingLeavesRequest ===================
+export async function listPendingLeaveRequests(req: Request, res: Response) {
+  try {
+    res.json(await service.listPendingLeaveRequests(req.companyId!));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+// =================== HOLIDAYS ===================
 
-// --------Holiday Calendar----------
 export async function createHoliday(req: Request, res: Response) {
   try {
-    const { companyId, name, date } = req.body;
+    const { name, date } = req.body;
 
-    if (!companyId || !name || !date) {
+    if (!name || !date) {
       return res.status(400).json({ message: "Invalid input" });
     }
 
     res.status(201).json(
       await service.createHoliday({
-        companyId,
+        companyId: req.companyId!,
         name,
         date: new Date(date),
       })
@@ -433,22 +431,18 @@ export async function createHoliday(req: Request, res: Response) {
 
 export async function listHolidays(req: Request, res: Response) {
   try {
-    const { companyId } = req.params;
-     if (!companyId || Array.isArray(companyId)) {
-            return res.status(400).json({ message: "Invalid request" });
-        }
-        res.json(await service.listHolidays(companyId));
-      } catch (err: any) {
-        res.status(400).json({ message: err.message });
-      }
+    res.json(await service.listHolidays(req.companyId!));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function deleteHoliday(req: Request, res: Response) {
+  try {
+    const { holidayId } = req.params;
+    if (!holidayId || Array.isArray(holidayId)) {
+      return res.status(400).json({ message: "Invalid request" });
     }
-    
-    export async function deleteHoliday(req: Request, res: Response) {
-      try {
-        const { holidayId } = req.params;
-        if (!holidayId || Array.isArray(holidayId)) {
-               return res.status(400).json({ message: "Invalid request" });
-           }
     res.json(await service.deleteHoliday(holidayId));
   } catch (err: any) {
     res.status(400).json({ message: err.message });

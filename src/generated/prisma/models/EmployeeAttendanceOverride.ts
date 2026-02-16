@@ -447,10 +447,6 @@ export type EmployeeAttendanceOverrideUncheckedUpdateManyWithoutEmployeeNestedIn
   deleteMany?: Prisma.EmployeeAttendanceOverrideScalarWhereInput | Prisma.EmployeeAttendanceOverrideScalarWhereInput[]
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type EmployeeAttendanceOverrideCreateWithoutEmployeeInput = {
   id?: string
   autoPresent?: boolean

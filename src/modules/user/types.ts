@@ -1,3 +1,4 @@
+// src/modules/user/types.ts
 import { AuthProvider, UserRole  } from "../../generated/prisma/enums.js";
 
 export interface CreateUserDTO {

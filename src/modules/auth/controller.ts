@@ -40,6 +40,10 @@ export async function login(req: Request, res: Response) {
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
             httpOnly: true,
             sameSite: "lax",
+            // sameSite: "none",
+            // secure: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
 
         return res.json({
@@ -74,6 +78,10 @@ export async function googleLogin(req: Request, res: Response) {
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
             httpOnly: true,
             sameSite: "lax",
+            // sameSite: "none",
+            // secure: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
 
         return res.json({
@@ -108,6 +116,10 @@ export async function microsoftLogin(req: Request, res: Response) {
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
             httpOnly: true,
             sameSite: "lax",
+            // sameSite: "none",
+            // secure: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
 
         return res.json({
@@ -143,6 +155,8 @@ export async function refreshToken(req: Request, res: Response) {
         res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
             httpOnly: true,
             sameSite: "lax",
+            // sameSite: "none",
+            // secure: true,
             secure: process.env.NODE_ENV === "production",
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });

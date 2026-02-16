@@ -1,32 +1,33 @@
 // src/modules/organization/routes.ts
-
 import { Router } from "express";
 import {
   createDepartment,
   listDepartments,
+  updateDepartment,
+  deactivateDepartment,
   createTeam,
   listTeams,
+  updateTeam,
+  deactivateTeam,
   createDesignation,
   listDesignations,
+  updateDesignation,
+  deactivateDesignation,
   setOfficeLocation,
   getOfficeLocation,
   upsertDesignationAttendancePolicy,
   listDesignationAttendancePolicies,
   getDesignationAttendancePolicy,
-  updateDepartment,
-  deactivateDepartment,
-  updateTeam,
-  deactivateTeam,
-  updateDesignation,
-  deactivateDesignation,
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/requireRole.js";
+import { validateCompanyHeader } from "../../middlewares/validateCompany.js";
 import { UserRole } from "../../generated/prisma/enums.js";
 
 const router = Router();
 router.use(
   authenticateJWT,
+  validateCompanyHeader,
   requireRole(UserRole.COMPANY_ADMIN, UserRole.HR)
 );
 
@@ -35,22 +36,15 @@ router.get("/departments", listDepartments);
 router.patch("/departments/:departmentId", updateDepartment);
 router.delete("/departments/:departmentId", deactivateDepartment);
 
-
 router.post("/teams", createTeam);
 router.get("/teams", listTeams);
 router.patch("/teams/:teamId", updateTeam);
 router.delete("/teams/:teamId", deactivateTeam);
 
-
 router.post("/designations", createDesignation);
 router.get("/designations", listDesignations);
 router.patch("/designations/:designationId", updateDesignation);
 router.delete("/designations/:designationId", deactivateDesignation);
-
-// router.post("/employees", createEmployee);
-// router.get("/employees", listEmployees);
-// router.patch("/employees/:employeeId", updateEmployee);
-// router.delete("/employees/:employeeId", deactivateEmployee);
 
 router.post("/office-location", setOfficeLocation);
 router.get("/office-location", getOfficeLocation);
