@@ -314,6 +314,8 @@ export const LeaveRequestScalarFieldEnum = {
   toDate: 'toDate',
   durationType: 'durationType',
   durationValue: 'durationValue',
+  startTime: 'startTime',
+  endTime: 'endTime',
   reason: 'reason',
   status: 'status',
   approvedById: 'approvedById',

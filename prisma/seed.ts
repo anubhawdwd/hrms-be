@@ -69,8 +69,8 @@ async function seed() {
         name: "Platform Team",
       },
     },
-    update: {},
-    create: { name: "Platform Team", departmentId: engineering.id },
+    update: { name: "IT Team", departmentId: engineering.id },
+    create: { name: "IT Team", departmentId: engineering.id },
   });
 
   // ================= DESIGNATIONS =================
@@ -84,11 +84,11 @@ async function seed() {
     where: {
       companyId_name: {
         companyId: company.id,
-        name: "Cloud and System Architecture",
+        name: "Cloud and System Architect",
       },
     },
     update: {},
-    create: { name: "Cloud and System Architecture", companyId: company.id },
+    create: { name: "Cloud and System Architect", companyId: company.id },
   });
 
   const se1 = await prisma.designation.upsert({

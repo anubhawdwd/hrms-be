@@ -42,6 +42,8 @@ export type LeaveRequestMinAggregateOutputType = {
   toDate: Date | null
   durationType: $Enums.LeaveDurationType | null
   durationValue: number | null
+  startTime: string | null
+  endTime: string | null
   reason: string | null
   status: $Enums.LeaveRequestStatus | null
   approvedById: string | null
@@ -57,6 +59,8 @@ export type LeaveRequestMaxAggregateOutputType = {
   toDate: Date | null
   durationType: $Enums.LeaveDurationType | null
   durationValue: number | null
+  startTime: string | null
+  endTime: string | null
   reason: string | null
   status: $Enums.LeaveRequestStatus | null
   approvedById: string | null
@@ -72,6 +76,8 @@ export type LeaveRequestCountAggregateOutputType = {
   toDate: number
   durationType: number
   durationValue: number
+  startTime: number
+  endTime: number
   reason: number
   status: number
   approvedById: number
@@ -97,6 +103,8 @@ export type LeaveRequestMinAggregateInputType = {
   toDate?: true
   durationType?: true
   durationValue?: true
+  startTime?: true
+  endTime?: true
   reason?: true
   status?: true
   approvedById?: true
@@ -112,6 +120,8 @@ export type LeaveRequestMaxAggregateInputType = {
   toDate?: true
   durationType?: true
   durationValue?: true
+  startTime?: true
+  endTime?: true
   reason?: true
   status?: true
   approvedById?: true
@@ -127,6 +137,8 @@ export type LeaveRequestCountAggregateInputType = {
   toDate?: true
   durationType?: true
   durationValue?: true
+  startTime?: true
+  endTime?: true
   reason?: true
   status?: true
   approvedById?: true
@@ -229,6 +241,8 @@ export type LeaveRequestGroupByOutputType = {
   toDate: Date
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime: string | null
+  endTime: string | null
   reason: string | null
   status: $Enums.LeaveRequestStatus
   approvedById: string | null
@@ -267,6 +281,8 @@ export type LeaveRequestWhereInput = {
   toDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFilter<"LeaveRequest"> | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFilter<"LeaveRequest"> | number
+  startTime?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
+  endTime?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   reason?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   approvedById?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
@@ -285,6 +301,8 @@ export type LeaveRequestOrderByWithRelationInput = {
   toDate?: Prisma.SortOrder
   durationType?: Prisma.SortOrder
   durationValue?: Prisma.SortOrder
+  startTime?: Prisma.SortOrderInput | Prisma.SortOrder
+  endTime?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -306,6 +324,8 @@ export type LeaveRequestWhereUniqueInput = Prisma.AtLeast<{
   toDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFilter<"LeaveRequest"> | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFilter<"LeaveRequest"> | number
+  startTime?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
+  endTime?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   reason?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   approvedById?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
@@ -324,6 +344,8 @@ export type LeaveRequestOrderByWithAggregationInput = {
   toDate?: Prisma.SortOrder
   durationType?: Prisma.SortOrder
   durationValue?: Prisma.SortOrder
+  startTime?: Prisma.SortOrderInput | Prisma.SortOrder
+  endTime?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -347,6 +369,8 @@ export type LeaveRequestScalarWhereWithAggregatesInput = {
   toDate?: Prisma.DateTimeWithAggregatesFilter<"LeaveRequest"> | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeWithAggregatesFilter<"LeaveRequest"> | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatWithAggregatesFilter<"LeaveRequest"> | number
+  startTime?: Prisma.StringNullableWithAggregatesFilter<"LeaveRequest"> | string | null
+  endTime?: Prisma.StringNullableWithAggregatesFilter<"LeaveRequest"> | string | null
   reason?: Prisma.StringNullableWithAggregatesFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusWithAggregatesFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   approvedById?: Prisma.StringNullableWithAggregatesFilter<"LeaveRequest"> | string | null
@@ -360,6 +384,8 @@ export type LeaveRequestCreateInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   createdAt?: Date | string
@@ -377,6 +403,8 @@ export type LeaveRequestUncheckedCreateInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   approvedById?: string | null
@@ -390,6 +418,8 @@ export type LeaveRequestUpdateInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,6 +437,8 @@ export type LeaveRequestUncheckedUpdateInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -422,6 +454,8 @@ export type LeaveRequestCreateManyInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   approvedById?: string | null
@@ -435,6 +469,8 @@ export type LeaveRequestUpdateManyMutationInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -449,6 +485,8 @@ export type LeaveRequestUncheckedUpdateManyInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -474,6 +512,8 @@ export type LeaveRequestCountOrderByAggregateInput = {
   toDate?: Prisma.SortOrder
   durationType?: Prisma.SortOrder
   durationValue?: Prisma.SortOrder
+  startTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedById?: Prisma.SortOrder
@@ -493,6 +533,8 @@ export type LeaveRequestMaxOrderByAggregateInput = {
   toDate?: Prisma.SortOrder
   durationType?: Prisma.SortOrder
   durationValue?: Prisma.SortOrder
+  startTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedById?: Prisma.SortOrder
@@ -508,6 +550,8 @@ export type LeaveRequestMinOrderByAggregateInput = {
   toDate?: Prisma.SortOrder
   durationType?: Prisma.SortOrder
   durationValue?: Prisma.SortOrder
+  startTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedById?: Prisma.SortOrder
@@ -659,6 +703,8 @@ export type LeaveRequestCreateWithoutEmployeeInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   createdAt?: Date | string
@@ -674,6 +720,8 @@ export type LeaveRequestUncheckedCreateWithoutEmployeeInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   approvedById?: string | null
@@ -697,6 +745,8 @@ export type LeaveRequestCreateWithoutApprovedByInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   createdAt?: Date | string
@@ -713,6 +763,8 @@ export type LeaveRequestUncheckedCreateWithoutApprovedByInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   createdAt?: Date | string
@@ -756,6 +808,8 @@ export type LeaveRequestScalarWhereInput = {
   toDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFilter<"LeaveRequest"> | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFilter<"LeaveRequest"> | number
+  startTime?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
+  endTime?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   reason?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   approvedById?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
@@ -785,6 +839,8 @@ export type LeaveRequestCreateWithoutLeaveTypeInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   createdAt?: Date | string
@@ -800,6 +856,8 @@ export type LeaveRequestUncheckedCreateWithoutLeaveTypeInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   approvedById?: string | null
@@ -840,6 +898,8 @@ export type LeaveRequestCreateManyEmployeeInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   approvedById?: string | null
@@ -855,6 +915,8 @@ export type LeaveRequestCreateManyApprovedByInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   createdAt?: Date | string
@@ -867,6 +929,8 @@ export type LeaveRequestUpdateWithoutEmployeeInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -882,6 +946,8 @@ export type LeaveRequestUncheckedUpdateWithoutEmployeeInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -896,6 +962,8 @@ export type LeaveRequestUncheckedUpdateManyWithoutEmployeeInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -909,6 +977,8 @@ export type LeaveRequestUpdateWithoutApprovedByInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -925,6 +995,8 @@ export type LeaveRequestUncheckedUpdateWithoutApprovedByInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -939,6 +1011,8 @@ export type LeaveRequestUncheckedUpdateManyWithoutApprovedByInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -952,6 +1026,8 @@ export type LeaveRequestCreateManyLeaveTypeInput = {
   toDate: Date | string
   durationType: $Enums.LeaveDurationType
   durationValue: number
+  startTime?: string | null
+  endTime?: string | null
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   approvedById?: string | null
@@ -965,6 +1041,8 @@ export type LeaveRequestUpdateWithoutLeaveTypeInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -980,6 +1058,8 @@ export type LeaveRequestUncheckedUpdateWithoutLeaveTypeInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -994,6 +1074,8 @@ export type LeaveRequestUncheckedUpdateManyWithoutLeaveTypeInput = {
   toDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationType?: Prisma.EnumLeaveDurationTypeFieldUpdateOperationsInput | $Enums.LeaveDurationType
   durationValue?: Prisma.FloatFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1011,6 +1093,8 @@ export type LeaveRequestSelect<ExtArgs extends runtime.Types.Extensions.Internal
   toDate?: boolean
   durationType?: boolean
   durationValue?: boolean
+  startTime?: boolean
+  endTime?: boolean
   reason?: boolean
   status?: boolean
   approvedById?: boolean
@@ -1029,6 +1113,8 @@ export type LeaveRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   toDate?: boolean
   durationType?: boolean
   durationValue?: boolean
+  startTime?: boolean
+  endTime?: boolean
   reason?: boolean
   status?: boolean
   approvedById?: boolean
@@ -1047,6 +1133,8 @@ export type LeaveRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   toDate?: boolean
   durationType?: boolean
   durationValue?: boolean
+  startTime?: boolean
+  endTime?: boolean
   reason?: boolean
   status?: boolean
   approvedById?: boolean
@@ -1065,6 +1153,8 @@ export type LeaveRequestSelectScalar = {
   toDate?: boolean
   durationType?: boolean
   durationValue?: boolean
+  startTime?: boolean
+  endTime?: boolean
   reason?: boolean
   status?: boolean
   approvedById?: boolean
@@ -1072,7 +1162,7 @@ export type LeaveRequestSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LeaveRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "leaveTypeId" | "fromDate" | "toDate" | "durationType" | "durationValue" | "reason" | "status" | "approvedById" | "createdAt" | "updatedAt", ExtArgs["result"]["leaveRequest"]>
+export type LeaveRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "leaveTypeId" | "fromDate" | "toDate" | "durationType" | "durationValue" | "startTime" | "endTime" | "reason" | "status" | "approvedById" | "createdAt" | "updatedAt", ExtArgs["result"]["leaveRequest"]>
 export type LeaveRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.EmployeeProfileDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
@@ -1104,6 +1194,8 @@ export type $LeaveRequestPayload<ExtArgs extends runtime.Types.Extensions.Intern
     toDate: Date
     durationType: $Enums.LeaveDurationType
     durationValue: number
+    startTime: string | null
+    endTime: string | null
     reason: string | null
     status: $Enums.LeaveRequestStatus
     approvedById: string | null
@@ -1542,6 +1634,8 @@ export interface LeaveRequestFieldRefs {
   readonly toDate: Prisma.FieldRef<"LeaveRequest", 'DateTime'>
   readonly durationType: Prisma.FieldRef<"LeaveRequest", 'LeaveDurationType'>
   readonly durationValue: Prisma.FieldRef<"LeaveRequest", 'Float'>
+  readonly startTime: Prisma.FieldRef<"LeaveRequest", 'String'>
+  readonly endTime: Prisma.FieldRef<"LeaveRequest", 'String'>
   readonly reason: Prisma.FieldRef<"LeaveRequest", 'String'>
   readonly status: Prisma.FieldRef<"LeaveRequest", 'LeaveRequestStatus'>
   readonly approvedById: Prisma.FieldRef<"LeaveRequest", 'String'>

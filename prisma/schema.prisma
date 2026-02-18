@@ -365,6 +365,9 @@ model LeaveRequest {
 
   durationType  LeaveDurationType
   durationValue Float
+  
+  startTime String? // e.g. "16:00"
+  endTime   String? // e.g. "18:00"
 
   reason String?
 

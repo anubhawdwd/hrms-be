@@ -6,8 +6,31 @@ import {
   LeaveEncashmentStatus,
 } from "../../generated/prisma/enums.js";
 import { prisma } from "../../config/prisma.js";
+import { isValidTimeString, timeDiffMinutes } from "../../utils/date.js";
 
 const repo = new LeaveRepository();
+
+/**
+ * Standard work schedule (used for auto-computing time ranges)
+ */
+const WORK_START = "09:00";
+const WORK_END = "18:00";
+const WORK_HOURS = 8; // 8-hour workday for balance conversion
+
+/**
+ * Pre-defined time slots for half-day and quarter-day
+ */
+const HALF_DAY_SLOTS: Record<string, { start: string; end: string }> = {
+  FIRST_HALF: { start: "09:00", end: "13:00" },
+  SECOND_HALF: { start: "14:00", end: "18:00" },
+};
+
+const QUARTER_DAY_SLOTS: Record<string, { start: string; end: string }> = {
+  Q1: { start: "09:00", end: "11:00" },
+  Q2: { start: "11:00", end: "13:00" },
+  Q3: { start: "14:00", end: "16:00" },
+  Q4: { start: "16:00", end: "18:00" },
+};
 
 export class LeaveService {
   // =================== LEAVE TYPE ===================
@@ -88,10 +111,11 @@ export class LeaveService {
     fromDate: string;
     toDate: string;
     durationType: LeaveDurationType;
-    durationValue: number;
+    slot?: string; // "FIRST_HALF", "SECOND_HALF", "Q1", "Q2", "Q3", "Q4"
+    startTime?: string; // "HH:MM" — for HOURLY
+    endTime?: string; // "HH:MM" — for HOURLY
     reason?: string;
   }) {
-    // Resolve employee from JWT user
     const employee = await this.resolveEmployee(
       params.userId,
       params.companyId
@@ -107,29 +131,120 @@ export class LeaveService {
     if (from.getFullYear() !== to.getFullYear()) {
       throw new Error("Leave cannot span across multiple years");
     }
-    if (params.durationValue <= 0) {
-      throw new Error("durationValue must be greater than 0");
-    }
-    if (
-      params.durationType === LeaveDurationType.HOURLY &&
-      from.toDateString() !== to.toDateString()
-    ) {
-      throw new Error("Hourly leave must be for a single day");
+
+    // ─── Resolve startTime, endTime, durationValue based on durationType ───
+
+    let durationValue: number;
+    let startTime: string | null = null;
+    let endTime: string | null = null;
+
+    switch (params.durationType) {
+      case LeaveDurationType.FULL_DAY: {
+        // Date range — compute number of calendar days (inclusive)
+        const diffTime = to.getTime() - from.getTime();
+        const diffDays =
+          Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        durationValue = diffDays;
+        // No startTime/endTime for full day
+        break;
+      }
+
+      case LeaveDurationType.HALF_DAY: {
+        // Must be single day
+        if (from.toDateString() !== to.toDateString()) {
+          throw new Error("Half day leave must be for a single day");
+        }
+        if (!params.slot) {
+          throw new Error(
+            "Slot is required for half day (FIRST_HALF or SECOND_HALF)"
+          );
+        }
+        const halfSlot = HALF_DAY_SLOTS[params.slot];
+        if (!halfSlot) {
+          throw new Error("Invalid half-day slot. Use FIRST_HALF or SECOND_HALF");
+        }
+        startTime = halfSlot.start;
+        endTime = halfSlot.end;
+        durationValue = 0.5; // 0.5 day
+        break;
+      }
+
+      case LeaveDurationType.QUARTER_DAY: {
+        // Must be single day
+        if (from.toDateString() !== to.toDateString()) {
+          throw new Error("Quarter day leave must be for a single day");
+        }
+        if (!params.slot) {
+          throw new Error("Slot is required for quarter day (Q1, Q2, Q3, or Q4)");
+        }
+        const qSlot = QUARTER_DAY_SLOTS[params.slot];
+        if (!qSlot) {
+          throw new Error("Invalid quarter-day slot. Use Q1, Q2, Q3, or Q4");
+        }
+        startTime = qSlot.start;
+        endTime = qSlot.end;
+        durationValue = 0.25; // 0.25 day
+        break;
+      }
+
+      case LeaveDurationType.HOURLY: {
+        // Must be single day
+        if (from.toDateString() !== to.toDateString()) {
+          throw new Error("Hourly leave must be for a single day");
+        }
+        if (!params.startTime || !params.endTime) {
+          throw new Error(
+            "startTime and endTime are required for hourly leave"
+          );
+        }
+        if (
+          !isValidTimeString(params.startTime) ||
+          !isValidTimeString(params.endTime)
+        ) {
+          throw new Error("Time must be in HH:MM format (e.g., 16:00)");
+        }
+
+        const diffMinutes = timeDiffMinutes(
+          params.startTime,
+          params.endTime
+        );
+        if (diffMinutes < 15) {
+          throw new Error("Minimum hourly leave duration is 15 minutes");
+        }
+
+        startTime = params.startTime;
+        endTime = params.endTime;
+        // durationValue in fractional hours (for display), balance deduction uses toDays()
+        durationValue = diffMinutes / 60;
+        break;
+      }
+
+      default:
+        throw new Error("Invalid duration type");
     }
 
-    // Overlap check
+    if (durationValue <= 0) {
+      throw new Error("durationValue must be greater than 0");
+    }
+
+    // ─── Overlap check (time-aware for partial types) ───
     const overlapping = await repo.findOverlappingLeaveRequest({
       employeeId: employee.id,
       from,
       to,
+      durationType: params.durationType,
+      startTime,
+      endTime,
     });
     if (overlapping) {
-      throw new Error("You already have a leave request overlapping this date range");
+      throw new Error(
+        "You already have a leave request overlapping this date/time range"
+      );
     }
 
     const year = from.getFullYear();
 
-    // Balance check
+    // ─── Balance check ───
     const balance = await repo.getLeaveBalance(
       employee.id,
       params.leaveTypeId,
@@ -137,7 +252,6 @@ export class LeaveService {
     );
     if (!balance) throw new Error("Leave balance not found");
 
-    // Policy + override
     const policy = await repo.getLeavePolicy({
       companyId: params.companyId,
       leaveTypeId: params.leaveTypeId,
@@ -151,24 +265,29 @@ export class LeaveService {
       year,
     });
 
-    // Sandwich calculation
-    let sandwichEnabled = policy.sandwichRule;
-    if (override?.allowSandwich === false) sandwichEnabled = false;
+    // Calculate effective days for balance deduction
+    let effectiveDays = this.toDays(params.durationType, durationValue);
 
-    // let effectiveDays = params.durationValue;
-    let effectiveDays = this.toDays(params.durationType, params.durationValue);
+    // Sandwich calculation (only for FULL_DAY spanning multiple days)
+    if (
+      params.durationType === LeaveDurationType.FULL_DAY &&
+      durationValue > 1
+    ) {
+      let sandwichEnabled = policy.sandwichRule;
+      if (override?.allowSandwich === false) sandwichEnabled = false;
 
-    if (sandwichEnabled) {
-      const holidays = await repo.getHolidaysForRange({
-        companyId: params.companyId,
-        from,
-        to,
-      });
-      effectiveDays += this.countSandwichDays(
-        from,
-        to,
-        holidays.map((h) => h.date)
-      );
+      if (sandwichEnabled) {
+        const holidays = await repo.getHolidaysForRange({
+          companyId: params.companyId,
+          from,
+          to,
+        });
+        effectiveDays += this.countSandwichDays(
+          from,
+          to,
+          holidays.map((h) => h.date)
+        );
+      }
     }
 
     if (balance.remaining < effectiveDays) {
@@ -183,7 +302,9 @@ export class LeaveService {
       fromDate: from,
       toDate: to,
       durationType: params.durationType,
-      durationValue: params.durationValue,
+      durationValue,
+      startTime,
+      endTime,
       reason: params.reason ?? null,
     });
   }
@@ -215,41 +336,55 @@ export class LeaveService {
     });
   }
 
-  // =================== LEAVE  ===================
+  // =================== DURATION → DAYS CONVERSION ===================
   /**
-   * Convert duration to days based on type
-   * Balance is always tracked in DAYS
+   * Convert duration to days for balance deduction.
+   * Balance is always tracked in DAYS.
+   *
+   * FULL_DAY    → durationValue (already in days)
+   * HALF_DAY    → 0.5 (durationValue is already 0.5)
+   * QUARTER_DAY → 0.25 (durationValue is already 0.25)
+   * HOURLY      → durationValue / 8 (8-hour workday)
    */
-  private toDays(durationType: LeaveDurationType, durationValue: number): number {
+  private toDays(
+    durationType: LeaveDurationType,
+    durationValue: number
+  ): number {
     switch (durationType) {
       case LeaveDurationType.FULL_DAY:
         return durationValue;
       case LeaveDurationType.HALF_DAY:
-        return durationValue * 0.5;
+        return durationValue; // already 0.5
       case LeaveDurationType.QUARTER_DAY:
-        return durationValue * 0.25;
+        return durationValue; // already 0.25
       case LeaveDurationType.HOURLY:
-        // 8-hour workday standard
-        return durationValue / 8;
+        return durationValue / WORK_HOURS;
       default:
         return durationValue;
     }
   }
+
   // =================== LEAVE APPROVAL ===================
 
-  async approveLeave(params: { requestId: string; userId: string; companyId: string }) {
+  async approveLeave(params: {
+    requestId: string;
+    userId: string;
+    companyId: string;
+  }) {
     const request = await repo.findLeaveRequestById(params.requestId);
     if (!request) throw new Error("Leave request not found");
     if (request.status !== LeaveRequestStatus.PENDING) {
       throw new Error("Leave request already processed");
     }
 
-    // Resolve approver's employee profile from user ID
     const approver = await repo.getEmployeeByUserId(params.userId);
     if (!approver) throw new Error("Approver employee profile not found");
 
     const year = request.fromDate.getFullYear();
-    const deductDays = this.toDays(request.durationType, request.durationValue);
+    const deductDays = this.toDays(
+      request.durationType,
+      request.durationValue
+    );
 
     return prisma.$transaction(async (tx) => {
       await repo.deductLeaveBalance(tx, {
@@ -263,30 +398,32 @@ export class LeaveService {
         where: { id: params.requestId },
         data: {
           status: LeaveRequestStatus.APPROVED,
-          approvedById: approver.id,  // ← Employee ID, not User ID
+          approvedById: approver.id,
         },
       });
     });
   }
 
-  async rejectLeave(params: { requestId: string; userId: string; companyId: string }) {
+  async rejectLeave(params: {
+    requestId: string;
+    userId: string;
+    companyId: string;
+  }) {
     const request = await repo.findLeaveRequestById(params.requestId);
     if (!request) throw new Error("Leave request not found");
     if (request.status !== LeaveRequestStatus.PENDING) {
       throw new Error("Leave request already processed");
     }
 
-    // Resolve approver's employee profile from user ID
     const approver = await repo.getEmployeeByUserId(params.userId);
     if (!approver) throw new Error("Approver employee profile not found");
 
     return repo.updateLeaveRequestStatus({
       requestId: params.requestId,
       status: LeaveRequestStatus.REJECTED,
-      approvedById: approver.id,  // ← Employee ID, not User ID
+      approvedById: approver.id,
     });
   }
-
 
   async hrCancelApprovedLeave(params: {
     requestId: string;
@@ -299,14 +436,16 @@ export class LeaveService {
     }
 
     const year = request.fromDate.getFullYear();
-    const revertDays = this.toDays(request.durationType, request.durationValue);
+    const revertDays = this.toDays(
+      request.durationType,
+      request.durationValue
+    );
 
     return prisma.$transaction(async (tx) => {
       await repo.revertLeaveBalance(tx, {
         employeeId: request.employeeId,
         leaveTypeId: request.leaveTypeId,
         year,
-        // days: request.durationValue,
         days: revertDays,
       });
 
@@ -488,6 +627,8 @@ export class LeaveService {
         team: l.employee.team?.name ?? null,
         leaveType: l.leaveType.name,
         durationType: l.durationType,
+        startTime: (l as any).startTime ?? null,
+        endTime: (l as any).endTime ?? null,
       })),
     };
   }

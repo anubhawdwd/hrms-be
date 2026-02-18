@@ -114,6 +114,8 @@ export class LeaveRepository {
     toDate: Date;
     durationType: LeaveDurationType;
     durationValue: number;
+    startTime?: string | null;
+    endTime?: string | null;
     reason?: string | null;
   }) {
     return prisma.leaveRequest.create({
@@ -124,6 +126,8 @@ export class LeaveRepository {
         toDate: params.toDate,
         durationType: params.durationType,
         durationValue: params.durationValue,
+        startTime: params.startTime ?? null,
+        endTime: params.endTime ?? null,
         reason: params.reason ?? null,
       },
     });
@@ -159,17 +163,100 @@ export class LeaveRepository {
     });
   }
 
-  findOverlappingLeaveRequest(params: {
+  /**
+   * Find overlapping leave requests with time-aware overlap for partial-day types.
+   */
+  async findOverlappingLeaveRequest(params: {
     employeeId: string;
     from: Date;
     to: Date;
+    durationType: LeaveDurationType;
+    startTime?: string | null;
+    endTime?: string | null;
   }) {
-    return prisma.leaveRequest.findFirst({
+    const existing = await prisma.leaveRequest.findMany({
       where: {
         employeeId: params.employeeId,
         status: { in: ["PENDING", "APPROVED"] },
         fromDate: { lte: params.to },
         toDate: { gte: params.from },
+      },
+    });
+
+    if (existing.length === 0) return null;
+
+    const isPartialDay = (dt: LeaveDurationType) =>
+      dt === LeaveDurationType.HALF_DAY ||
+      dt === LeaveDurationType.QUARTER_DAY ||
+      dt === LeaveDurationType.HOURLY;
+
+    // If the new request is FULL_DAY, any date overlap is a conflict
+    if (params.durationType === LeaveDurationType.FULL_DAY) {
+      return existing[0];
+    }
+
+    // New request is partial-day — check each existing
+    for (const req of existing) {
+      // If existing is FULL_DAY covering the same date, it blocks entirely
+      if (req.durationType === LeaveDurationType.FULL_DAY) {
+        return req;
+      }
+
+      // Both are partial-day — check time overlap
+      if (
+        isPartialDay(req.durationType) &&
+        req.startTime &&
+        req.endTime &&
+        params.startTime &&
+        params.endTime
+      ) {
+        // Overlap: newStart < existingEnd AND newEnd > existingStart
+        if (
+          params.startTime < req.endTime &&
+          params.endTime > req.startTime
+        ) {
+          return req;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Find approved FULL_DAY leave for a date (blocks entire day attendance)
+   */
+  findApprovedFullDayLeaveForDate(employeeId: string, date: Date) {
+    return prisma.leaveRequest.findFirst({
+      where: {
+        employeeId,
+        status: "APPROVED",
+        durationType: "FULL_DAY",
+        fromDate: { lte: date },
+        toDate: { gte: date },
+      },
+    });
+  }
+
+  /**
+   * Find all approved partial-day leaves (HALF_DAY, QUARTER_DAY, HOURLY) for a date
+   */
+  findApprovedPartialLeavesForDate(employeeId: string, date: Date) {
+    return prisma.leaveRequest.findMany({
+      where: {
+        employeeId,
+        status: "APPROVED",
+        durationType: { in: ["HALF_DAY", "QUARTER_DAY", "HOURLY"] },
+        fromDate: { lte: date },
+        toDate: { gte: date },
+      },
+      select: {
+        id: true,
+        durationType: true,
+        startTime: true,
+        endTime: true,
+        durationValue: true,
+        leaveType: { select: { name: true, code: true } },
       },
     });
   }
@@ -324,7 +411,7 @@ export class LeaveRepository {
   listPendingLeaveRequests(companyId: string) {
     return prisma.leaveRequest.findMany({
       where: {
-        status: 'PENDING',
+        status: "PENDING",
         employee: { companyId },
       },
       include: {
@@ -337,9 +424,10 @@ export class LeaveRepository {
           },
         },
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
     });
   }
+
   // =================== HOLIDAYS ===================
 
   createHoliday(params: { companyId: string; name: string; date: Date }) {

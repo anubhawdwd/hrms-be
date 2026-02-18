@@ -1,21 +1,5 @@
 // src/utils/date.ts
-// Central date helpers
 
-export function startOfDay(date: Date = new Date()) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-export function endOfDay(date: Date = new Date()) {
-  const d = new Date(date);
-  d.setHours(23, 59, 59, 999);
-  return d;
-}
-
-export function isSameDay(a: Date, b: Date) {
-  return startOfDay(a).getTime() === startOfDay(b).getTime();
-}
 /**
  * Returns today's date as YYYY-MM-DD midnight UTC
  * Use this for all attendance date comparisons
@@ -31,8 +15,41 @@ export function todayDateUTC(): Date {
  * Parse a YYYY-MM-DD string into UTC midnight Date
  */
 export function parseDateUTC(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  return new Date(Date.UTC(year, month - 1, day));
+  const parts = dateStr.split("-").map(Number);
+  const year = parts[0] ?? 0;
+  const month = (parts[1] ?? 1) - 1;
+  const day = parts[2] ?? 1;
+  return new Date(Date.UTC(year, month, day));
+}
+
+/**
+ * Parse "HH:MM" string to total minutes since midnight
+ */
+export function parseTimeToMinutes(timeStr: string): number {
+  const parts = timeStr.split(":").map(Number);
+  const hours = parts[0] ?? 0;
+  const minutes = parts[1] ?? 0;
+  return hours * 60 + minutes;
+}
+
+/**
+ * Calculate duration in minutes between two "HH:MM" strings
+ */
+export function timeDiffMinutes(startTime: string, endTime: string): number {
+  const startMins = parseTimeToMinutes(startTime);
+  const endMins = parseTimeToMinutes(endTime);
+  if (endMins <= startMins) {
+    throw new Error("End time must be after start time");
+  }
+  return endMins - startMins;
+}
+
+/**
+ * Validate "HH:MM" format (00:00 – 23:59)
+ */
+export function isValidTimeString(timeStr: string): boolean {
+  const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(timeStr);
+  return match !== null;
 }
 
 /**

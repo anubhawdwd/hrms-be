@@ -13,8 +13,8 @@ import {
 
 export interface CreateLeaveTypeDTO {
   companyId: string;
-  name: string;       // Casual Leave
-  code: string;       // CL
+  name: string;
+  code: string;
   isPaid: boolean;
 }
 
@@ -72,10 +72,14 @@ export interface CreateLeaveRequestDTO {
   leaveTypeId: string;
 
   fromDate: string; // ISO (YYYY-MM-DD)
-  toDate: string;   // ISO (YYYY-MM-DD)
+  toDate: string; // ISO (YYYY-MM-DD)
 
   durationType: LeaveDurationType;
-  durationValue: number; // days or hours
+  durationValue: number; // computed by service
+
+  // Required for HALF_DAY, QUARTER_DAY, HOURLY
+  startTime?: string; // "HH:MM" e.g. "09:00"
+  endTime?: string; // "HH:MM" e.g. "13:00"
 
   reason?: string;
 }
@@ -121,10 +125,7 @@ export interface UpsertEmployeeLeaveOverrideDTO {
 /* ======================================================
    EMPLOYEE ON LEAVE HIERARCHY
    ====================================================== */
-export type LeaveTodayScope =
-  | "team"
-  | "hierarchy"
-  | "company";
+export type LeaveTodayScope = "team" | "hierarchy" | "company";
 
 export interface GetTodayLeavesDTO {
   userId: string;
