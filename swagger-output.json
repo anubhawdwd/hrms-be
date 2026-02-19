@@ -11,7 +11,7 @@
     "http"
   ],
   "paths": {
-    "/health": {
+    "/": {
       "get": {
         "description": "",
         "responses": {
@@ -1325,7 +1325,13 @@
                 "durationType": {
                   "example": "any"
                 },
-                "durationValue": {
+                "slot": {
+                  "example": "any"
+                },
+                "startTime": {
+                  "example": "any"
+                },
+                "endTime": {
                   "example": "any"
                 },
                 "reason": {

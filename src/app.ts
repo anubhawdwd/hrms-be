@@ -10,23 +10,22 @@ import cookieParser from "cookie-parser";
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:[
+      "http://localhost:5173",
+      "https://tender-employ-hampton-seeing.trycloudflare.com",
+    ], 
     credentials: true,
   })
 );
-
+app.set("trust proxy", 1);
 app.use(cookieParser());
 
 app.use(express.json());
 
-app.get("/health", (_, res) => {
+app.get("/", (_, res) => {
   res.status(200).json({ status: "ok" });
 });
 
-/**
- * Temporary company scoping:
- * In Phase 2 this will come from JWT.
- */
 const swaggerPath = path.resolve("./swagger-output.json");
 
 if (fs.existsSync(swaggerPath)) {

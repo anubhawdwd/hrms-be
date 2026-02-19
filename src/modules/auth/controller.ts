@@ -1,12 +1,25 @@
 // src/modules/auth/controller.ts
+
 import type { Request, Response } from "express";
 import { AuthService } from "./service.js";
 import { REFRESH_TOKEN_COOKIE } from "../../config/auth.js";
 
 const service = new AuthService();
 
-// GET /auth/me
 
+// Cookie options — cross-origin safe for Cloudflare tunnels
+ 
+const getCookieOptions = () => ({
+    httpOnly: true,
+    secure: true,           // Always true — tunnels are HTTPS
+    // secure: process.env.NODE_ENV === "production",
+    sameSite: "none" as const, // Required for cross-origin cookies
+    // sameSite: "lax",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    path: "/",
+});
+
+// GET /auth/me
 export async function me(req: Request, res: Response) {
     try {
         const data = await service.me(req.user!.userId);
@@ -16,14 +29,15 @@ export async function me(req: Request, res: Response) {
     }
 }
 
-
-//    POST /auth/login
+// POST /auth/login
 export async function login(req: Request, res: Response) {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Email and password required" });
+            return res
+                .status(400)
+                .json({ message: "Email and password required" });
         }
 
         const result = await service.login({
@@ -32,19 +46,10 @@ export async function login(req: Request, res: Response) {
             ...(req.headers["user-agent"] && {
                 userAgent: req.headers["user-agent"],
             }),
-            ...(req.ip && {
-                ipAddress: req.ip,
-            })
+            ...(req.ip && { ipAddress: req.ip }),
         });
 
-        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            // sameSite: "none",
-            // secure: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
+        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, getCookieOptions());
 
         return res.json({
             accessToken: result.accessToken,
@@ -55,8 +60,7 @@ export async function login(req: Request, res: Response) {
     }
 }
 
-
-//    POST /auth/google
+// POST /auth/google
 export async function googleLogin(req: Request, res: Response) {
     try {
         const { idToken } = req.body;
@@ -70,19 +74,10 @@ export async function googleLogin(req: Request, res: Response) {
             ...(req.headers["user-agent"] && {
                 userAgent: req.headers["user-agent"],
             }),
-            ...(req.ip && {
-                ipAddress: req.ip,
-            }),
+            ...(req.ip && { ipAddress: req.ip }),
         });
 
-        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            // sameSite: "none",
-            // secure: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
+        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, getCookieOptions());
 
         return res.json({
             accessToken: result.accessToken,
@@ -93,8 +88,7 @@ export async function googleLogin(req: Request, res: Response) {
     }
 }
 
-
-//    POST /auth/microsoft
+// POST /auth/microsoft
 export async function microsoftLogin(req: Request, res: Response) {
     try {
         const { accessToken } = req.body;
@@ -108,19 +102,10 @@ export async function microsoftLogin(req: Request, res: Response) {
             ...(req.headers["user-agent"] && {
                 userAgent: req.headers["user-agent"],
             }),
-            ...(req.ip && {
-                ipAddress: req.ip,
-            }),
+            ...(req.ip && { ipAddress: req.ip }),
         });
 
-        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            // sameSite: "none",
-            // secure: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
+        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, getCookieOptions());
 
         return res.json({
             accessToken: result.accessToken,
@@ -131,8 +116,7 @@ export async function microsoftLogin(req: Request, res: Response) {
     }
 }
 
-
-//    POST /auth/refresh
+// POST /auth/refresh
 export async function refreshToken(req: Request, res: Response) {
     try {
         const token = req.cookies?.[REFRESH_TOKEN_COOKIE];
@@ -141,25 +125,15 @@ export async function refreshToken(req: Request, res: Response) {
             return res.status(401).json({ message: "Missing refresh token" });
         }
 
-        // const result = await service.refreshToken({ refreshToken: token });
         const result = await service.refreshToken({
             refreshToken: token,
             ...(req.headers["user-agent"] && {
                 userAgent: req.headers["user-agent"],
             }),
-            ...(req.ip && {
-                ipAddress: req.ip,
-            })
+            ...(req.ip && { ipAddress: req.ip }),
         });
 
-        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            // sameSite: "none",
-            // secure: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
+        res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, getCookieOptions());
 
         return res.json({
             accessToken: result.accessToken,
@@ -169,8 +143,7 @@ export async function refreshToken(req: Request, res: Response) {
     }
 }
 
-
-//    POST /auth/logout
+// POST /auth/logout
 export async function logout(req: Request, res: Response) {
     try {
         const token = req.cookies?.[REFRESH_TOKEN_COOKIE];
@@ -179,7 +152,7 @@ export async function logout(req: Request, res: Response) {
             await service.logout(token);
         }
 
-        res.clearCookie(REFRESH_TOKEN_COOKIE);
+        res.clearCookie(REFRESH_TOKEN_COOKIE, getCookieOptions());
 
         return res.json({ message: "Logged out" });
     } catch {

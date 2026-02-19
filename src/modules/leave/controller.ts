@@ -615,10 +615,10 @@ export async function applyLeave(req: Request, res: Response) {
       fromDate,
       toDate,
       durationType,
-      slot: typeof slot === "string" ? slot : undefined,
-      startTime: typeof startTime === "string" ? startTime : undefined,
-      endTime: typeof endTime === "string" ? endTime : undefined,
-      reason: typeof reason === "string" ? reason : undefined,
+      ...(typeof slot === "string" ? {slot} : {}),
+      ...(typeof startTime === "string" ? {startTime} : {}),
+      ...(typeof endTime === "string" ? {endTime} : {}),
+      ...(typeof reason === "string" ? {reason} : {}),
     });
 
     res.status(201).json(result);
