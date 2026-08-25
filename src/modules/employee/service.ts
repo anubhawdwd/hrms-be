@@ -43,7 +43,7 @@ export class EmployeeService {
     const employee = await repo.createEmployee({
       userId: dto.userId,
       companyId: dto.companyId,
-      teamId: dto.teamId,
+      ...(dto.teamId && { teamId: dto.teamId }),
       designationId: dto.designationId,
       ...(dto.managerId && { managerId: dto.managerId }),
       employeeCode: nextEmployeeCode,

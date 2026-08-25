@@ -106,12 +106,14 @@ router.post(
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   upsertEmployeeLeaveOverride
 );
+
 // All pending leave requests for company (HR/Admin view)
 router.get(
   "/requests/pending",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   listPendingLeaveRequests
 );
+
 // HOLIDAYS
 router.post(
   "/holidays",

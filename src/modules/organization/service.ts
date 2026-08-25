@@ -97,10 +97,32 @@ export class OrganizationService {
     companyId: string,
     latitude: number,
     longitude: number,
-    radiusM: number
+    radiusM: number,
+    geoFencingEnabled: boolean = true
   ) {
     if (radiusM <= 0) throw new Error("Radius must be positive greater than 0");
-    return repo.upsertOfficeLocation(companyId, latitude, longitude, radiusM);
+    return repo.upsertOfficeLocation(
+      companyId,
+      latitude,
+      longitude,
+      radiusM,
+      geoFencingEnabled
+    );
+  }
+
+  async updateOfficeLocation(
+    companyId: string,
+    data: {
+      latitude?: number;
+      longitude?: number;
+      radiusM?: number;
+      geoFencingEnabled?: boolean;
+    }
+  ) {
+    if (data.radiusM !== undefined && data.radiusM <= 0) {
+      throw new Error("Radius must be positive greater than 0");
+    }
+    return repo.patchOfficeLocation(companyId, data);
   }
 
   async getOfficeLocation(companyId: string) {

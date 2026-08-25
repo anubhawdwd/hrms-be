@@ -22,9 +22,9 @@ async function seed() {
 
   // ================= COMPANY =================
   const company = await prisma.company.upsert({
-    where: { name: "Phibonacci Solutions" },
+    where: { name: "Phibonacci Learning" },
     update: {},
-    create: { name: "Phibonacci Solutions" },
+    create: { name: "Phibonacci Learning" },
   });
 
   // ================= DEPARTMENTS =================
@@ -450,7 +450,7 @@ if (!existingOffice) {
 
   
 
-  console.log("Phibonacci Solutions fully seeded successfully.");
+  console.log("Phibonacci Learning fully seeded successfully.");
 }
 
 seed()

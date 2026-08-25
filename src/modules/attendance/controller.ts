@@ -1,6 +1,7 @@
 // src/modules/attendance/controller.ts
 import type { Request, Response } from "express";
 import { AttendanceService } from "./service.js";
+import { UserRole } from "../../generated/prisma/enums.js";
 
 const service = new AttendanceService();
 
@@ -58,10 +59,30 @@ export async function checkOut(req: Request, res: Response) {
 
 export async function getAttendanceDay(req: Request, res: Response) {
   try {
-    const { date } = req.query;
+    const { date, employeeId } = req.query;
 
     if (typeof date !== "string") {
       return res.status(400).json({ message: "Invalid query" });
+    }
+
+    if (employeeId && typeof employeeId === "string") {
+      const allowedRoles: UserRole[] = [
+        UserRole.HR,
+        UserRole.COMPANY_ADMIN,
+        UserRole.SUPER_ADMIN,
+      ];
+      if (!req.user || !allowedRoles.includes(req.user.role)) {
+        return res.status(403).json({
+          message: "Unauthorized to view other employee attendance records",
+        });
+      }
+
+      const data = await service.getAttendanceDayByEmployeeId(
+        employeeId,
+        req.companyId!,
+        date
+      );
+      return res.json(data);
     }
 
     const data = await service.getAttendanceDay(

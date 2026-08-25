@@ -14,6 +14,7 @@ import {
   updateDesignation,
   deactivateDesignation,
   setOfficeLocation,
+  updateOfficeLocation,
   getOfficeLocation,
   upsertDesignationAttendancePolicy,
   listDesignationAttendancePolicies,
@@ -49,6 +50,7 @@ router.delete("/designations/:designationId", deactivateDesignation);
 router.post("/office-location", setOfficeLocation);
 router.get("/office-location", getOfficeLocation);
 router.put("/office-location", setOfficeLocation);
+router.patch("/office-location", updateOfficeLocation);
 
 router.post(
   "/designation-attendance-policy",

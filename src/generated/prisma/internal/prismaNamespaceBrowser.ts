@@ -248,6 +248,7 @@ export const OfficeLocationScalarFieldEnum = {
   latitude: 'latitude',
   longitude: 'longitude',
   radiusM: 'radiusM',
+  geoFencingEnabled: 'geoFencingEnabled',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

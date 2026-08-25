@@ -185,12 +185,13 @@ export async function deactivateDesignation(req: Request, res: Response) {
 
 export async function setOfficeLocation(req: Request, res: Response) {
   try {
-    const { latitude, longitude, radiusM } = req.body;
+    const { latitude, longitude, radiusM, geoFencingEnabled } = req.body;
 
     if (
       typeof latitude !== "number" ||
       typeof longitude !== "number" ||
-      typeof radiusM !== "number"
+      typeof radiusM !== "number" ||
+      (geoFencingEnabled !== undefined && typeof geoFencingEnabled !== "boolean")
     ) {
       return res.status(400).json({ message: "Invalid input" });
     }
@@ -199,8 +200,44 @@ export async function setOfficeLocation(req: Request, res: Response) {
       req.companyId!,
       latitude,
       longitude,
-      radiusM
+      radiusM,
+      geoFencingEnabled !== undefined ? geoFencingEnabled : true
     );
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function updateOfficeLocation(req: Request, res: Response) {
+  try {
+    const { latitude, longitude, radiusM, geoFencingEnabled } = req.body;
+
+    if (
+      (latitude !== undefined && typeof latitude !== "number") ||
+      (longitude !== undefined && typeof longitude !== "number") ||
+      (radiusM !== undefined && typeof radiusM !== "number") ||
+      (geoFencingEnabled !== undefined && typeof geoFencingEnabled !== "boolean")
+    ) {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+
+    if (
+      latitude === undefined &&
+      longitude === undefined &&
+      radiusM === undefined &&
+      geoFencingEnabled === undefined
+    ) {
+      return res.status(400).json({ message: "Nothing to update" });
+    }
+
+    const result = await service.updateOfficeLocation(req.companyId!, {
+      ...(latitude !== undefined && { latitude }),
+      ...(longitude !== undefined && { longitude }),
+      ...(radiusM !== undefined && { radiusM }),
+      ...(geoFencingEnabled !== undefined && { geoFencingEnabled }),
+    });
 
     res.json(result);
   } catch (err: any) {

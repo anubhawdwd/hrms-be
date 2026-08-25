@@ -288,9 +288,37 @@ All follow standard CRUD patterns:
 {
   "latitude": 19.076,
   "longitude": 72.8777,
-  "radiusM": 200
+  "radiusM": 200,
+  "geoFencingEnabled": true
 }
+```
 
+#### PATCH `/api/organization/office-location`
+
+**Body (Partial update)**
+
+```json
+{
+  "geoFencingEnabled": false
+}
+```
+
+#### GET `/api/organization/office-location`
+
+**Response**
+
+```json
+{
+  "id": "uuid",
+  "companyId": "uuid",
+  "latitude": 19.076,
+  "longitude": 72.8777,
+  "radiusM": 200,
+  "geoFencingEnabled": true,
+  "isActive": true,
+  "createdAt": "ISO-Date",
+  "updatedAt": "ISO-Date"
+}
 ```
 
 ---

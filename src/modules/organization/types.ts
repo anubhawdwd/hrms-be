@@ -36,4 +36,20 @@ export interface UpsertDesignationAttendancePolicyDTO {
   attendanceExempt: boolean;
 }
 
+export interface SetOfficeLocationDTO {
+  companyId: string;
+  latitude: number;
+  longitude: number;
+  radiusM: number;
+  geoFencingEnabled?: boolean;
+}
+
+export interface UpdateOfficeLocationDTO {
+  companyId: string;
+  latitude?: number;
+  longitude?: number;
+  radiusM?: number;
+  geoFencingEnabled?: boolean;
+}
+
 

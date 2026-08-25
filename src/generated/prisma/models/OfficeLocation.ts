@@ -44,6 +44,7 @@ export type OfficeLocationMinAggregateOutputType = {
   latitude: number | null
   longitude: number | null
   radiusM: number | null
+  geoFencingEnabled: boolean | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,6 +56,7 @@ export type OfficeLocationMaxAggregateOutputType = {
   latitude: number | null
   longitude: number | null
   radiusM: number | null
+  geoFencingEnabled: boolean | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -66,6 +68,7 @@ export type OfficeLocationCountAggregateOutputType = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -91,6 +94,7 @@ export type OfficeLocationMinAggregateInputType = {
   latitude?: true
   longitude?: true
   radiusM?: true
+  geoFencingEnabled?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -102,6 +106,7 @@ export type OfficeLocationMaxAggregateInputType = {
   latitude?: true
   longitude?: true
   radiusM?: true
+  geoFencingEnabled?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -113,6 +118,7 @@ export type OfficeLocationCountAggregateInputType = {
   latitude?: true
   longitude?: true
   radiusM?: true
+  geoFencingEnabled?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -211,6 +217,7 @@ export type OfficeLocationGroupByOutputType = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled: boolean
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -245,6 +252,7 @@ export type OfficeLocationWhereInput = {
   latitude?: Prisma.FloatFilter<"OfficeLocation"> | number
   longitude?: Prisma.FloatFilter<"OfficeLocation"> | number
   radiusM?: Prisma.IntFilter<"OfficeLocation"> | number
+  geoFencingEnabled?: Prisma.BoolFilter<"OfficeLocation"> | boolean
   isActive?: Prisma.BoolFilter<"OfficeLocation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OfficeLocation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OfficeLocation"> | Date | string
@@ -257,6 +265,7 @@ export type OfficeLocationOrderByWithRelationInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   radiusM?: Prisma.SortOrder
+  geoFencingEnabled?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -272,6 +281,7 @@ export type OfficeLocationWhereUniqueInput = Prisma.AtLeast<{
   latitude?: Prisma.FloatFilter<"OfficeLocation"> | number
   longitude?: Prisma.FloatFilter<"OfficeLocation"> | number
   radiusM?: Prisma.IntFilter<"OfficeLocation"> | number
+  geoFencingEnabled?: Prisma.BoolFilter<"OfficeLocation"> | boolean
   isActive?: Prisma.BoolFilter<"OfficeLocation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OfficeLocation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OfficeLocation"> | Date | string
@@ -284,6 +294,7 @@ export type OfficeLocationOrderByWithAggregationInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   radiusM?: Prisma.SortOrder
+  geoFencingEnabled?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -303,6 +314,7 @@ export type OfficeLocationScalarWhereWithAggregatesInput = {
   latitude?: Prisma.FloatWithAggregatesFilter<"OfficeLocation"> | number
   longitude?: Prisma.FloatWithAggregatesFilter<"OfficeLocation"> | number
   radiusM?: Prisma.IntWithAggregatesFilter<"OfficeLocation"> | number
+  geoFencingEnabled?: Prisma.BoolWithAggregatesFilter<"OfficeLocation"> | boolean
   isActive?: Prisma.BoolWithAggregatesFilter<"OfficeLocation"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OfficeLocation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OfficeLocation"> | Date | string
@@ -313,6 +325,7 @@ export type OfficeLocationCreateInput = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -325,6 +338,7 @@ export type OfficeLocationUncheckedCreateInput = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -335,6 +349,7 @@ export type OfficeLocationUpdateInput = {
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   radiusM?: Prisma.IntFieldUpdateOperationsInput | number
+  geoFencingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -347,6 +362,7 @@ export type OfficeLocationUncheckedUpdateInput = {
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   radiusM?: Prisma.IntFieldUpdateOperationsInput | number
+  geoFencingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,6 +374,7 @@ export type OfficeLocationCreateManyInput = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -368,6 +385,7 @@ export type OfficeLocationUpdateManyMutationInput = {
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   radiusM?: Prisma.IntFieldUpdateOperationsInput | number
+  geoFencingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -379,6 +397,7 @@ export type OfficeLocationUncheckedUpdateManyInput = {
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   radiusM?: Prisma.IntFieldUpdateOperationsInput | number
+  geoFencingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -400,6 +419,7 @@ export type OfficeLocationCountOrderByAggregateInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   radiusM?: Prisma.SortOrder
+  geoFencingEnabled?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -417,6 +437,7 @@ export type OfficeLocationMaxOrderByAggregateInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   radiusM?: Prisma.SortOrder
+  geoFencingEnabled?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -428,6 +449,7 @@ export type OfficeLocationMinOrderByAggregateInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   radiusM?: Prisma.SortOrder
+  geoFencingEnabled?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -486,6 +508,7 @@ export type OfficeLocationCreateWithoutCompanyInput = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -496,6 +519,7 @@ export type OfficeLocationUncheckedCreateWithoutCompanyInput = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -536,6 +560,7 @@ export type OfficeLocationScalarWhereInput = {
   latitude?: Prisma.FloatFilter<"OfficeLocation"> | number
   longitude?: Prisma.FloatFilter<"OfficeLocation"> | number
   radiusM?: Prisma.IntFilter<"OfficeLocation"> | number
+  geoFencingEnabled?: Prisma.BoolFilter<"OfficeLocation"> | boolean
   isActive?: Prisma.BoolFilter<"OfficeLocation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OfficeLocation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OfficeLocation"> | Date | string
@@ -546,6 +571,7 @@ export type OfficeLocationCreateManyCompanyInput = {
   latitude: number
   longitude: number
   radiusM: number
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -556,6 +582,7 @@ export type OfficeLocationUpdateWithoutCompanyInput = {
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   radiusM?: Prisma.IntFieldUpdateOperationsInput | number
+  geoFencingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -566,6 +593,7 @@ export type OfficeLocationUncheckedUpdateWithoutCompanyInput = {
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   radiusM?: Prisma.IntFieldUpdateOperationsInput | number
+  geoFencingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -576,6 +604,7 @@ export type OfficeLocationUncheckedUpdateManyWithoutCompanyInput = {
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   radiusM?: Prisma.IntFieldUpdateOperationsInput | number
+  geoFencingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -589,6 +618,7 @@ export type OfficeLocationSelect<ExtArgs extends runtime.Types.Extensions.Intern
   latitude?: boolean
   longitude?: boolean
   radiusM?: boolean
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -601,6 +631,7 @@ export type OfficeLocationSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   latitude?: boolean
   longitude?: boolean
   radiusM?: boolean
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -613,6 +644,7 @@ export type OfficeLocationSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   latitude?: boolean
   longitude?: boolean
   radiusM?: boolean
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -625,12 +657,13 @@ export type OfficeLocationSelectScalar = {
   latitude?: boolean
   longitude?: boolean
   radiusM?: boolean
+  geoFencingEnabled?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OfficeLocationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "latitude" | "longitude" | "radiusM" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["officeLocation"]>
+export type OfficeLocationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "latitude" | "longitude" | "radiusM" | "geoFencingEnabled" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["officeLocation"]>
 export type OfficeLocationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }
@@ -652,6 +685,7 @@ export type $OfficeLocationPayload<ExtArgs extends runtime.Types.Extensions.Inte
     latitude: number
     longitude: number
     radiusM: number
+    geoFencingEnabled: boolean
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1084,6 +1118,7 @@ export interface OfficeLocationFieldRefs {
   readonly latitude: Prisma.FieldRef<"OfficeLocation", 'Float'>
   readonly longitude: Prisma.FieldRef<"OfficeLocation", 'Float'>
   readonly radiusM: Prisma.FieldRef<"OfficeLocation", 'Int'>
+  readonly geoFencingEnabled: Prisma.FieldRef<"OfficeLocation", 'Boolean'>
   readonly isActive: Prisma.FieldRef<"OfficeLocation", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"OfficeLocation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OfficeLocation", 'DateTime'>

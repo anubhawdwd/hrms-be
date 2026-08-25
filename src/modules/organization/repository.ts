@@ -105,7 +105,8 @@ export class OrganizationRepository {
     companyId: string,
     latitude: number,
     longitude: number,
-    radiusM: number
+    radiusM: number,
+    geoFencingEnabled: boolean = true
   ) {
     await prisma.officeLocation.updateMany({
       where: { companyId, isActive: true },
@@ -118,7 +119,35 @@ export class OrganizationRepository {
         latitude,
         longitude,
         radiusM,
+        geoFencingEnabled,
         isActive: true,
+      },
+    });
+  }
+
+  async patchOfficeLocation(
+    companyId: string,
+    data: {
+      latitude?: number;
+      longitude?: number;
+      radiusM?: number;
+      geoFencingEnabled?: boolean;
+    }
+  ) {
+    const existing = await this.getActiveOfficeLocation(companyId);
+    if (!existing) {
+      throw new Error("Office location not configured");
+    }
+
+    return prisma.officeLocation.update({
+      where: { id: existing.id },
+      data: {
+        ...(data.latitude !== undefined && { latitude: data.latitude }),
+        ...(data.longitude !== undefined && { longitude: data.longitude }),
+        ...(data.radiusM !== undefined && { radiusM: data.radiusM }),
+        ...(data.geoFencingEnabled !== undefined && {
+          geoFencingEnabled: data.geoFencingEnabled,
+        }),
       },
     });
   }

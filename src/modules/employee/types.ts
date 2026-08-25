@@ -3,7 +3,7 @@
 export interface CreateEmployeeDTO {
   userId: string;
   companyId: string;
-  teamId: string;
+  teamId?: string;
   designationId: string;
 
   firstName: string;

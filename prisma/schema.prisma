@@ -258,9 +258,10 @@ model OfficeLocation {
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
 
-  latitude  Float
-  longitude Float
-  radiusM   Int // radius in meters
+  latitude          Float
+  longitude         Float
+  radiusM           Int // radius in meters
+  geoFencingEnabled Boolean @default(true)
 
   isActive Boolean @default(true)
 

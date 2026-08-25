@@ -204,6 +204,17 @@ export class AttendanceService {
     return repo.getAttendanceByDay(employee.id, companyId, date);
   }
 
+  async getAttendanceDayByEmployeeId(
+    employeeId: string,
+    companyId: string,
+    dateStr: string
+  ) {
+    const date = parseDateUTC(dateStr);
+    if (Number.isNaN(date.getTime())) throw new Error("Invalid date");
+
+    return repo.getAttendanceByDay(employeeId, companyId, date);
+  }
+
   async getAttendanceRange(
     userId: string,
     companyId: string,
@@ -352,6 +363,11 @@ export class AttendanceService {
         });
       }
       throw new Error("Office location not configured");
+    }
+
+    // Skip radius validation if geo-fencing is disabled company-wide
+    if (!office.geoFencingEnabled) {
+      return;
     }
 
     const distance = haversineDistanceMeters(

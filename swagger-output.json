@@ -607,6 +607,9 @@
                 },
                 "radiusM": {
                   "example": "any"
+                },
+                "geoFencingEnabled": {
+                  "example": "any"
                 }
               }
             }
@@ -648,6 +651,43 @@
                   "example": "any"
                 },
                 "radiusM": {
+                  "example": "any"
+                },
+                "geoFencingEnabled": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "example": "any"
+                },
+                "longitude": {
+                  "example": "any"
+                },
+                "radiusM": {
+                  "example": "any"
+                },
+                "geoFencingEnabled": {
                   "example": "any"
                 }
               }
@@ -797,6 +837,11 @@
             "name": "date",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "employeeId",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -805,6 +850,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
