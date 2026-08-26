@@ -85,11 +85,6 @@ export class AuthService {
       id: user.id,
     });
 
-    // await repo.createRefreshToken({
-    //   userId: user.id,
-    //   token: refreshToken,
-    //   expiresAt: this.getRefreshExpiryDate(),
-    // });
     await repo.createRefreshToken({
       userId: user.id,
       token: refreshToken,
@@ -207,8 +202,7 @@ export class AuthService {
   }
 
 
-  // MICROSOFT LOGIN (placeholder)
-
+  // MICROSOFT LOGIN
 
   async microsoftLogin(dto: MicrosoftLoginDTO) {
     const res = await axios.get(

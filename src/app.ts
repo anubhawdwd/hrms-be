@@ -9,13 +9,22 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-const allowedOrigins: string[] = process.env.FRONTEND_URL
+const configuredOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(",").map((o) => o.trim())
-  : [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "http://192.168.1.185:5173",
-    ];
+  : [];
+
+const defaultOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://192.168.1.185:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5174",
+  "http://192.168.1.185:5174",
+];
+
+const allowedOrigins = Array.from(
+  new Set([...defaultOrigins, ...configuredOrigins].filter(Boolean))
+);
 
 app.use(
   cors({
@@ -25,7 +34,7 @@ app.use(
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
-      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+      return callback(null, false);
     },
     credentials: true,
   })
