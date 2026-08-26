@@ -27,3 +27,9 @@ export interface RefreshTokenDTO {
     userAgent?: string
     ipAddress?: string
 }
+
+//    CHANGE PASSWORD
+export interface ChangePasswordDTO {
+    currentPassword: string;
+    newPassword: string;
+}

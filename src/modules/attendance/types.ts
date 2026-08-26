@@ -10,14 +10,14 @@ export interface CheckInDTO {
   userId: string;
   companyId: string;
   source: "WEB" | "PWA";
-  location: GeoLocation;
+  location?: GeoLocation;
 }
 
 export interface CheckOutDTO {
   userId: string;
   companyId: string;
   source: "WEB" | "PWA";
-  location: GeoLocation;
+  location?: GeoLocation;
 }
 
 export interface HrUpsertAttendanceDayDTO {

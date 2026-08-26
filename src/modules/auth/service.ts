@@ -33,16 +33,21 @@ export class AuthService {
     if (!user || !user.isActive) {
       throw new Error("User inactive");
     }
-    const company = await repo.findCompanyById(user.companyId)
+    const company = await repo.findCompanyById(user.companyId);
 
     if (!company || !company.isActive) {
       throw new Error("Company inactive");
     }
+
+    const office = await repo.findActiveOfficeLocation(user.companyId);
+
     return {
       id: user.id,
       email: user.email,
       role: user.role,
       companyId: user.companyId,
+      geoFencingEnabled: office?.geoFencingEnabled ?? false,
+      mustChangePassword: user.mustChangePassword ?? false,
     };
   }
 
@@ -93,15 +98,51 @@ export class AuthService {
       ...(dto.ipAddress && {ipAddress: dto.ipAddress}),
     });
 
+    const office = await repo.findActiveOfficeLocation(user.companyId);
+
     return {
       accessToken,
       refreshToken,
       user: {
         id: user.id,
         email: user.email,
+        role: user.role,
         companyId: user.companyId,
+        geoFencingEnabled: office?.geoFencingEnabled ?? false,
+        mustChangePassword: user.mustChangePassword ?? false,
       },
     };
+  }
+
+  // CHANGE PASSWORD
+  async changePassword(userId: string, dto: { currentPassword: string; newPassword: string }) {
+    const user = await repo.findUserById(userId);
+
+    if (!user || !user.isActive) {
+      throw new Error("User inactive or not found");
+    }
+
+    if (!user.passwordHash) {
+      throw new Error("Password login not enabled for this account");
+    }
+
+    const valid = await bcrypt.compare(dto.currentPassword, user.passwordHash);
+    if (!valid) {
+      throw new Error("Current password is incorrect");
+    }
+
+    if (!dto.newPassword || dto.newPassword.length < 6) {
+      throw new Error("New password must be at least 6 characters long");
+    }
+
+    if (dto.newPassword === dto.currentPassword) {
+      throw new Error("New password must be different from current password");
+    }
+
+    const newHash = await bcrypt.hash(dto.newPassword, 12);
+    await repo.updatePassword(userId, newHash);
+
+    return { message: "Password changed successfully" };
   }
 
 
@@ -190,13 +231,22 @@ export class AuthService {
       expiresAt: this.getRefreshExpiryDate(),
     });
 
+    if (user.mustChangePassword) {
+      await repo.clearMustChangePassword(user.id);
+    }
+
+    const office = await repo.findActiveOfficeLocation(user.companyId);
+
     return {
       accessToken,
       refreshToken,
       user: {
         id: user.id,
         email: user.email,
+        role: user.role,
         companyId: user.companyId,
+        geoFencingEnabled: office?.geoFencingEnabled ?? false,
+        mustChangePassword: false,
       },
     };
   }
@@ -248,13 +298,22 @@ export class AuthService {
       expiresAt: this.getRefreshExpiryDate(),
     });
 
+    if (user.mustChangePassword) {
+      await repo.clearMustChangePassword(user.id);
+    }
+
+    const office = await repo.findActiveOfficeLocation(user.companyId);
+
     return {
       accessToken,
       refreshToken,
       user: {
         id: user.id,
         email: user.email,
+        role: user.role,
         companyId: user.companyId,
+        geoFencingEnabled: office?.geoFencingEnabled ?? false,
+        mustChangePassword: false,
       },
     };
   }

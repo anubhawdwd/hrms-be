@@ -78,8 +78,7 @@ export class AttendanceService {
     await this.validateGeoFence(
       dto.companyId,
       employee.id,
-      dto.location.latitude,
-      dto.location.longitude,
+      dto.location,
       dto.source
     );
 
@@ -132,8 +131,7 @@ export class AttendanceService {
     await this.validateGeoFence(
       dto.companyId,
       employee.id,
-      dto.location.latitude,
-      dto.location.longitude,
+      dto.location,
       dto.source
     );
 
@@ -340,8 +338,7 @@ export class AttendanceService {
   private async validateGeoFence(
     companyId: string,
     employeeId: string,
-    latitude: number,
-    longitude: number,
+    location: { latitude: number; longitude: number } | undefined,
     source: "WEB" | "PWA"
   ) {
     const office = await repo.getActiveOfficeLocation(companyId);
@@ -351,12 +348,12 @@ export class AttendanceService {
     });
 
     if (!office) {
-      if (company?.logGeoFenceViolations) {
+      if (company?.logGeoFenceViolations && location) {
         await repo.logViolation({
           employeeId,
           companyId,
-          latitude,
-          longitude,
+          latitude: location.latitude,
+          longitude: location.longitude,
           distanceM: 0,
           reason: "NO_OFFICE_CONFIG",
           source,
@@ -370,9 +367,18 @@ export class AttendanceService {
       return;
     }
 
+    // When geo-fencing is enabled, location must be provided
+    if (
+      !location ||
+      typeof location.latitude !== "number" ||
+      typeof location.longitude !== "number"
+    ) {
+      throw new Error("Location coordinates required for geo-fenced attendance");
+    }
+
     const distance = haversineDistanceMeters(
-      latitude,
-      longitude,
+      location.latitude,
+      location.longitude,
       office.latitude,
       office.longitude
     );
@@ -381,8 +387,8 @@ export class AttendanceService {
       await repo.logViolation({
         employeeId,
         companyId,
-        latitude,
-        longitude,
+        latitude: location.latitude,
+        longitude: location.longitude,
         distanceM: distance,
         reason: "OUTSIDE_RADIUS",
         source,

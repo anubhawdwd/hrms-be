@@ -326,6 +326,7 @@ if (!existingOffice) {
       latitude: 23.052228,
       longitude: 72.493801,
       radiusM: 200,
+      geoFencingEnabled: false,
     },
   });
 }

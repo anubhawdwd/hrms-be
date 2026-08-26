@@ -158,3 +158,25 @@ export async function logout(req: Request, res: Response) {
         return res.json({ message: "Logged out" });
     }
 }
+
+// POST /auth/change-password
+export async function changePassword(req: Request, res: Response) {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res
+                .status(400)
+                .json({ message: "currentPassword and newPassword required" });
+        }
+
+        const result = await service.changePassword(req.user!.userId, {
+            currentPassword,
+            newPassword,
+        });
+
+        return res.json(result);
+    } catch (err: any) {
+        return res.status(400).json({ message: err.message });
+    }
+}

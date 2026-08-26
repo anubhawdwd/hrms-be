@@ -201,7 +201,7 @@ export async function setOfficeLocation(req: Request, res: Response) {
       latitude,
       longitude,
       radiusM,
-      geoFencingEnabled !== undefined ? geoFencingEnabled : true
+      geoFencingEnabled !== undefined ? geoFencingEnabled : false
     );
 
     res.json(result);

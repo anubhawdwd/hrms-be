@@ -149,9 +149,13 @@ export class EmployeeService {
   private async bootstrapLeaveBalances(employee: {
     id: string;
     companyId: string;
-    joiningDate: Date;
+    joiningDate?: Date | null;
     isProbation: boolean;
   }) {
+    if (!employee.joiningDate) {
+      return;
+    }
+
     const year = employee.joiningDate.getFullYear();
 
     const policies = await repo.getLeavePoliciesForCompany(

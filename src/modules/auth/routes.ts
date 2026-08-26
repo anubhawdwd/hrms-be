@@ -7,7 +7,8 @@ import {
   microsoftLogin,
   refreshToken,
   logout,
-  me
+  me,
+  changePassword,
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
 
@@ -22,6 +23,7 @@ router.post("/google", googleLogin);
 router.post("/microsoft", microsoftLogin);
 router.post("/refresh", refreshToken);
 router.post("/logout", logout);
+router.post("/change-password", authenticateJWT, changePassword);
 
 
 export default router;

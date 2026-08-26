@@ -9,6 +9,13 @@ export class AuthRepository {
     });
   }
 
+  findActiveOfficeLocation(companyId: string) {
+    return prisma.officeLocation.findFirst({
+      where: { companyId, isActive: true },
+      select: { geoFencingEnabled: true },
+    });
+  }
+
   findUserByEmail(email: string) {
     return prisma.user.findUnique({ where: { email } });
   }
@@ -48,5 +55,24 @@ export class AuthRepository {
 
   deleteAllRefreshTokensByUser(userId: string) {
     return prisma.refreshToken.deleteMany({ where: { userId } });
+  }
+
+  updatePassword(userId: string, passwordHash: string) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        passwordHash,
+        mustChangePassword: false,
+      },
+    });
+  }
+
+  clearMustChangePassword(userId: string) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        mustChangePassword: false,
+      },
+    });
   }
 }

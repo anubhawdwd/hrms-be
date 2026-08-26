@@ -9,20 +9,23 @@ export async function checkIn(req: Request, res: Response) {
   try {
     const { source, location } = req.body;
 
+    if (!source || (source !== "WEB" && source !== "PWA")) {
+      return res.status(400).json({ message: "Invalid source" });
+    }
+
     if (
-      !source ||
-      !location ||
-      typeof location.latitude !== "number" ||
-      typeof location.longitude !== "number"
+      location &&
+      (typeof location.latitude !== "number" ||
+        typeof location.longitude !== "number")
     ) {
-      return res.status(400).json({ message: "Invalid input" });
+      return res.status(400).json({ message: "Invalid location format" });
     }
 
     const result = await service.checkIn({
       userId: req.user!.userId,
       companyId: req.companyId!,
       source,
-      location,
+      ...(location && { location }),
     });
 
     res.json(result);
@@ -35,20 +38,23 @@ export async function checkOut(req: Request, res: Response) {
   try {
     const { source, location } = req.body;
 
+    if (!source || (source !== "WEB" && source !== "PWA")) {
+      return res.status(400).json({ message: "Invalid source" });
+    }
+
     if (
-      !source ||
-      !location ||
-      typeof location.latitude !== "number" ||
-      typeof location.longitude !== "number"
+      location &&
+      (typeof location.latitude !== "number" ||
+        typeof location.longitude !== "number")
     ) {
-      return res.status(400).json({ message: "Invalid input" });
+      return res.status(400).json({ message: "Invalid location format" });
     }
 
     const result = await service.checkOut({
       userId: req.user!.userId,
       companyId: req.companyId!,
       source,
-      location,
+      ...(location && { location }),
     });
 
     res.json(result);

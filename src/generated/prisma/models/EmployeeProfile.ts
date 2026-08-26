@@ -266,7 +266,7 @@ export type EmployeeProfileGroupByOutputType = {
   dateOfBirth: Date | null
   isActive: boolean
   isProbation: boolean
-  joiningDate: Date
+  joiningDate: Date | null
   createdAt: Date
   updatedAt: Date
   _count: EmployeeProfileCountAggregateOutputType | null
@@ -309,7 +309,7 @@ export type EmployeeProfileWhereInput = {
   dateOfBirth?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
-  joiningDate?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
+  joiningDate?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -343,7 +343,7 @@ export type EmployeeProfileOrderByWithRelationInput = {
   dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isProbation?: Prisma.SortOrder
-  joiningDate?: Prisma.SortOrder
+  joiningDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -381,7 +381,7 @@ export type EmployeeProfileWhereUniqueInput = Prisma.AtLeast<{
   dateOfBirth?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
-  joiningDate?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
+  joiningDate?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -415,7 +415,7 @@ export type EmployeeProfileOrderByWithAggregationInput = {
   dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isProbation?: Prisma.SortOrder
-  joiningDate?: Prisma.SortOrder
+  joiningDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.EmployeeProfileCountOrderByAggregateInput
@@ -443,7 +443,7 @@ export type EmployeeProfileScalarWhereWithAggregatesInput = {
   dateOfBirth?: Prisma.DateTimeNullableWithAggregatesFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolWithAggregatesFilter<"EmployeeProfile"> | boolean
-  joiningDate?: Prisma.DateTimeWithAggregatesFilter<"EmployeeProfile"> | Date | string
+  joiningDate?: Prisma.DateTimeNullableWithAggregatesFilter<"EmployeeProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmployeeProfile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"EmployeeProfile"> | Date | string
 }
@@ -458,7 +458,7 @@ export type EmployeeProfileCreateInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -492,7 +492,7 @@ export type EmployeeProfileUncheckedCreateInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -516,7 +516,7 @@ export type EmployeeProfileUpdateInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -550,7 +550,7 @@ export type EmployeeProfileUncheckedUpdateInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -579,7 +579,7 @@ export type EmployeeProfileCreateManyInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -594,7 +594,7 @@ export type EmployeeProfileUpdateManyMutationInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -614,7 +614,7 @@ export type EmployeeProfileUncheckedUpdateManyInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1064,7 +1064,7 @@ export type EmployeeProfileCreateWithoutCompanyInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1096,7 +1096,7 @@ export type EmployeeProfileUncheckedCreateWithoutCompanyInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1154,7 +1154,7 @@ export type EmployeeProfileScalarWhereInput = {
   dateOfBirth?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   isActive?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
   isProbation?: Prisma.BoolFilter<"EmployeeProfile"> | boolean
-  joiningDate?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
+  joiningDate?: Prisma.DateTimeNullableFilter<"EmployeeProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
 }
@@ -1169,7 +1169,7 @@ export type EmployeeProfileCreateWithoutUserInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
@@ -1201,7 +1201,7 @@ export type EmployeeProfileUncheckedCreateWithoutUserInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1241,7 +1241,7 @@ export type EmployeeProfileUpdateWithoutUserInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
@@ -1273,7 +1273,7 @@ export type EmployeeProfileUncheckedUpdateWithoutUserInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -1297,7 +1297,7 @@ export type EmployeeProfileCreateWithoutTeamInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1329,7 +1329,7 @@ export type EmployeeProfileUncheckedCreateWithoutTeamInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1379,7 +1379,7 @@ export type EmployeeProfileCreateWithoutDesignationInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1411,7 +1411,7 @@ export type EmployeeProfileUncheckedCreateWithoutDesignationInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1461,7 +1461,7 @@ export type EmployeeProfileCreateWithoutSubordinatesInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1494,7 +1494,7 @@ export type EmployeeProfileUncheckedCreateWithoutSubordinatesInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1522,7 +1522,7 @@ export type EmployeeProfileCreateWithoutManagerInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1554,7 +1554,7 @@ export type EmployeeProfileUncheckedCreateWithoutManagerInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1599,7 +1599,7 @@ export type EmployeeProfileUpdateWithoutSubordinatesInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -1632,7 +1632,7 @@ export type EmployeeProfileUncheckedUpdateWithoutSubordinatesInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1671,7 +1671,7 @@ export type EmployeeProfileCreateWithoutAttendanceDaysInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1704,7 +1704,7 @@ export type EmployeeProfileUncheckedCreateWithoutAttendanceDaysInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1743,7 +1743,7 @@ export type EmployeeProfileUpdateWithoutAttendanceDaysInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -1776,7 +1776,7 @@ export type EmployeeProfileUncheckedUpdateWithoutAttendanceDaysInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -1799,7 +1799,7 @@ export type EmployeeProfileCreateWithoutAttendanceViolationsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1832,7 +1832,7 @@ export type EmployeeProfileUncheckedCreateWithoutAttendanceViolationsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1871,7 +1871,7 @@ export type EmployeeProfileUpdateWithoutAttendanceViolationsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -1904,7 +1904,7 @@ export type EmployeeProfileUncheckedUpdateWithoutAttendanceViolationsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -1927,7 +1927,7 @@ export type EmployeeProfileCreateWithoutEmployeeAttendanceOverridesInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -1960,7 +1960,7 @@ export type EmployeeProfileUncheckedCreateWithoutEmployeeAttendanceOverridesInpu
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -1999,7 +1999,7 @@ export type EmployeeProfileUpdateWithoutEmployeeAttendanceOverridesInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2032,7 +2032,7 @@ export type EmployeeProfileUncheckedUpdateWithoutEmployeeAttendanceOverridesInpu
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2055,7 +2055,7 @@ export type EmployeeProfileCreateWithoutLeaveBalancesInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -2088,7 +2088,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveBalancesInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -2127,7 +2127,7 @@ export type EmployeeProfileUpdateWithoutLeaveBalancesInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2160,7 +2160,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveBalancesInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2183,7 +2183,7 @@ export type EmployeeProfileCreateWithoutLeaveRequestsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -2216,7 +2216,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveRequestsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -2244,7 +2244,7 @@ export type EmployeeProfileCreateWithoutApprovedLeaveRequestsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -2277,7 +2277,7 @@ export type EmployeeProfileUncheckedCreateWithoutApprovedLeaveRequestsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -2316,7 +2316,7 @@ export type EmployeeProfileUpdateWithoutLeaveRequestsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2349,7 +2349,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveRequestsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2383,7 +2383,7 @@ export type EmployeeProfileUpdateWithoutApprovedLeaveRequestsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2416,7 +2416,7 @@ export type EmployeeProfileUncheckedUpdateWithoutApprovedLeaveRequestsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2439,7 +2439,7 @@ export type EmployeeProfileCreateWithoutLeaveEncashmentsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -2472,7 +2472,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveEncashmentsInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -2511,7 +2511,7 @@ export type EmployeeProfileUpdateWithoutLeaveEncashmentsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2544,7 +2544,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveEncashmentsInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2567,7 +2567,7 @@ export type EmployeeProfileCreateWithoutEmployeeLeaveOverridesInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
@@ -2600,7 +2600,7 @@ export type EmployeeProfileUncheckedCreateWithoutEmployeeLeaveOverridesInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
@@ -2639,7 +2639,7 @@ export type EmployeeProfileUpdateWithoutEmployeeLeaveOverridesInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2672,7 +2672,7 @@ export type EmployeeProfileUncheckedUpdateWithoutEmployeeLeaveOverridesInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2699,7 +2699,7 @@ export type EmployeeProfileCreateManyCompanyInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2714,7 +2714,7 @@ export type EmployeeProfileUpdateWithoutCompanyInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2746,7 +2746,7 @@ export type EmployeeProfileUncheckedUpdateWithoutCompanyInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2774,7 +2774,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutCompanyInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2793,7 +2793,7 @@ export type EmployeeProfileCreateManyTeamInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2808,7 +2808,7 @@ export type EmployeeProfileUpdateWithoutTeamInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2840,7 +2840,7 @@ export type EmployeeProfileUncheckedUpdateWithoutTeamInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2868,7 +2868,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutTeamInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2887,7 +2887,7 @@ export type EmployeeProfileCreateManyDesignationInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2902,7 +2902,7 @@ export type EmployeeProfileUpdateWithoutDesignationInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -2934,7 +2934,7 @@ export type EmployeeProfileUncheckedUpdateWithoutDesignationInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -2962,7 +2962,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutDesignationInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2981,7 +2981,7 @@ export type EmployeeProfileCreateManyManagerInput = {
   dateOfBirth?: Date | string | null
   isActive?: boolean
   isProbation?: boolean
-  joiningDate: Date | string
+  joiningDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2996,7 +2996,7 @@ export type EmployeeProfileUpdateWithoutManagerInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
@@ -3028,7 +3028,7 @@ export type EmployeeProfileUncheckedUpdateWithoutManagerInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
@@ -3056,7 +3056,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutManagerInput = {
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3335,7 +3335,7 @@ export type $EmployeeProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     dateOfBirth: Date | null
     isActive: boolean
     isProbation: boolean
-    joiningDate: Date
+    joiningDate: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["employeeProfile"]>

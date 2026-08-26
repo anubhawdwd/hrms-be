@@ -29,6 +29,7 @@ export type UserMinAggregateOutputType = {
   email: string | null
   personalEmail: string | null
   passwordHash: string | null
+  mustChangePassword: boolean | null
   authProvider: $Enums.AuthProvider | null
   providerId: string | null
   isActive: boolean | null
@@ -43,6 +44,7 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   personalEmail: string | null
   passwordHash: string | null
+  mustChangePassword: boolean | null
   authProvider: $Enums.AuthProvider | null
   providerId: string | null
   isActive: boolean | null
@@ -57,6 +59,7 @@ export type UserCountAggregateOutputType = {
   email: number
   personalEmail: number
   passwordHash: number
+  mustChangePassword: number
   authProvider: number
   providerId: number
   isActive: number
@@ -73,6 +76,7 @@ export type UserMinAggregateInputType = {
   email?: true
   personalEmail?: true
   passwordHash?: true
+  mustChangePassword?: true
   authProvider?: true
   providerId?: true
   isActive?: true
@@ -87,6 +91,7 @@ export type UserMaxAggregateInputType = {
   email?: true
   personalEmail?: true
   passwordHash?: true
+  mustChangePassword?: true
   authProvider?: true
   providerId?: true
   isActive?: true
@@ -101,6 +106,7 @@ export type UserCountAggregateInputType = {
   email?: true
   personalEmail?: true
   passwordHash?: true
+  mustChangePassword?: true
   authProvider?: true
   providerId?: true
   isActive?: true
@@ -188,6 +194,7 @@ export type UserGroupByOutputType = {
   email: string
   personalEmail: string | null
   passwordHash: string | null
+  mustChangePassword: boolean
   authProvider: $Enums.AuthProvider
   providerId: string | null
   isActive: boolean
@@ -223,6 +230,7 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   personalEmail?: Prisma.StringNullableFilter<"User"> | string | null
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  mustChangePassword?: Prisma.BoolFilter<"User"> | boolean
   authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   providerId?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
@@ -240,6 +248,7 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   personalEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  mustChangePassword?: Prisma.SortOrder
   authProvider?: Prisma.SortOrder
   providerId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -260,6 +269,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   personalEmail?: Prisma.StringNullableFilter<"User"> | string | null
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  mustChangePassword?: Prisma.BoolFilter<"User"> | boolean
   authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   providerId?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
@@ -277,6 +287,7 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   personalEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  mustChangePassword?: Prisma.SortOrder
   authProvider?: Prisma.SortOrder
   providerId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -297,6 +308,7 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   personalEmail?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   passwordHash?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  mustChangePassword?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   authProvider?: Prisma.EnumAuthProviderWithAggregatesFilter<"User"> | $Enums.AuthProvider
   providerId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
@@ -311,6 +323,7 @@ export type UserCreateInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -327,6 +340,7 @@ export type UserUncheckedCreateInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -343,6 +357,7 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -359,6 +374,7 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -375,6 +391,7 @@ export type UserCreateManyInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -389,6 +406,7 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -402,6 +420,7 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -426,6 +445,7 @@ export type UserCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   personalEmail?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  mustChangePassword?: Prisma.SortOrder
   authProvider?: Prisma.SortOrder
   providerId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -440,6 +460,7 @@ export type UserMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   personalEmail?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  mustChangePassword?: Prisma.SortOrder
   authProvider?: Prisma.SortOrder
   providerId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -454,6 +475,7 @@ export type UserMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   personalEmail?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  mustChangePassword?: Prisma.SortOrder
   authProvider?: Prisma.SortOrder
   providerId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -555,6 +577,7 @@ export type UserCreateWithoutCompanyInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -570,6 +593,7 @@ export type UserUncheckedCreateWithoutCompanyInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -614,6 +638,7 @@ export type UserScalarWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   personalEmail?: Prisma.StringNullableFilter<"User"> | string | null
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  mustChangePassword?: Prisma.BoolFilter<"User"> | boolean
   authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   providerId?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
@@ -628,6 +653,7 @@ export type UserCreateWithoutEmployeeInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -643,6 +669,7 @@ export type UserUncheckedCreateWithoutEmployeeInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -674,6 +701,7 @@ export type UserUpdateWithoutEmployeeInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -689,6 +717,7 @@ export type UserUncheckedUpdateWithoutEmployeeInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -704,6 +733,7 @@ export type UserCreateWithoutRefreshTokensInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -719,6 +749,7 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -750,6 +781,7 @@ export type UserUpdateWithoutRefreshTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -765,6 +797,7 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -780,6 +813,7 @@ export type UserCreateManyCompanyInput = {
   email: string
   personalEmail?: string | null
   passwordHash?: string | null
+  mustChangePassword?: boolean
   authProvider: $Enums.AuthProvider
   providerId?: string | null
   isActive?: boolean
@@ -793,6 +827,7 @@ export type UserUpdateWithoutCompanyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -808,6 +843,7 @@ export type UserUncheckedUpdateWithoutCompanyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -823,6 +859,7 @@ export type UserUncheckedUpdateManyWithoutCompanyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   providerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -867,6 +904,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   personalEmail?: boolean
   passwordHash?: boolean
+  mustChangePassword?: boolean
   authProvider?: boolean
   providerId?: boolean
   isActive?: boolean
@@ -885,6 +923,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   personalEmail?: boolean
   passwordHash?: boolean
+  mustChangePassword?: boolean
   authProvider?: boolean
   providerId?: boolean
   isActive?: boolean
@@ -900,6 +939,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   personalEmail?: boolean
   passwordHash?: boolean
+  mustChangePassword?: boolean
   authProvider?: boolean
   providerId?: boolean
   isActive?: boolean
@@ -915,6 +955,7 @@ export type UserSelectScalar = {
   email?: boolean
   personalEmail?: boolean
   passwordHash?: boolean
+  mustChangePassword?: boolean
   authProvider?: boolean
   providerId?: boolean
   isActive?: boolean
@@ -924,7 +965,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "personalEmail" | "passwordHash" | "authProvider" | "providerId" | "isActive" | "role" | "companyId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "personalEmail" | "passwordHash" | "mustChangePassword" | "authProvider" | "providerId" | "isActive" | "role" | "companyId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.User$employeeArgs<ExtArgs>
@@ -950,6 +991,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string
     personalEmail: string | null
     passwordHash: string | null
+    mustChangePassword: boolean
     authProvider: $Enums.AuthProvider
     providerId: string | null
     isActive: boolean
@@ -1387,6 +1429,7 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly personalEmail: Prisma.FieldRef<"User", 'String'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
+  readonly mustChangePassword: Prisma.FieldRef<"User", 'Boolean'>
   readonly authProvider: Prisma.FieldRef<"User", 'AuthProvider'>
   readonly providerId: Prisma.FieldRef<"User", 'String'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
