@@ -291,17 +291,46 @@ employee (if HR enables self-completion).
 
 ## Phase 5 — HR Attendance Dashboard
 
-### Chunk 5A — Backend
-- [ ] `GET /api/attendance/dashboard?month=YYYY-MM` — employee × date matrix + daily summary counts
-- [ ] Efficient batched queries (no N+1)
-- [ ] Final status enum (e.g. `PRESENT, ABSENT, ON_LEAVE, HALF_DAY_LEAVE, PENDING_LEAVE, HOLIDAY, WEEKEND`) documented for frontend color mapping
-- [ ] `requireRole(HR, COMPANY_ADMIN)` guard
+### 5A — Backend Contract & Business Rules
+- [ ] Define `GET /api/attendance/dashboard?month=YYYY-MM`
+- [ ] Define the dashboard response structure for employee × date matrix
+- [ ] Define daily summary counts: Present, Absent, On Leave, Pending Leave
+- [ ] Define final attendance status enum and status precedence rules
+- [ ] Document status values for frontend color mapping
+- [ ] Add `requireRole(HR, COMPANY_ADMIN)` authorization
+- [ ] Verify company isolation
 
-### Chunk 5B — Frontend
-- [ ] `AdminAttendanceDashboard.tsx`: month selector, sticky-header color-coded grid, per-day summary chips (Present/Absent/On Leave/Pending)
-- [ ] Cell tooltip with detail (check-in/out time, leave type)
-- [ ] Route `/admin/attendance-dashboard` + dashboard card
-- [ ] Performance-test with 30+ employees × 30 days
+### 5B — Backend Implementation & Performance
+- [ ] Implement attendance dashboard aggregation
+- [ ] Combine attendance, approved/pending leave, holidays, and weekends
+- [ ] Use efficient batched queries; no N+1 queries
+- [ ] Handle month boundaries and date/timezone consistently
+- [ ] Verify 30+ employees × 30 days without excessive queries
+- [ ] Verify summary counts against the employee/date matrix
+
+### 5C — Frontend Dashboard
+- [ ] Create `AdminAttendanceDashboard.tsx`
+- [ ] Add month selector
+- [ ] Add employee × date attendance matrix
+- [ ] Sticky employee/date headers
+- [ ] Color-code attendance statuses
+- [ ] Add summary chips: Present, Absent, On Leave, Pending
+- [ ] Add cell tooltip/detail: check-in, check-out, total time, leave type
+- [ ] Add route `/admin/attendance-dashboard`
+- [ ] Add dashboard entry point
+- [ ] Ensure responsive behavior for smaller screens
+
+### 5D — Manual Verification
+- [ ] Verify current month
+- [ ] Verify previous/next month
+- [ ] Verify employee with attendance
+- [ ] Verify employee with approved leave
+- [ ] Verify employee with pending leave
+- [ ] Verify weekends
+- [ ] Verify holidays
+- [ ] Verify absent days
+- [ ] Verify summary chip counts
+- [ ] Verify 30+ employee × 30-day dataset manually
 
 ---
 
