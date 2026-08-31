@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "swagger": "tsx swagger.ts",
-    "dev": "npm run swagger && tsx --watch ./src/server.ts"
+    "dev": "npm run swagger && tsx --watch ./src/server.ts",
+    "test": "tsx tests/run-all.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -1947,7 +1947,12 @@ export const CompanyScalarFieldEnum = {
   name: 'name',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  logGeoFenceViolations: 'logGeoFenceViolations'
+  logGeoFenceViolations: 'logGeoFenceViolations',
+  usesTeams: 'usesTeams',
+  workingMinutes: 'workingMinutes',
+  lunchMinutes: 'lunchMinutes',
+  breakMinutes: 'breakMinutes',
+  graceMinutes: 'graceMinutes'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -2022,6 +2027,7 @@ export const EmployeeProfileScalarFieldEnum = {
   employeeCode: 'employeeCode',
   userId: 'userId',
   companyId: 'companyId',
+  departmentId: 'departmentId',
   designationId: 'designationId',
   teamId: 'teamId',
   managerId: 'managerId',
@@ -2300,6 +2306,20 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'AuthProvider'
  */
 export type EnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider'>
@@ -2324,20 +2344,6 @@ export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'UserRole[]'
  */
 export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 

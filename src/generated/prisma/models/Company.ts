@@ -20,8 +20,24 @@ export type CompanyModel = runtime.Types.Result.DefaultSelection<Prisma.$Company
 
 export type AggregateCompany = {
   _count: CompanyCountAggregateOutputType | null
+  _avg: CompanyAvgAggregateOutputType | null
+  _sum: CompanySumAggregateOutputType | null
   _min: CompanyMinAggregateOutputType | null
   _max: CompanyMaxAggregateOutputType | null
+}
+
+export type CompanyAvgAggregateOutputType = {
+  workingMinutes: number | null
+  lunchMinutes: number | null
+  breakMinutes: number | null
+  graceMinutes: number | null
+}
+
+export type CompanySumAggregateOutputType = {
+  workingMinutes: number | null
+  lunchMinutes: number | null
+  breakMinutes: number | null
+  graceMinutes: number | null
 }
 
 export type CompanyMinAggregateOutputType = {
@@ -30,6 +46,11 @@ export type CompanyMinAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   logGeoFenceViolations: boolean | null
+  usesTeams: boolean | null
+  workingMinutes: number | null
+  lunchMinutes: number | null
+  breakMinutes: number | null
+  graceMinutes: number | null
 }
 
 export type CompanyMaxAggregateOutputType = {
@@ -38,6 +59,11 @@ export type CompanyMaxAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   logGeoFenceViolations: boolean | null
+  usesTeams: boolean | null
+  workingMinutes: number | null
+  lunchMinutes: number | null
+  breakMinutes: number | null
+  graceMinutes: number | null
 }
 
 export type CompanyCountAggregateOutputType = {
@@ -46,9 +72,28 @@ export type CompanyCountAggregateOutputType = {
   isActive: number
   createdAt: number
   logGeoFenceViolations: number
+  usesTeams: number
+  workingMinutes: number
+  lunchMinutes: number
+  breakMinutes: number
+  graceMinutes: number
   _all: number
 }
 
+
+export type CompanyAvgAggregateInputType = {
+  workingMinutes?: true
+  lunchMinutes?: true
+  breakMinutes?: true
+  graceMinutes?: true
+}
+
+export type CompanySumAggregateInputType = {
+  workingMinutes?: true
+  lunchMinutes?: true
+  breakMinutes?: true
+  graceMinutes?: true
+}
 
 export type CompanyMinAggregateInputType = {
   id?: true
@@ -56,6 +101,11 @@ export type CompanyMinAggregateInputType = {
   isActive?: true
   createdAt?: true
   logGeoFenceViolations?: true
+  usesTeams?: true
+  workingMinutes?: true
+  lunchMinutes?: true
+  breakMinutes?: true
+  graceMinutes?: true
 }
 
 export type CompanyMaxAggregateInputType = {
@@ -64,6 +114,11 @@ export type CompanyMaxAggregateInputType = {
   isActive?: true
   createdAt?: true
   logGeoFenceViolations?: true
+  usesTeams?: true
+  workingMinutes?: true
+  lunchMinutes?: true
+  breakMinutes?: true
+  graceMinutes?: true
 }
 
 export type CompanyCountAggregateInputType = {
@@ -72,6 +127,11 @@ export type CompanyCountAggregateInputType = {
   isActive?: true
   createdAt?: true
   logGeoFenceViolations?: true
+  usesTeams?: true
+  workingMinutes?: true
+  lunchMinutes?: true
+  breakMinutes?: true
+  graceMinutes?: true
   _all?: true
 }
 
@@ -113,6 +173,18 @@ export type CompanyAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: CompanyAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: CompanySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: CompanyMinAggregateInputType
@@ -143,6 +215,8 @@ export type CompanyGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: CompanyCountAggregateInputType | true
+  _avg?: CompanyAvgAggregateInputType
+  _sum?: CompanySumAggregateInputType
   _min?: CompanyMinAggregateInputType
   _max?: CompanyMaxAggregateInputType
 }
@@ -153,7 +227,14 @@ export type CompanyGroupByOutputType = {
   isActive: boolean
   createdAt: Date
   logGeoFenceViolations: boolean
+  usesTeams: boolean
+  workingMinutes: number
+  lunchMinutes: number
+  breakMinutes: number
+  graceMinutes: number
   _count: CompanyCountAggregateOutputType | null
+  _avg: CompanyAvgAggregateOutputType | null
+  _sum: CompanySumAggregateOutputType | null
   _min: CompanyMinAggregateOutputType | null
   _max: CompanyMaxAggregateOutputType | null
 }
@@ -182,6 +263,11 @@ export type CompanyWhereInput = {
   isActive?: Prisma.BoolFilter<"Company"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   logGeoFenceViolations?: Prisma.BoolFilter<"Company"> | boolean
+  usesTeams?: Prisma.BoolFilter<"Company"> | boolean
+  workingMinutes?: Prisma.IntFilter<"Company"> | number
+  lunchMinutes?: Prisma.IntFilter<"Company"> | number
+  breakMinutes?: Prisma.IntFilter<"Company"> | number
+  graceMinutes?: Prisma.IntFilter<"Company"> | number
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
@@ -201,6 +287,11 @@ export type CompanyOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   logGeoFenceViolations?: Prisma.SortOrder
+  usesTeams?: Prisma.SortOrder
+  workingMinutes?: Prisma.SortOrder
+  lunchMinutes?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  graceMinutes?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   departments?: Prisma.DepartmentOrderByRelationAggregateInput
   designations?: Prisma.DesignationOrderByRelationAggregateInput
@@ -223,6 +314,11 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"Company"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   logGeoFenceViolations?: Prisma.BoolFilter<"Company"> | boolean
+  usesTeams?: Prisma.BoolFilter<"Company"> | boolean
+  workingMinutes?: Prisma.IntFilter<"Company"> | number
+  lunchMinutes?: Prisma.IntFilter<"Company"> | number
+  breakMinutes?: Prisma.IntFilter<"Company"> | number
+  graceMinutes?: Prisma.IntFilter<"Company"> | number
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
@@ -242,9 +338,16 @@ export type CompanyOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   logGeoFenceViolations?: Prisma.SortOrder
+  usesTeams?: Prisma.SortOrder
+  workingMinutes?: Prisma.SortOrder
+  lunchMinutes?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  graceMinutes?: Prisma.SortOrder
   _count?: Prisma.CompanyCountOrderByAggregateInput
+  _avg?: Prisma.CompanyAvgOrderByAggregateInput
   _max?: Prisma.CompanyMaxOrderByAggregateInput
   _min?: Prisma.CompanyMinOrderByAggregateInput
+  _sum?: Prisma.CompanySumOrderByAggregateInput
 }
 
 export type CompanyScalarWhereWithAggregatesInput = {
@@ -256,6 +359,11 @@ export type CompanyScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
   logGeoFenceViolations?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
+  usesTeams?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
+  workingMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
+  lunchMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
+  breakMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
+  graceMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
 }
 
 export type CompanyCreateInput = {
@@ -264,6 +372,11 @@ export type CompanyCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -283,6 +396,11 @@ export type CompanyUncheckedCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -302,6 +420,11 @@ export type CompanyUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -321,6 +444,11 @@ export type CompanyUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -340,6 +468,11 @@ export type CompanyCreateManyInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
 }
 
 export type CompanyUpdateManyMutationInput = {
@@ -348,6 +481,11 @@ export type CompanyUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type CompanyUncheckedUpdateManyInput = {
@@ -356,6 +494,11 @@ export type CompanyUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type CompanyCountOrderByAggregateInput = {
@@ -364,6 +507,18 @@ export type CompanyCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   logGeoFenceViolations?: Prisma.SortOrder
+  usesTeams?: Prisma.SortOrder
+  workingMinutes?: Prisma.SortOrder
+  lunchMinutes?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  graceMinutes?: Prisma.SortOrder
+}
+
+export type CompanyAvgOrderByAggregateInput = {
+  workingMinutes?: Prisma.SortOrder
+  lunchMinutes?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  graceMinutes?: Prisma.SortOrder
 }
 
 export type CompanyMaxOrderByAggregateInput = {
@@ -372,6 +527,11 @@ export type CompanyMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   logGeoFenceViolations?: Prisma.SortOrder
+  usesTeams?: Prisma.SortOrder
+  workingMinutes?: Prisma.SortOrder
+  lunchMinutes?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  graceMinutes?: Prisma.SortOrder
 }
 
 export type CompanyMinOrderByAggregateInput = {
@@ -380,6 +540,18 @@ export type CompanyMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   logGeoFenceViolations?: Prisma.SortOrder
+  usesTeams?: Prisma.SortOrder
+  workingMinutes?: Prisma.SortOrder
+  lunchMinutes?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  graceMinutes?: Prisma.SortOrder
+}
+
+export type CompanySumOrderByAggregateInput = {
+  workingMinutes?: Prisma.SortOrder
+  lunchMinutes?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  graceMinutes?: Prisma.SortOrder
 }
 
 export type CompanyScalarRelationFilter = {
@@ -397,6 +569,14 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type CompanyCreateNestedOneWithoutUsersInput = {
@@ -559,6 +739,11 @@ export type CompanyCreateWithoutUsersInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -577,6 +762,11 @@ export type CompanyUncheckedCreateWithoutUsersInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -611,6 +801,11 @@ export type CompanyUpdateWithoutUsersInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -629,6 +824,11 @@ export type CompanyUncheckedUpdateWithoutUsersInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -647,6 +847,11 @@ export type CompanyCreateWithoutDepartmentsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -665,6 +870,11 @@ export type CompanyUncheckedCreateWithoutDepartmentsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -699,6 +909,11 @@ export type CompanyUpdateWithoutDepartmentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -717,6 +932,11 @@ export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -735,6 +955,11 @@ export type CompanyCreateWithoutDesignationsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -753,6 +978,11 @@ export type CompanyUncheckedCreateWithoutDesignationsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -787,6 +1017,11 @@ export type CompanyUpdateWithoutDesignationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -805,6 +1040,11 @@ export type CompanyUncheckedUpdateWithoutDesignationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -823,6 +1063,11 @@ export type CompanyCreateWithoutDesignationAttendancePoliciesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -841,6 +1086,11 @@ export type CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -875,6 +1125,11 @@ export type CompanyUpdateWithoutDesignationAttendancePoliciesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -893,6 +1148,11 @@ export type CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -911,6 +1171,11 @@ export type CompanyCreateWithoutEmployeesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -929,6 +1194,11 @@ export type CompanyUncheckedCreateWithoutEmployeesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -963,6 +1233,11 @@ export type CompanyUpdateWithoutEmployeesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -981,6 +1256,11 @@ export type CompanyUncheckedUpdateWithoutEmployeesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -999,6 +1279,11 @@ export type CompanyCreateWithoutAttendanceDaysInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1017,6 +1302,11 @@ export type CompanyUncheckedCreateWithoutAttendanceDaysInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1051,6 +1341,11 @@ export type CompanyUpdateWithoutAttendanceDaysInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1069,6 +1364,11 @@ export type CompanyUncheckedUpdateWithoutAttendanceDaysInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1087,6 +1387,11 @@ export type CompanyCreateWithoutAttendanceViolationsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1105,6 +1410,11 @@ export type CompanyUncheckedCreateWithoutAttendanceViolationsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1139,6 +1449,11 @@ export type CompanyUpdateWithoutAttendanceViolationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1157,6 +1472,11 @@ export type CompanyUncheckedUpdateWithoutAttendanceViolationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1175,6 +1495,11 @@ export type CompanyCreateWithoutOfficeLocationsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1193,6 +1518,11 @@ export type CompanyUncheckedCreateWithoutOfficeLocationsInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1227,6 +1557,11 @@ export type CompanyUpdateWithoutOfficeLocationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1245,6 +1580,11 @@ export type CompanyUncheckedUpdateWithoutOfficeLocationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1263,6 +1603,11 @@ export type CompanyCreateWithoutLeaveTypesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1281,6 +1626,11 @@ export type CompanyUncheckedCreateWithoutLeaveTypesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1315,6 +1665,11 @@ export type CompanyUpdateWithoutLeaveTypesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1333,6 +1688,11 @@ export type CompanyUncheckedUpdateWithoutLeaveTypesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1351,6 +1711,11 @@ export type CompanyCreateWithoutLeavePoliciesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1369,6 +1734,11 @@ export type CompanyUncheckedCreateWithoutLeavePoliciesInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1403,6 +1773,11 @@ export type CompanyUpdateWithoutLeavePoliciesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1421,6 +1796,11 @@ export type CompanyUncheckedUpdateWithoutLeavePoliciesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1439,6 +1819,11 @@ export type CompanyCreateWithoutHolidaysInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1457,6 +1842,11 @@ export type CompanyUncheckedCreateWithoutHolidaysInput = {
   isActive?: boolean
   createdAt?: Date | string
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1491,6 +1881,11 @@ export type CompanyUpdateWithoutHolidaysInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1509,6 +1904,11 @@ export type CompanyUncheckedUpdateWithoutHolidaysInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1648,6 +2048,11 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   isActive?: boolean
   createdAt?: boolean
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: boolean
+  lunchMinutes?: boolean
+  breakMinutes?: boolean
+  graceMinutes?: boolean
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
   designations?: boolean | Prisma.Company$designationsArgs<ExtArgs>
@@ -1668,6 +2073,11 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isActive?: boolean
   createdAt?: boolean
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: boolean
+  lunchMinutes?: boolean
+  breakMinutes?: boolean
+  graceMinutes?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1676,6 +2086,11 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isActive?: boolean
   createdAt?: boolean
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: boolean
+  lunchMinutes?: boolean
+  breakMinutes?: boolean
+  graceMinutes?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectScalar = {
@@ -1684,9 +2099,14 @@ export type CompanySelectScalar = {
   isActive?: boolean
   createdAt?: boolean
   logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: boolean
+  lunchMinutes?: boolean
+  breakMinutes?: boolean
+  graceMinutes?: boolean
 }
 
-export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt" | "logGeoFenceViolations", ExtArgs["result"]["company"]>
+export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt" | "logGeoFenceViolations" | "usesTeams" | "workingMinutes" | "lunchMinutes" | "breakMinutes" | "graceMinutes", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
@@ -1725,6 +2145,11 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     isActive: boolean
     createdAt: Date
     logGeoFenceViolations: boolean
+    usesTeams: boolean
+    workingMinutes: number
+    lunchMinutes: number
+    breakMinutes: number
+    graceMinutes: number
   }, ExtArgs["result"]["company"]>
   composites: {}
 }
@@ -2164,6 +2589,11 @@ export interface CompanyFieldRefs {
   readonly isActive: Prisma.FieldRef<"Company", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Company", 'DateTime'>
   readonly logGeoFenceViolations: Prisma.FieldRef<"Company", 'Boolean'>
+  readonly usesTeams: Prisma.FieldRef<"Company", 'Boolean'>
+  readonly workingMinutes: Prisma.FieldRef<"Company", 'Int'>
+  readonly lunchMinutes: Prisma.FieldRef<"Company", 'Int'>
+  readonly breakMinutes: Prisma.FieldRef<"Company", 'Int'>
+  readonly graceMinutes: Prisma.FieldRef<"Company", 'Int'>
 }
     
 

@@ -78,8 +78,10 @@ hrms_main/
 * **Employee Management**: Employee directory, profile viewing, managerial hierarchy mapping, and two-step guided onboarding with automatic leave balance bootstrapping.
 * **Attendance Tracking**: Real-time employee check-in and check-out, geo-fence radius verification, today's attendance calculation, and weekly attendance calendar.
 * **Leave Management**: Leave policies (annual quotas, carry-forward, sandwich rules), leave applications (full-day, half-day, quarter-day, hourly), balance deduction, and HR approval/rejection workflows.
-* **Organization Hierarchy**: Management of departments, teams, designations, and designation-level attendance policies.
-* **Geo-Fencing Settings**: Company-level office location setup (latitude, longitude, radius) with an instant toggle switch to enable/disable geo-fencing enforcement.
+* **Organization Management & Policy Hierarchy**: Unified administration hub (`AdminOrganization.tsx`) for departments, teams, designations, and 3-tier attendance policy assignment (Employee Override → Designation Policy → System Default) supporting auto-present and attendance exemption.
+* **Workplace & Geo-Fencing Settings**: Company-level office location setup (latitude, longitude, radius) with an instant toggle switch, plus company-wide working hours (8h), scheduled lunch (30m), break (20m), and grace period (10m) configurations.
+* **Attendance Dashboard & Day Boundaries**: Batched monthly employee × date matrix endpoint (`GET /api/attendance/dashboard?month=YYYY-MM`) with zero N+1 queries, sticky matrix grid, live search filter, strict calendar-day boundaries, same-day overtime accumulation, and automatic end-of-day checkout at 23:59:59 IST.
+* **HR Leave Dashboard & Approvals**: Card-based operational overview showing employees on leave today, actionable pending approvals (inline approve/reject), recently approved requests (`GET /api/leave/requests/recent`), and transactional HR cancellation with quota restoration.
 * **HR / Admin Operations**: Dedicated admin dashboards, attendance violation logs, manual attendance adjustments (by employee and date without UUID exposure), punch event additions, and holiday management.
 
 ---
@@ -152,6 +154,8 @@ JWT_REFRESH_SECRET="<refresh-token-secret>"
 ### Frontend (`hrms-fe/.env`)
 ```env
 VITE_API_BASE_URL=http://192.168.1.185:4000
+VITE_GOOGLE_CLIENT_ID="<google-oauth-client-id>"
+VITE_MICROSOFT_CLIENT_ID="<microsoft-app-client-id>"
 ```
 
 ---

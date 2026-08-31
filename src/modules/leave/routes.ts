@@ -22,6 +22,8 @@ import {
   deleteHoliday,
   listTodayLeaves,
   listPendingLeaveRequests,
+  listRecentLeaveRequests,
+  listEmployeeLeaveRequests,
 } from "./controller.js";
 
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
@@ -107,11 +109,22 @@ router.post(
   upsertEmployeeLeaveOverride
 );
 
-// All pending leave requests for company (HR/Admin view)
+// All pending / recent leave requests for company (HR/Admin view)
+router.get(
+  "/requests/employee/:employeeId",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  listEmployeeLeaveRequests
+);
+
 router.get(
   "/requests/pending",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   listPendingLeaveRequests
+);
+router.get(
+  "/requests/recent",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  listRecentLeaveRequests
 );
 
 // HOLIDAYS

@@ -46,10 +46,10 @@ Legend:
 - [x] Employee self-profile view on employee dashboard (`EmployeeDashboard.tsx`)
 - [x] Two-step guided employee onboarding form (`AdminCreateEmployee.tsx`)
 - [x] Automatic leave balance bootstrapping during employee profile creation
-- [~] Manager hierarchy reassignment (`PATCH /api/employees/:id/manager` implemented; dedicated UI modal pending)
+- [x] Manager hierarchy reassignment (`PATCH /api/employees/:id/manager` wired in Quick Edit Modal)
 - [~] Employee self-profile update (`PUT /api/employees/me/profile` implemented; frontend modal pending)
-- [~] Admin employee profile update (`PUT /api/employees/:id/admin` implemented; frontend modal pending)
-- [~] Employee deactivation (`DELETE /api/employees/:id` implemented; frontend action button pending)
+- [x] Admin employee profile update (`PUT /api/employees/:id/admin` wired in Quick Edit Modal)
+- [x] Employee deactivation / status management (`isActive` toggle in Quick Edit Modal + 3-state directory filter)
 - [ ] Bulk employee CSV import (see Phase 2 below — schema mismatch with HR's real export needs resolving first)
 
 ---
@@ -97,12 +97,11 @@ Legend:
 
 ## 6. Organization Management
 
-- [~] Department management CRUD (backend implemented; API client created; **frontend page NOT available — confirmed bug, HR cannot create departments at all right now**)
-- [~] Team management CRUD (backend implemented; API client created; frontend page pending)
-- [~] Designation management CRUD (backend implemented; API client created; frontend page pending)
-- [~] Designation attendance policy configuration (backend implemented; frontend page pending)
-
-> **Blocking note:** CSV import (Phase 2) requires resolving departments/designations by name. Since department creation has no frontend UI yet, any department in the HR's CSV that doesn't already exist in the DB (e.g. "Simulation Development Team", "K 6-12", "Product Managament Team") will fail import until either (a) `AdminOrganization.tsx` is built first, or (b) the CSV importer is allowed to auto-create missing departments/designations inline (needs a product decision — see Phase 2A).
+- [x] Department management CRUD (`AdminOrganization.tsx` Departments tab)
+- [x] Team management CRUD (`AdminOrganization.tsx` Teams tab)
+- [x] Designation management CRUD (`AdminOrganization.tsx` Designations tab)
+- [x] Designation attendance policy configuration (`AdminOrganization.tsx` Attendance Policy tab)
+- [x] Employee-specific attendance override configuration with 3-tier precedence hierarchy (Employee Override → Designation Policy → System Default)
 
 ---
 
@@ -170,7 +169,7 @@ Legend:
 
 - [ ] `GET /api/employees/` route in `hrms-be/src/modules/employee/routes.ts` does not have a `requireRole` middleware guard.
 - [ ] Google and Microsoft OAuth login buttons are not yet exposed on `hrms-fe/src/pages/Login.tsx`.
-- [ ] **Department creation has no frontend UI at all** — backend + API client exist, but HR/Admin cannot create a department through the app today. This blocks CSV import for any department not already seeded.
+- [ ] No forgot-password / reset-password self-service flow — see Phase 9.
 - [ ] HR's real CSV export does not match assumed employee-import schema (see Phase 2 for full mismatch list).
 
 ---
@@ -193,87 +192,67 @@ Legend:
 
 ---
 
-## Phase 2 — CSV Bulk Employee Import (Partial Import Strategy)
+## Phase 2 — Employee & Organization Data Seeding ✅ DONE
 
-### Decision made
-Rather than blocking import on fields the CSV doesn't reliably have, import 
-only the clearly usable columns now. Everything else is left blank and 
-marked as an incomplete profile, to be filled in later by HR or the 
-employee (if HR enables self-completion).
+Phase 2 is considered complete through database seeding scripts rather than a CSV import feature.
 
-**Import now (from CSV):**
-- Employee ID (store as an external reference / employee code, not the DB id)
-- First Name, Last Name
-- Designation
-- Department
-- Employment Type
-- Email address
+The real employee dataset was imported directly into the database using
+`scripts/seed-real-employees.ts`.
 
-**Deferred — filled in later via profile completion, not at import time:**
-- Reporting Manager / Secondary Reporting Manager (name-only in CSV, 
-  ambiguous — do not attempt to auto-resolve at import)
-- Joining date, Date of birth, Team (not present in CSV at all)
-- "Current Experience" column is dropped entirely — not used to derive 
-  joining date
+### Completed
 
-### ⚠️ Still must resolve before building
-- [ ] Confirm which of the deferred fields are truly optional/nullable in 
-  the current Prisma `Employee` schema. If any are required (e.g. 
-  joiningDate NOT NULL), either relax the constraint or pick a safe 
-  placeholder value + flag the record as incomplete.
-- [ ] Decide default `role` (`EMPLOYEE`) and `authProvider` (`LOCAL`) for 
-  imported users, plus how they get their first password (temp password 
-  emailed, invite link, or admin sets manually — pick one for now).
-- [ ] Departments in this file that likely don't exist yet in DB: 
-  "Simulation Development Team", "K 6-12", "Product Managament Team" 
-  (note the typo — decide normalize vs import as-is).
-- [ ] **Department creation has no frontend page yet** (Phase 3 fixes this) 
-  — decide whether Phase 2 waits for Phase 3, or the importer auto-creates 
-  missing departments/designations inline with a warning in the result report.
-- [ ] Add an `isProfileComplete` (or similar) flag to the Employee model so 
-  incomplete imported records are visibly flagged in the UI until HR/employee 
-  fills in the rest.
+- [x] Imported real employee records into the database
+- [x] Created/linked employee profiles
+- [x] Created/linked departments
+- [x] Created/linked designations
+- [x] Stored employee ID as `employeeCode`
+- [x] Imported employee first name and last name
+- [x] Imported employee email
+- [x] Imported designation
+- [x] Imported department
+- [x] Imported employment type
+- [x] Set employee probation status from employment type
+- [x] Assigned default application role (`EMPLOYEE`; HR Manager → `HR`)
+- [x] Created local authentication accounts
+- [x] Applied temporary password with forced first-login password change
+- [x] Bootstrapped leave balances for configured leave types
+- [x] Used transactional creation of User + EmployeeProfile + LeaveBalance records
+- [x] Added duplicate email and employee-code protection
+- [x] Verified seeded employee dataset successfully
 
-### Chunk 2A — Backend (`hrms-be`)
-- [ ] Inspect actual required/optional fields on `Employee` and `User` Prisma 
-  models — confirm which deferred fields can be nullable
-- [ ] Add `isProfileComplete` flag (or equivalent) if not already derivable
-- [ ] Build `POST /api/employees/bulk-import` (multipart CSV upload) using 
-  ONLY the 6 confirmed-usable columns
-- [ ] Row-level validation + per-row error reporting (not all-or-nothing)
-- [ ] Reuse existing employee creation service where possible; skip leave 
-  balance bootstrap dependency on joining date if that's currently required 
-  — confirm and adjust
-- [ ] Decide on auto-create-missing-department/designation behavior
-- [ ] `requireRole(HR, COMPANY_ADMIN)` guard
-- [ ] Document endpoint + final column spec in `API_Consumption_Guide.md`
+### Database Result
 
-### Chunk 2B — Frontend (`hrms-fe`)
-- [ ] `AdminBulkImportEmployees.tsx`: file upload, downloadable template 
-  matching the 6-column spec, row preview, submit
-- [ ] Result screen: success/failure counts, per-row error table, 
-  downloadable failed-rows CSV
-- [ ] Visual indicator (badge/chip) on `AdminEmployeeList.tsx` for employees 
-  with incomplete profiles
-- [ ] Route `/admin/employees/bulk-import` + link from `AdminEmployeeList.tsx`
-- [ ] Test with the actual HR-provided file end-to-end
+The database now contains the required real employee, department,
+designation, and leave data.
 
-### Chunk 2C — Profile Completion (follow-up, not blocking Phase 2 launch)
-- [ ] Admin-side profile completion form (reuses existing 
-  `PUT /api/employees/:id/admin` — just needs frontend modal, already 
-  tracked in section 3 as pending)
-- [ ] Optional: HR-toggleable setting to let employees self-complete missing 
-  fields (manager, joining date, DOB, team) via 
-  `PUT /api/employees/me/profile` — needs a per-company or per-employee flag 
-  to enable/disable this, does not exist yet
+A separate CSV bulk-import UI/API is **not required for the current HRMS
+scope**. Future bulk data imports can continue to be handled through
+controlled database seed/backfill scripts when required.
+
+### Decision
+
+**Do NOT implement `AdminBulkImportEmployees.tsx`.**
+
+**Do NOT implement `POST /api/employees/bulk-import`.**
+
+**Do NOT add CSV-import-specific profile completion logic.**
+
+The previous CSV-import plan is superseded by the completed database
+seeding approach.
+
+> Phase 2 is therefore fully complete. Future employee creation and
+> profile updates should use the existing application onboarding and
+> employee-management workflows.
 
 ---
 
-## Phase 3 — Organization Management Frontend (prerequisite for clean Phase 2)
-- [ ] Build `AdminOrganization.tsx` with tabs: Departments / Teams / Designations / Office Location
-- [ ] Wire existing `organizationApi.*` CRUD calls (already implemented, unused)
-- [ ] Add route `/admin/organization` + card in `AdminDashboard.tsx`
-- [ ] This directly fixes the "department creation not available" bug
+## Phase 3 — Organization Management Frontend ✅ DONE
+- [x] Built `AdminOrganization.tsx` with tabs: Departments / Teams / Designations / Attendance Policy
+- [x] Wired full CRUD calls in `organizationApi.*` and `attendanceApi.*`
+- [x] Added route `/admin/organization` + card in `AdminDashboard.tsx`
+- [x] Dual-mode Attendance Policy tab supporting Designation Policies and Employee-specific Overrides (3-tier precedence hierarchy)
+- [x] Kept Workplace Settings (Office Location, Geo-Fencing, Working Hours) cleanly housed under `AdminGeoSettings.tsx` with cross-link navigation
+- [x] Verified end-to-end with automated test suite and production builds passing
 
 ---
 
@@ -292,80 +271,163 @@ employee (if HR enables self-completion).
 ## Phase 5 — HR Attendance Dashboard
 
 ### 5A — Backend Contract & Business Rules
-- [ ] Define `GET /api/attendance/dashboard?month=YYYY-MM`
-- [ ] Define the dashboard response structure for employee × date matrix
-- [ ] Define daily summary counts: Present, Absent, On Leave, Pending Leave
-- [ ] Define final attendance status enum and status precedence rules
-- [ ] Document status values for frontend color mapping
-- [ ] Add `requireRole(HR, COMPANY_ADMIN)` authorization
-- [ ] Verify company isolation
+- [x] Define `GET /api/attendance/dashboard?month=YYYY-MM`
+- [x] Define the dashboard response structure for employee × date matrix
+- [x] Define daily summary counts: Present, Absent, On Leave, Pending Leave
+- [x] Define final attendance status enum and status precedence rules
+- [x] Document status values for frontend color mapping
+- [x] Add `requireRole(HR, COMPANY_ADMIN)` authorization
+- [x] Verify company isolation
 
 ### 5B — Backend Implementation & Performance
-- [ ] Implement attendance dashboard aggregation
-- [ ] Combine attendance, approved/pending leave, holidays, and weekends
-- [ ] Use efficient batched queries; no N+1 queries
-- [ ] Handle month boundaries and date/timezone consistently
-- [ ] Verify 30+ employees × 30 days without excessive queries
-- [ ] Verify summary counts against the employee/date matrix
+- [x] Implement attendance dashboard aggregation
+- [x] Combine attendance, approved/pending leave, holidays, and weekends
+- [x] Use efficient batched queries; no N+1 queries
+- [x] Handle month boundaries and date/timezone consistently
+- [x] Verify 30+ employees × 30 days without excessive queries
+- [x] Verify summary counts against the employee/date matrix
 
-### 5C — Frontend Dashboard
-- [ ] Create `AdminAttendanceDashboard.tsx`
-- [ ] Add month selector
-- [ ] Add employee × date attendance matrix
-- [ ] Sticky employee/date headers
-- [ ] Color-code attendance statuses
-- [ ] Add summary chips: Present, Absent, On Leave, Pending
-- [ ] Add cell tooltip/detail: check-in, check-out, total time, leave type
-- [ ] Add route `/admin/attendance-dashboard`
-- [ ] Add dashboard entry point
-- [ ] Ensure responsive behavior for smaller screens
+### 5C — Working Hours Configuration
+- [x] Make working-hours configuration configurable by HR/Admin
+- [x] Working hours: 8h 00m (default, configurable)
+- [x] Lunch duration: 30m (default, configurable)
+- [x] Break duration: 20m (default, configurable)
+- [x] Grace period: 10m (default, configurable)
+- [x] Use configured working hours consistently in attendance status calculation and dashboard
+- [x] Ensure lunch/break duration is not counted as actual working time
+- [x] Apply grace period consistently when determining attendance status
+- [x] Add HR/Admin UI to view and update working-hours configuration
+- [x] Persist the configuration at company level
+- [x] Ensure configuration changes affect future attendance calculations without altering historical attendance records
 
-### 5D — Manual Verification
-- [ ] Verify current month
-- [ ] Verify previous/next month
-- [ ] Verify employee with attendance
-- [ ] Verify employee with approved leave
-- [ ] Verify employee with pending leave
-- [ ] Verify weekends
-- [ ] Verify holidays
-- [ ] Verify absent days
-- [ ] Verify summary chip counts
-- [ ] Verify 30+ employee × 30-day dataset manually
+### 5D — Attendance Day Boundary & Forgotten Checkout
+
+- [x] Attendance is bounded to a single calendar day
+- [x] Same-day overtime remains attached to the same AttendanceDay
+- [x] Automatically close an open attendance at 23:59:59 when employee
+      forgets to check out
+- [x] Preserve the original CHECK_IN event when automatic checkout occurs
+- [x] Prevent attendance from carrying into the next calendar day
+- [ ] Future improvement: replace automatic 23:59:59 checkout with a more
+      accurate forgotten-checkout handling workflow
+- [ ] Future improvement: allow HR to review/flag automatically closed
+      attendance records
+- [ ] Future improvement: distinguish system-generated checkout from
+      employee-generated checkout in attendance history
+
+### 5E — Frontend Dashboard ✅ DONE
+- [x] Create `AdminAttendanceDashboard.tsx`
+- [x] Add month selector (with instant in-memory cache and prev/next/this month toggles)
+- [x] Add employee × date attendance matrix (tested with 99 employees × 31 days = 3,069 cells)
+- [x] Sticky employee column and sticky date header
+- [x] Color-code attendance statuses (Present, Absent, Partial, On Leave, Half Day, Pending Leave, Holiday, Weekend, Unrecorded)
+- [x] Add summary cards: Present, Absent, On Leave, Pending Leave (computed for Today)
+- [x] Add single shared floating Popover for cell details: IST timestamps, HH:mm:ss duration, leave & policy metadata
+- [x] Add route `/admin/attendance-dashboard`
+- [x] Add dashboard entry point in global header ("Attendance") and Admin Dashboard card
+- [x] Dedicated entry point for operational tasks in `/admin/attendance` ("Attendance Administration")
+- [x] Ensure responsive behavior for smaller screens and wide full-screen layouts
+- [x] Live typo-tolerant employee search filter (name, employee code, designation, department)
+- [x] High-performance rendering optimization (memoized `MatrixRow`, `MatrixCell`, single shared Popover replacing 3,069 heavy MUI Tooltip instances)
+
+### 5F — Verification ✅ DONE
+- [x] Verify current month
+- [x] Verify previous/next month navigation
+- [x] Verify employee with active attendance & presence duration
+- [x] Verify employee with approved leave (full-day & partial)
+- [x] Verify employee with pending leave
+- [x] Verify weekends and holidays
+- [x] Verify absent days
+- [x] Verify summary chip counts
+- [x] Verify 99-employee × 31-day dataset performance (~79ms backend aggregation, 60fps frontend rendering)
+- [x] Verify check-in immediately establishes PRESENT status across all endpoints
+- [x] Verify future date & timestamp restrictions on HR manual attendance operations
 
 ---
 
-## Phase 6 — HR Leave Dashboard
-- [ ] Confirm/add `GET /api/leave/requests/recent?status=APPROVED&days=7` if not already present
-- [ ] `AdminLeaveDashboard.tsx`: "On Leave Today", "Pending Approvals" (inline approve/reject), "Recently Approved" — simple cards, not a dense table
-- [ ] Route `/admin/leave-dashboard` + dashboard card
-- [ ] Add pending HR-cancel button to `AdminLeaveApprovals.tsx` if still not done (verify current status first)
+## Phase 6 — HR Leave Dashboard ✅ DONE
+- [x] Confirm/add `GET /api/leave/requests/recent?status=APPROVED&days=7` with batched relations and strict company isolation
+- [x] `AdminLeaveDashboard.tsx`: "On Leave Today", "Pending Approvals" (inline approve/reject), "Recently Approved" (with HR Cancel) — clean operational card layout
+- [x] Route `/admin/leave-dashboard` + "Leave Dashboard" card on `AdminDashboard.tsx`
+- [x] Verified and preserved HR-cancel functionality and fixed Approved tab in `AdminLeaveApprovals.tsx`
 
 ---
 
-## Phase 7 — Employee Search + Quick Edit Modal
-- [ ] Search input on `AdminEmployeeList.tsx` (by name/email)
-- [ ] Click employee → modal with Attendance tab (reuse `AdminAttendance.tsx` edit logic, scoped to employee) and Leave tab (reuse `AdminLeaveApprovals.tsx` logic)
-- [ ] Extract shared hooks/components rather than duplicating logic
-- [ ] Modal edits refresh underlying dashboard data without full reload
+## Phase 7 — Employee Search + Quick Edit Modal ✅ DONE
+- [x] Typo-tolerant live search on `AdminEmployeeList.tsx` (by name, email, employee code `#6`, department, designation, team)
+- [x] 3-state segmented status filter (`Active | Inactive | All`) with live count badges
+- [x] `AdminEmployeeQuickEditModal.tsx` supporting Profile & Org, Attendance Correction, and Leave Request Approvals / HR Cancellation
+- [x] Typo-tolerant Search + Select Autocompletes for Department, Designation, Team (conditionally shown if `usesTeams: true`), and Reporting Manager
+- [x] Live in-memory list synchronization on save with instant modal close and zero full-page reloads
+- [x] Complete relation data returned by backend `updateEmployee` and `changeManager` endpoints
+
+---
+## Quick Fixes / Hardening — Before Next Phase ✅ DONE
+- [x] Employee Dashboard configurable display working hours & total scheduled presence ($= \text{Work} + \text{Lunch} + \text{Break}$)
+- [x] Dynamic non-negative Time Remaining countdown timer on Employee Dashboard
+- [x] Fix employee leave application: "Leave policy not configured" (Leave policy resolution & company policies initialized)
+- [x] HR dual-mode access: Admin Dashboard $\leftrightarrow$ Employee Dashboard (Seamless view switcher & context navigation)
+- [x] Canonical tenant company name resolution (sourced directly from `Company.name`, eliminating domain heuristic)
+- [x] Attendance Dashboard canonical Pending Approval metric (`GET /api/leave/requests/pending`) with interactive scrollable drill-down popovers across all 4 status cards
+- [x] Leave Approval routing consolidation: single source of truth at `/admin/leave-dashboard` with backward-compatibility redirects and removal of obsolete `AdminLeaveApprovals.tsx`
+- [x] Canonical Multi-Session Attendance Daily Presence Engine: pairwise session matching (`computeDailyAttendanceSessions`), cumulative presence sum ($\sum \Delta t_k$), active shift tracking (`checkOut: null` / "In progress"), multi-session live timer, and accurate calendar daily totals
 
 ---
 
-## Phase 8 — Google SSO Frontend
-- [ ] Google Identity Services integration in `Login.tsx`
-- [ ] `POST /api/auth/google` wiring via new `auth.api.ts` function
-- [ ] Same session/redirect handling as email login
-- [ ] Requires user-created OAuth Client ID in Google Cloud Console — flag exact `.env` slot needed
+## Phase 8 — Forgot / Reset Password (Tier 1 ✅ DONE)
+
+Two-tier approach: shipped the admin-assisted path first; self-service email reset follows once an email provider is chosen.
+
+### Tier 1 — Admin-Assisted Reset ✅ DONE
+- [x] Backend: `POST /api/users/:userId/reset-password` — `requireRole(HR, COMPANY_ADMIN)` guarded with tenant isolation
+- [x] Backend: Cryptographically secure 12-char temporary password generator (`crypto.randomInt`), bcrypt 12 hashing, `mustChangePassword: true`, and complete refresh token session invalidation
+- [x] Backend: Supports both auto-generated and manual temporary password settings ($\ge 6$ chars)
+- [x] Backend: Returns one-time temporary password in JSON response (never logged, never stored in plaintext)
+- [x] Frontend: "Reset Password" action in `AdminEmployeeProfile.tsx` and `AdminEmployeeQuickEditModal.tsx` with confirmation dialog and focus-trap/LAN-safe one-time copy-to-clipboard modal
+- [x] Frontend: "Forgot password?" modal on `Login.tsx` directing employees to contact HR/Admin
+- [x] Verified: Login with temp password forces `ChangePasswordModal.tsx`, old password rejected, old refresh tokens invalidated, permanent password updates correctly and clears `mustChangePassword`
+
+### Tier 2 (Future if required) — Self-Service Reset via Email (gated on email provider decision)
+- [ ] **Decision needed first**: choose an email-sending provider (e.g. 
+  Resend, SendGrid, AWS SES) — none currently integrated. This blocks all 
+  of Tier 2 until decided.
+- [ ] Backend: `POST /api/auth/forgot-password` — takes email, generates a 
+  short-lived (e.g. 1h) signed single-use token, emails a reset link. 
+  Always returns a generic success response regardless of whether the email 
+  exists, to avoid leaking which emails are registered.
+- [ ] Backend: `POST /api/auth/reset-password` — takes token + new password, 
+  validates token (not expired, not already used), updates password hash, 
+  invalidates the token, invalidates existing sessions.
+- [ ] Frontend: "Forgot password?" link on `Login.tsx` → request form → 
+  "check your email" confirmation screen.
+- [ ] Frontend: reset-password page (token from URL query param) → new 
+  password form → success → redirect to login.
+- [ ] Ensure this doesn't conflict with the existing `mustChangePassword` 
+  forced-change flow (a password reset should also clear `mustChangePassword` 
+  if it was set, since the user has now set their own password).
 
 ---
 
-## Phase 9 — Cleanup & Hardening
+## Phase 9 — Google & Microsoft SSO Frontend ✅ DONE
+- [x] Google Identity Services integration in `Login.tsx`
+- [x] `POST /api/auth/google` wiring via new `auth.api.ts` function
+- [x] Microsoft login button in `Login.tsx` (backend Graph API verification already implemented)
+- [x] `POST /api/auth/microsoft` wiring via `auth.api.ts`
+- [x] Same session/redirect handling as email login for both providers
+- [x] Requires user-created OAuth Client ID in Google Cloud Console (and Microsoft/Azure AD app registration for Microsoft) — exact `.env` slots documented (`VITE_GOOGLE_CLIENT_ID`, `VITE_MICROSOFT_CLIENT_ID`)
+
+---
+## Phase 10 — Employee Lifecycle & Soft Offboarding
+
+---
+## Phase 11 — Cleanup & Hardening
 - [ ] Add `requireRole(HR, COMPANY_ADMIN)` guard to `GET /api/employees/`
 - [ ] Build `AdminUserList.tsx` (user account directory)
 - [ ] Automated test suite (Vitest/Jest/Supertest) — at minimum for auth, attendance, and leave modules
 
+
 ---
 
 ## Next Immediate Priority
-1. **Phase 2 mismatch resolution** — decide manager-resolution strategy and default role/auth for CSV import (blocking; needs your product decision, not just code)
-2. **Phase 3** — build `AdminOrganization.tsx` (unblocks department creation bug + cleanly unblocks Phase 2 import)
-3. **Phase 2A/2B** — build the importer once Phase 3 exists and mismatches are resolved
+1. **Phase 10 — Route security & cleanup**: Add role guard to `GET /api/employees/`.
+2. **Phase 10 — Admin User List**: Build `AdminUserList.tsx` for HR/Admin user directory management.

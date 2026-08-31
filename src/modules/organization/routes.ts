@@ -1,6 +1,8 @@
 // src/modules/organization/routes.ts
 import { Router } from "express";
 import {
+  getTeamsSetting,
+  updateTeamsSetting,
   createDepartment,
   listDepartments,
   updateDepartment,
@@ -19,6 +21,8 @@ import {
   upsertDesignationAttendancePolicy,
   listDesignationAttendancePolicies,
   getDesignationAttendancePolicy,
+  getWorkingHours,
+  updateWorkingHours,
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/requireRole.js";
@@ -26,11 +30,16 @@ import { validateCompanyHeader } from "../../middlewares/validateCompany.js";
 import { UserRole } from "../../generated/prisma/enums.js";
 
 const router = Router();
-router.use(
-  authenticateJWT,
-  validateCompanyHeader,
-  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR)
-);
+router.use(authenticateJWT, validateCompanyHeader);
+
+// Public/Employee read access to company working hours
+router.get("/working-hours", getWorkingHours);
+
+// Management routes requiring COMPANY_ADMIN or HR role
+router.use(requireRole(UserRole.COMPANY_ADMIN, UserRole.HR));
+
+router.get("/teams-setting", getTeamsSetting);
+router.patch("/teams-setting", updateTeamsSetting);
 
 router.post("/departments", createDepartment);
 router.get("/departments", listDepartments);
@@ -51,6 +60,9 @@ router.post("/office-location", setOfficeLocation);
 router.get("/office-location", getOfficeLocation);
 router.put("/office-location", setOfficeLocation);
 router.patch("/office-location", updateOfficeLocation);
+
+router.patch("/working-hours", updateWorkingHours);
+router.put("/working-hours", updateWorkingHours);
 
 router.post(
   "/designation-attendance-policy",

@@ -2,7 +2,8 @@
 import { prisma } from "../../config/prisma.js";
 
 export interface UpdateEmployeeData {
-  teamId?: string;
+  departmentId?: string | null;
+  teamId?: string | null;
   designationId?: string;
   firstName?: string;
   middleName?: string | null;
@@ -25,6 +26,7 @@ export class EmployeeRepository {
   createEmployee(data: {
     userId: string;
     companyId: string;
+    departmentId?: string;
     teamId?: string;
     designationId: string;
     managerId?: string;
@@ -41,6 +43,9 @@ export class EmployeeRepository {
       data: {
         user: { connect: { id: data.userId } },
         company: { connect: { id: data.companyId } },
+        ...(data.departmentId && {
+          department: { connect: { id: data.departmentId } },
+        }),
         ...(data.teamId && { team: { connect: { id: data.teamId } } }),
         designation: { connect: { id: data.designationId } },
         ...(data.managerId && {
@@ -67,8 +72,9 @@ export class EmployeeRepository {
       where: { id: employeeId, companyId },
       include: {
         user: { select: { email: true } },
-        team: { select: { name: true } },
-        designation: { select: { name: true } },
+        department: { select: { id: true, name: true } },
+        team: { select: { id: true, name: true } },
+        designation: { select: { id: true, name: true } },
         manager: { select: { id: true, displayName: true } },
         subordinates: { select: { id: true, displayName: true } },
       },
@@ -81,8 +87,9 @@ export class EmployeeRepository {
       orderBy: { employeeCode: "asc" },
       include: {
         user: { select: { email: true } },
-        team: { select: { name: true } },
-        designation: { select: { name: true } },
+        department: { select: { id: true, name: true } },
+        team: { select: { id: true, name: true } },
+        designation: { select: { id: true, name: true } },
         manager: { select: { id: true, displayName: true } },
       },
     });
@@ -96,6 +103,13 @@ export class EmployeeRepository {
     return prisma.employeeProfile.update({
       where: { id: employeeId },
       data,
+      include: {
+        user: { select: { email: true } },
+        department: { select: { id: true, name: true } },
+        designation: { select: { id: true, name: true } },
+        team: { select: { id: true, name: true } },
+        manager: { select: { id: true, displayName: true } },
+      },
     });
   }
 
@@ -114,6 +128,13 @@ export class EmployeeRepository {
     return prisma.employeeProfile.update({
       where: { id: employeeId },
       data: { managerId: managerId ?? null },
+      include: {
+        user: { select: { email: true } },
+        department: { select: { id: true, name: true } },
+        designation: { select: { id: true, name: true } },
+        team: { select: { id: true, name: true } },
+        manager: { select: { id: true, displayName: true } },
+      },
     });
   }
 

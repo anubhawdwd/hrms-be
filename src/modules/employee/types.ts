@@ -3,6 +3,7 @@
 export interface CreateEmployeeDTO {
   userId: string;
   companyId: string;
+  departmentId?: string;
   teamId?: string;
   designationId: string;
 
@@ -18,7 +19,8 @@ export interface CreateEmployeeDTO {
 }
 
 export interface UpdateEmployeeDTO {
-  teamId?: string;
+  departmentId?: string | null;
+  teamId?: string | null;
   designationId?: string;
 
   firstName?: string;

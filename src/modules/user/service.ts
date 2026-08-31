@@ -1,8 +1,8 @@
-// src/modules/user/service.ts
-
+import bcrypt from "bcrypt";
 import { UserRepository } from "./repository.js";
 import type { CreateUserDTO, ListUsersDTO, UpdateUserDTO } from "./types.js";
 import { AuthProvider, UserRole } from "../../generated/prisma/enums.js";
+import { generateTemporaryPassword } from "../../utils/password.js";
 
 const repo = new UserRepository();
 
@@ -67,6 +67,36 @@ export class UserService {
     }
 
     return { message: "User updated successfully" };
+  }
+
+  async resetPassword(dto: { userId: string; companyId: string; manualPassword?: string }) {
+    const user = await repo.findById(dto.userId, dto.companyId);
+    if (!user) {
+      throw new Error("User not found in company");
+    }
+    if (!user.isActive) {
+      throw new Error("Cannot reset password for inactive user");
+    }
+
+    let temporaryPassword = dto.manualPassword?.trim();
+    if (temporaryPassword) {
+      if (temporaryPassword.length < 6) {
+        throw new Error("Password must be at least 6 characters long");
+      }
+    } else {
+      temporaryPassword = generateTemporaryPassword();
+    }
+
+    const passwordHash = await bcrypt.hash(temporaryPassword, 12);
+
+    await repo.resetPassword(dto.userId, dto.companyId, passwordHash);
+    await repo.deleteAllRefreshTokensByUser(dto.userId);
+
+    // Return temporary password once to the requesting admin (do NOT log or persist in plaintext)
+    return {
+      message: "Password reset successfully",
+      temporaryPassword,
+    };
   }
 
   async deactivateUser(userId: string, companyId: string) {

@@ -39,6 +39,7 @@ export type EmployeeProfileMinAggregateOutputType = {
   employeeCode: number | null
   userId: string | null
   companyId: string | null
+  departmentId: string | null
   designationId: string | null
   teamId: string | null
   managerId: string | null
@@ -59,6 +60,7 @@ export type EmployeeProfileMaxAggregateOutputType = {
   employeeCode: number | null
   userId: string | null
   companyId: string | null
+  departmentId: string | null
   designationId: string | null
   teamId: string | null
   managerId: string | null
@@ -79,6 +81,7 @@ export type EmployeeProfileCountAggregateOutputType = {
   employeeCode: number
   userId: number
   companyId: number
+  departmentId: number
   designationId: number
   teamId: number
   managerId: number
@@ -109,6 +112,7 @@ export type EmployeeProfileMinAggregateInputType = {
   employeeCode?: true
   userId?: true
   companyId?: true
+  departmentId?: true
   designationId?: true
   teamId?: true
   managerId?: true
@@ -129,6 +133,7 @@ export type EmployeeProfileMaxAggregateInputType = {
   employeeCode?: true
   userId?: true
   companyId?: true
+  departmentId?: true
   designationId?: true
   teamId?: true
   managerId?: true
@@ -149,6 +154,7 @@ export type EmployeeProfileCountAggregateInputType = {
   employeeCode?: true
   userId?: true
   companyId?: true
+  departmentId?: true
   designationId?: true
   teamId?: true
   managerId?: true
@@ -256,6 +262,7 @@ export type EmployeeProfileGroupByOutputType = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId: string | null
   designationId: string
   teamId: string | null
   managerId: string | null
@@ -299,6 +306,7 @@ export type EmployeeProfileWhereInput = {
   employeeCode?: Prisma.IntFilter<"EmployeeProfile"> | number
   userId?: Prisma.StringFilter<"EmployeeProfile"> | string
   companyId?: Prisma.StringFilter<"EmployeeProfile"> | string
+  departmentId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   designationId?: Prisma.StringFilter<"EmployeeProfile"> | string
   teamId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   managerId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
@@ -314,6 +322,7 @@ export type EmployeeProfileWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
+  department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
   designation?: Prisma.XOR<Prisma.DesignationScalarRelationFilter, Prisma.DesignationWhereInput>
   team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   manager?: Prisma.XOR<Prisma.EmployeeProfileNullableScalarRelationFilter, Prisma.EmployeeProfileWhereInput> | null
@@ -333,6 +342,7 @@ export type EmployeeProfileOrderByWithRelationInput = {
   employeeCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  departmentId?: Prisma.SortOrderInput | Prisma.SortOrder
   designationId?: Prisma.SortOrder
   teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   managerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -348,6 +358,7 @@ export type EmployeeProfileOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   company?: Prisma.CompanyOrderByWithRelationInput
+  department?: Prisma.DepartmentOrderByWithRelationInput
   designation?: Prisma.DesignationOrderByWithRelationInput
   team?: Prisma.TeamOrderByWithRelationInput
   manager?: Prisma.EmployeeProfileOrderByWithRelationInput
@@ -371,6 +382,7 @@ export type EmployeeProfileWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.EmployeeProfileWhereInput | Prisma.EmployeeProfileWhereInput[]
   employeeCode?: Prisma.IntFilter<"EmployeeProfile"> | number
   companyId?: Prisma.StringFilter<"EmployeeProfile"> | string
+  departmentId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   designationId?: Prisma.StringFilter<"EmployeeProfile"> | string
   teamId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   managerId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
@@ -386,6 +398,7 @@ export type EmployeeProfileWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"EmployeeProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
+  department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
   designation?: Prisma.XOR<Prisma.DesignationScalarRelationFilter, Prisma.DesignationWhereInput>
   team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   manager?: Prisma.XOR<Prisma.EmployeeProfileNullableScalarRelationFilter, Prisma.EmployeeProfileWhereInput> | null
@@ -405,6 +418,7 @@ export type EmployeeProfileOrderByWithAggregationInput = {
   employeeCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  departmentId?: Prisma.SortOrderInput | Prisma.SortOrder
   designationId?: Prisma.SortOrder
   teamId?: Prisma.SortOrderInput | Prisma.SortOrder
   managerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -433,6 +447,7 @@ export type EmployeeProfileScalarWhereWithAggregatesInput = {
   employeeCode?: Prisma.IntWithAggregatesFilter<"EmployeeProfile"> | number
   userId?: Prisma.StringWithAggregatesFilter<"EmployeeProfile"> | string
   companyId?: Prisma.StringWithAggregatesFilter<"EmployeeProfile"> | string
+  departmentId?: Prisma.StringNullableWithAggregatesFilter<"EmployeeProfile"> | string | null
   designationId?: Prisma.StringWithAggregatesFilter<"EmployeeProfile"> | string
   teamId?: Prisma.StringNullableWithAggregatesFilter<"EmployeeProfile"> | string | null
   managerId?: Prisma.StringNullableWithAggregatesFilter<"EmployeeProfile"> | string | null
@@ -463,6 +478,7 @@ export type EmployeeProfileCreateInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -482,6 +498,7 @@ export type EmployeeProfileUncheckedCreateInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -521,6 +538,7 @@ export type EmployeeProfileUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -540,6 +558,7 @@ export type EmployeeProfileUncheckedUpdateInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -569,6 +588,7 @@ export type EmployeeProfileCreateManyInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -604,6 +624,7 @@ export type EmployeeProfileUncheckedUpdateManyInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -644,6 +665,7 @@ export type EmployeeProfileCountOrderByAggregateInput = {
   employeeCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  departmentId?: Prisma.SortOrder
   designationId?: Prisma.SortOrder
   teamId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
@@ -668,6 +690,7 @@ export type EmployeeProfileMaxOrderByAggregateInput = {
   employeeCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  departmentId?: Prisma.SortOrder
   designationId?: Prisma.SortOrder
   teamId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
@@ -688,6 +711,7 @@ export type EmployeeProfileMinOrderByAggregateInput = {
   employeeCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  departmentId?: Prisma.SortOrder
   designationId?: Prisma.SortOrder
   teamId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
@@ -784,6 +808,48 @@ export type EmployeeProfileUncheckedUpdateOneWithoutUserNestedInput = {
   delete?: Prisma.EmployeeProfileWhereInput | boolean
   connect?: Prisma.EmployeeProfileWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeProfileUpdateToOneWithWhereWithoutUserInput, Prisma.EmployeeProfileUpdateWithoutUserInput>, Prisma.EmployeeProfileUncheckedUpdateWithoutUserInput>
+}
+
+export type EmployeeProfileCreateNestedManyWithoutDepartmentInput = {
+  create?: Prisma.XOR<Prisma.EmployeeProfileCreateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput> | Prisma.EmployeeProfileCreateWithoutDepartmentInput[] | Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput[]
+  connectOrCreate?: Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput | Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput[]
+  createMany?: Prisma.EmployeeProfileCreateManyDepartmentInputEnvelope
+  connect?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+}
+
+export type EmployeeProfileUncheckedCreateNestedManyWithoutDepartmentInput = {
+  create?: Prisma.XOR<Prisma.EmployeeProfileCreateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput> | Prisma.EmployeeProfileCreateWithoutDepartmentInput[] | Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput[]
+  connectOrCreate?: Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput | Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput[]
+  createMany?: Prisma.EmployeeProfileCreateManyDepartmentInputEnvelope
+  connect?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+}
+
+export type EmployeeProfileUpdateManyWithoutDepartmentNestedInput = {
+  create?: Prisma.XOR<Prisma.EmployeeProfileCreateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput> | Prisma.EmployeeProfileCreateWithoutDepartmentInput[] | Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput[]
+  connectOrCreate?: Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput | Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput[]
+  upsert?: Prisma.EmployeeProfileUpsertWithWhereUniqueWithoutDepartmentInput | Prisma.EmployeeProfileUpsertWithWhereUniqueWithoutDepartmentInput[]
+  createMany?: Prisma.EmployeeProfileCreateManyDepartmentInputEnvelope
+  set?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  disconnect?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  delete?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  connect?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  update?: Prisma.EmployeeProfileUpdateWithWhereUniqueWithoutDepartmentInput | Prisma.EmployeeProfileUpdateWithWhereUniqueWithoutDepartmentInput[]
+  updateMany?: Prisma.EmployeeProfileUpdateManyWithWhereWithoutDepartmentInput | Prisma.EmployeeProfileUpdateManyWithWhereWithoutDepartmentInput[]
+  deleteMany?: Prisma.EmployeeProfileScalarWhereInput | Prisma.EmployeeProfileScalarWhereInput[]
+}
+
+export type EmployeeProfileUncheckedUpdateManyWithoutDepartmentNestedInput = {
+  create?: Prisma.XOR<Prisma.EmployeeProfileCreateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput> | Prisma.EmployeeProfileCreateWithoutDepartmentInput[] | Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput[]
+  connectOrCreate?: Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput | Prisma.EmployeeProfileCreateOrConnectWithoutDepartmentInput[]
+  upsert?: Prisma.EmployeeProfileUpsertWithWhereUniqueWithoutDepartmentInput | Prisma.EmployeeProfileUpsertWithWhereUniqueWithoutDepartmentInput[]
+  createMany?: Prisma.EmployeeProfileCreateManyDepartmentInputEnvelope
+  set?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  disconnect?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  delete?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  connect?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
+  update?: Prisma.EmployeeProfileUpdateWithWhereUniqueWithoutDepartmentInput | Prisma.EmployeeProfileUpdateWithWhereUniqueWithoutDepartmentInput[]
+  updateMany?: Prisma.EmployeeProfileUpdateManyWithWhereWithoutDepartmentInput | Prisma.EmployeeProfileUpdateManyWithWhereWithoutDepartmentInput[]
+  deleteMany?: Prisma.EmployeeProfileScalarWhereInput | Prisma.EmployeeProfileScalarWhereInput[]
 }
 
 export type EmployeeProfileCreateNestedManyWithoutTeamInput = {
@@ -888,14 +954,6 @@ export type EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput = {
   connectOrCreate?: Prisma.EmployeeProfileCreateOrConnectWithoutManagerInput | Prisma.EmployeeProfileCreateOrConnectWithoutManagerInput[]
   createMany?: Prisma.EmployeeProfileCreateManyManagerInputEnvelope
   connect?: Prisma.EmployeeProfileWhereUniqueInput | Prisma.EmployeeProfileWhereUniqueInput[]
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -1068,6 +1126,7 @@ export type EmployeeProfileCreateWithoutCompanyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -1086,6 +1145,7 @@ export type EmployeeProfileUncheckedCreateWithoutCompanyInput = {
   id?: string
   employeeCode: number
   userId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -1144,6 +1204,7 @@ export type EmployeeProfileScalarWhereInput = {
   employeeCode?: Prisma.IntFilter<"EmployeeProfile"> | number
   userId?: Prisma.StringFilter<"EmployeeProfile"> | string
   companyId?: Prisma.StringFilter<"EmployeeProfile"> | string
+  departmentId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   designationId?: Prisma.StringFilter<"EmployeeProfile"> | string
   teamId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
   managerId?: Prisma.StringNullableFilter<"EmployeeProfile"> | string | null
@@ -1173,6 +1234,7 @@ export type EmployeeProfileCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -1191,6 +1253,7 @@ export type EmployeeProfileUncheckedCreateWithoutUserInput = {
   id?: string
   employeeCode: number
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -1245,6 +1308,7 @@ export type EmployeeProfileUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -1263,6 +1327,7 @@ export type EmployeeProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1287,6 +1352,90 @@ export type EmployeeProfileUncheckedUpdateWithoutUserInput = {
   employeeLeaveOverrides?: Prisma.EmployeeLeaveOverrideUncheckedUpdateManyWithoutEmployeeNestedInput
 }
 
+export type EmployeeProfileCreateWithoutDepartmentInput = {
+  id?: string
+  employeeCode: number
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  displayName: string
+  dateOfBirth?: Date | string | null
+  isActive?: boolean
+  isProbation?: boolean
+  joiningDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutEmployeeInput
+  company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
+  team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
+  manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
+  subordinates?: Prisma.EmployeeProfileCreateNestedManyWithoutManagerInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutEmployeeInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutEmployeeInput
+  employeeAttendanceOverrides?: Prisma.EmployeeAttendanceOverrideCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
+  approvedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutApprovedByInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  employeeLeaveOverrides?: Prisma.EmployeeLeaveOverrideCreateNestedManyWithoutEmployeeInput
+}
+
+export type EmployeeProfileUncheckedCreateWithoutDepartmentInput = {
+  id?: string
+  employeeCode: number
+  userId: string
+  companyId: string
+  designationId: string
+  teamId?: string | null
+  managerId?: string | null
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  displayName: string
+  dateOfBirth?: Date | string | null
+  isActive?: boolean
+  isProbation?: boolean
+  joiningDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  subordinates?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutManagerInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutEmployeeInput
+  employeeAttendanceOverrides?: Prisma.EmployeeAttendanceOverrideUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+  approvedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  employeeLeaveOverrides?: Prisma.EmployeeLeaveOverrideUncheckedCreateNestedManyWithoutEmployeeInput
+}
+
+export type EmployeeProfileCreateOrConnectWithoutDepartmentInput = {
+  where: Prisma.EmployeeProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmployeeProfileCreateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput>
+}
+
+export type EmployeeProfileCreateManyDepartmentInputEnvelope = {
+  data: Prisma.EmployeeProfileCreateManyDepartmentInput | Prisma.EmployeeProfileCreateManyDepartmentInput[]
+  skipDuplicates?: boolean
+}
+
+export type EmployeeProfileUpsertWithWhereUniqueWithoutDepartmentInput = {
+  where: Prisma.EmployeeProfileWhereUniqueInput
+  update: Prisma.XOR<Prisma.EmployeeProfileUpdateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedUpdateWithoutDepartmentInput>
+  create: Prisma.XOR<Prisma.EmployeeProfileCreateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedCreateWithoutDepartmentInput>
+}
+
+export type EmployeeProfileUpdateWithWhereUniqueWithoutDepartmentInput = {
+  where: Prisma.EmployeeProfileWhereUniqueInput
+  data: Prisma.XOR<Prisma.EmployeeProfileUpdateWithoutDepartmentInput, Prisma.EmployeeProfileUncheckedUpdateWithoutDepartmentInput>
+}
+
+export type EmployeeProfileUpdateManyWithWhereWithoutDepartmentInput = {
+  where: Prisma.EmployeeProfileScalarWhereInput
+  data: Prisma.XOR<Prisma.EmployeeProfileUpdateManyMutationInput, Prisma.EmployeeProfileUncheckedUpdateManyWithoutDepartmentInput>
+}
+
 export type EmployeeProfileCreateWithoutTeamInput = {
   id?: string
   employeeCode: number
@@ -1302,6 +1451,7 @@ export type EmployeeProfileCreateWithoutTeamInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
   subordinates?: Prisma.EmployeeProfileCreateNestedManyWithoutManagerInput
@@ -1320,6 +1470,7 @@ export type EmployeeProfileUncheckedCreateWithoutTeamInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   managerId?: string | null
   firstName: string
@@ -1384,6 +1535,7 @@ export type EmployeeProfileCreateWithoutDesignationInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
   subordinates?: Prisma.EmployeeProfileCreateNestedManyWithoutManagerInput
@@ -1402,6 +1554,7 @@ export type EmployeeProfileUncheckedCreateWithoutDesignationInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   teamId?: string | null
   managerId?: string | null
   firstName: string
@@ -1466,6 +1619,7 @@ export type EmployeeProfileCreateWithoutSubordinatesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -1484,6 +1638,7 @@ export type EmployeeProfileUncheckedCreateWithoutSubordinatesInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -1527,6 +1682,7 @@ export type EmployeeProfileCreateWithoutManagerInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   subordinates?: Prisma.EmployeeProfileCreateNestedManyWithoutManagerInput
@@ -1545,6 +1701,7 @@ export type EmployeeProfileUncheckedCreateWithoutManagerInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   firstName: string
@@ -1604,6 +1761,7 @@ export type EmployeeProfileUpdateWithoutSubordinatesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -1622,6 +1780,7 @@ export type EmployeeProfileUncheckedUpdateWithoutSubordinatesInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1676,6 +1835,7 @@ export type EmployeeProfileCreateWithoutAttendanceDaysInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -1694,6 +1854,7 @@ export type EmployeeProfileUncheckedCreateWithoutAttendanceDaysInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -1748,6 +1909,7 @@ export type EmployeeProfileUpdateWithoutAttendanceDaysInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -1766,6 +1928,7 @@ export type EmployeeProfileUncheckedUpdateWithoutAttendanceDaysInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1804,6 +1967,7 @@ export type EmployeeProfileCreateWithoutAttendanceViolationsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -1822,6 +1986,7 @@ export type EmployeeProfileUncheckedCreateWithoutAttendanceViolationsInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -1876,6 +2041,7 @@ export type EmployeeProfileUpdateWithoutAttendanceViolationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -1894,6 +2060,7 @@ export type EmployeeProfileUncheckedUpdateWithoutAttendanceViolationsInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1932,6 +2099,7 @@ export type EmployeeProfileCreateWithoutEmployeeAttendanceOverridesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -1950,6 +2118,7 @@ export type EmployeeProfileUncheckedCreateWithoutEmployeeAttendanceOverridesInpu
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -2004,6 +2173,7 @@ export type EmployeeProfileUpdateWithoutEmployeeAttendanceOverridesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -2022,6 +2192,7 @@ export type EmployeeProfileUncheckedUpdateWithoutEmployeeAttendanceOverridesInpu
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2060,6 +2231,7 @@ export type EmployeeProfileCreateWithoutLeaveBalancesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -2078,6 +2250,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveBalancesInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -2132,6 +2305,7 @@ export type EmployeeProfileUpdateWithoutLeaveBalancesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -2150,6 +2324,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveBalancesInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2188,6 +2363,7 @@ export type EmployeeProfileCreateWithoutLeaveRequestsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -2206,6 +2382,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveRequestsInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -2249,6 +2426,7 @@ export type EmployeeProfileCreateWithoutApprovedLeaveRequestsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -2267,6 +2445,7 @@ export type EmployeeProfileUncheckedCreateWithoutApprovedLeaveRequestsInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -2321,6 +2500,7 @@ export type EmployeeProfileUpdateWithoutLeaveRequestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -2339,6 +2519,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveRequestsInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2388,6 +2569,7 @@ export type EmployeeProfileUpdateWithoutApprovedLeaveRequestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -2406,6 +2588,7 @@ export type EmployeeProfileUncheckedUpdateWithoutApprovedLeaveRequestsInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2444,6 +2627,7 @@ export type EmployeeProfileCreateWithoutLeaveEncashmentsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -2462,6 +2646,7 @@ export type EmployeeProfileUncheckedCreateWithoutLeaveEncashmentsInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -2516,6 +2701,7 @@ export type EmployeeProfileUpdateWithoutLeaveEncashmentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -2534,6 +2720,7 @@ export type EmployeeProfileUncheckedUpdateWithoutLeaveEncashmentsInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2572,6 +2759,7 @@ export type EmployeeProfileCreateWithoutEmployeeLeaveOverridesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmployeeInput
   company: Prisma.CompanyCreateNestedOneWithoutEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutEmployeesInput
   designation: Prisma.DesignationCreateNestedOneWithoutEmployeesInput
   team?: Prisma.TeamCreateNestedOneWithoutEmployeesInput
   manager?: Prisma.EmployeeProfileCreateNestedOneWithoutSubordinatesInput
@@ -2590,6 +2778,7 @@ export type EmployeeProfileUncheckedCreateWithoutEmployeeLeaveOverridesInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -2644,6 +2833,7 @@ export type EmployeeProfileUpdateWithoutEmployeeLeaveOverridesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -2662,6 +2852,7 @@ export type EmployeeProfileUncheckedUpdateWithoutEmployeeLeaveOverridesInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2689,6 +2880,7 @@ export type EmployeeProfileCreateManyCompanyInput = {
   id?: string
   employeeCode: number
   userId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   managerId?: string | null
@@ -2718,6 +2910,7 @@ export type EmployeeProfileUpdateWithoutCompanyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
@@ -2736,6 +2929,7 @@ export type EmployeeProfileUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2764,6 +2958,105 @@ export type EmployeeProfileUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  designationId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type EmployeeProfileCreateManyDepartmentInput = {
+  id?: string
+  employeeCode: number
+  userId: string
+  companyId: string
+  designationId: string
+  teamId?: string | null
+  managerId?: string | null
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  displayName: string
+  dateOfBirth?: Date | string | null
+  isActive?: boolean
+  isProbation?: boolean
+  joiningDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type EmployeeProfileUpdateWithoutDepartmentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
+  company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
+  team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
+  manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
+  subordinates?: Prisma.EmployeeProfileUpdateManyWithoutManagerNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutEmployeeNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutEmployeeNestedInput
+  employeeAttendanceOverrides?: Prisma.EmployeeAttendanceOverrideUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
+  approvedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutApprovedByNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  employeeLeaveOverrides?: Prisma.EmployeeLeaveOverrideUpdateManyWithoutEmployeeNestedInput
+}
+
+export type EmployeeProfileUncheckedUpdateWithoutDepartmentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  designationId?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProbation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  joiningDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subordinates?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutManagerNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutEmployeeNestedInput
+  employeeAttendanceOverrides?: Prisma.EmployeeAttendanceOverrideUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+  approvedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  employeeLeaveOverrides?: Prisma.EmployeeLeaveOverrideUncheckedUpdateManyWithoutEmployeeNestedInput
+}
+
+export type EmployeeProfileUncheckedUpdateManyWithoutDepartmentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2784,6 +3077,7 @@ export type EmployeeProfileCreateManyTeamInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   managerId?: string | null
   firstName: string
@@ -2813,6 +3107,7 @@ export type EmployeeProfileUpdateWithoutTeamInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
   subordinates?: Prisma.EmployeeProfileUpdateManyWithoutManagerNestedInput
@@ -2831,6 +3126,7 @@ export type EmployeeProfileUncheckedUpdateWithoutTeamInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2859,6 +3155,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutTeamInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2878,6 +3175,7 @@ export type EmployeeProfileCreateManyDesignationInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   teamId?: string | null
   managerId?: string | null
   firstName: string
@@ -2907,6 +3205,7 @@ export type EmployeeProfileUpdateWithoutDesignationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   manager?: Prisma.EmployeeProfileUpdateOneWithoutSubordinatesNestedInput
   subordinates?: Prisma.EmployeeProfileUpdateManyWithoutManagerNestedInput
@@ -2925,6 +3224,7 @@ export type EmployeeProfileUncheckedUpdateWithoutDesignationInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2953,6 +3253,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutDesignationInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2972,6 +3273,7 @@ export type EmployeeProfileCreateManyManagerInput = {
   employeeCode: number
   userId: string
   companyId: string
+  departmentId?: string | null
   designationId: string
   teamId?: string | null
   firstName: string
@@ -3001,6 +3303,7 @@ export type EmployeeProfileUpdateWithoutManagerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmployeeNestedInput
   company?: Prisma.CompanyUpdateOneRequiredWithoutEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutEmployeesNestedInput
   designation?: Prisma.DesignationUpdateOneRequiredWithoutEmployeesNestedInput
   team?: Prisma.TeamUpdateOneWithoutEmployeesNestedInput
   subordinates?: Prisma.EmployeeProfileUpdateManyWithoutManagerNestedInput
@@ -3019,6 +3322,7 @@ export type EmployeeProfileUncheckedUpdateWithoutManagerInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3047,6 +3351,7 @@ export type EmployeeProfileUncheckedUpdateManyWithoutManagerInput = {
   employeeCode?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   designationId?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3169,6 +3474,7 @@ export type EmployeeProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   employeeCode?: boolean
   userId?: boolean
   companyId?: boolean
+  departmentId?: boolean
   designationId?: boolean
   teamId?: boolean
   managerId?: boolean
@@ -3184,6 +3490,7 @@ export type EmployeeProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  department?: boolean | Prisma.EmployeeProfile$departmentArgs<ExtArgs>
   designation?: boolean | Prisma.DesignationDefaultArgs<ExtArgs>
   team?: boolean | Prisma.EmployeeProfile$teamArgs<ExtArgs>
   manager?: boolean | Prisma.EmployeeProfile$managerArgs<ExtArgs>
@@ -3204,6 +3511,7 @@ export type EmployeeProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   employeeCode?: boolean
   userId?: boolean
   companyId?: boolean
+  departmentId?: boolean
   designationId?: boolean
   teamId?: boolean
   managerId?: boolean
@@ -3219,6 +3527,7 @@ export type EmployeeProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  department?: boolean | Prisma.EmployeeProfile$departmentArgs<ExtArgs>
   designation?: boolean | Prisma.DesignationDefaultArgs<ExtArgs>
   team?: boolean | Prisma.EmployeeProfile$teamArgs<ExtArgs>
   manager?: boolean | Prisma.EmployeeProfile$managerArgs<ExtArgs>
@@ -3229,6 +3538,7 @@ export type EmployeeProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   employeeCode?: boolean
   userId?: boolean
   companyId?: boolean
+  departmentId?: boolean
   designationId?: boolean
   teamId?: boolean
   managerId?: boolean
@@ -3244,6 +3554,7 @@ export type EmployeeProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  department?: boolean | Prisma.EmployeeProfile$departmentArgs<ExtArgs>
   designation?: boolean | Prisma.DesignationDefaultArgs<ExtArgs>
   team?: boolean | Prisma.EmployeeProfile$teamArgs<ExtArgs>
   manager?: boolean | Prisma.EmployeeProfile$managerArgs<ExtArgs>
@@ -3254,6 +3565,7 @@ export type EmployeeProfileSelectScalar = {
   employeeCode?: boolean
   userId?: boolean
   companyId?: boolean
+  departmentId?: boolean
   designationId?: boolean
   teamId?: boolean
   managerId?: boolean
@@ -3269,10 +3581,11 @@ export type EmployeeProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type EmployeeProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeCode" | "userId" | "companyId" | "designationId" | "teamId" | "managerId" | "firstName" | "middleName" | "lastName" | "displayName" | "dateOfBirth" | "isActive" | "isProbation" | "joiningDate" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeProfile"]>
+export type EmployeeProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeCode" | "userId" | "companyId" | "departmentId" | "designationId" | "teamId" | "managerId" | "firstName" | "middleName" | "lastName" | "displayName" | "dateOfBirth" | "isActive" | "isProbation" | "joiningDate" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeProfile"]>
 export type EmployeeProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  department?: boolean | Prisma.EmployeeProfile$departmentArgs<ExtArgs>
   designation?: boolean | Prisma.DesignationDefaultArgs<ExtArgs>
   team?: boolean | Prisma.EmployeeProfile$teamArgs<ExtArgs>
   manager?: boolean | Prisma.EmployeeProfile$managerArgs<ExtArgs>
@@ -3290,6 +3603,7 @@ export type EmployeeProfileInclude<ExtArgs extends runtime.Types.Extensions.Inte
 export type EmployeeProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  department?: boolean | Prisma.EmployeeProfile$departmentArgs<ExtArgs>
   designation?: boolean | Prisma.DesignationDefaultArgs<ExtArgs>
   team?: boolean | Prisma.EmployeeProfile$teamArgs<ExtArgs>
   manager?: boolean | Prisma.EmployeeProfile$managerArgs<ExtArgs>
@@ -3297,6 +3611,7 @@ export type EmployeeProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Ty
 export type EmployeeProfileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  department?: boolean | Prisma.EmployeeProfile$departmentArgs<ExtArgs>
   designation?: boolean | Prisma.DesignationDefaultArgs<ExtArgs>
   team?: boolean | Prisma.EmployeeProfile$teamArgs<ExtArgs>
   manager?: boolean | Prisma.EmployeeProfile$managerArgs<ExtArgs>
@@ -3307,6 +3622,7 @@ export type $EmployeeProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     company: Prisma.$CompanyPayload<ExtArgs>
+    department: Prisma.$DepartmentPayload<ExtArgs> | null
     designation: Prisma.$DesignationPayload<ExtArgs>
     team: Prisma.$TeamPayload<ExtArgs> | null
     manager: Prisma.$EmployeeProfilePayload<ExtArgs> | null
@@ -3325,6 +3641,7 @@ export type $EmployeeProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     employeeCode: number
     userId: string
     companyId: string
+    departmentId: string | null
     designationId: string
     teamId: string | null
     managerId: string | null
@@ -3734,6 +4051,7 @@ export interface Prisma__EmployeeProfileClient<T, Null = never, ExtArgs extends 
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   company<T extends Prisma.CompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  department<T extends Prisma.EmployeeProfile$departmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmployeeProfile$departmentArgs<ExtArgs>>): Prisma.Prisma__DepartmentClient<runtime.Types.Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   designation<T extends Prisma.DesignationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignationDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignationClient<runtime.Types.Result.GetResult<Prisma.$DesignationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   team<T extends Prisma.EmployeeProfile$teamArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmployeeProfile$teamArgs<ExtArgs>>): Prisma.Prisma__TeamClient<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   manager<T extends Prisma.EmployeeProfile$managerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmployeeProfile$managerArgs<ExtArgs>>): Prisma.Prisma__EmployeeProfileClient<runtime.Types.Result.GetResult<Prisma.$EmployeeProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -3779,6 +4097,7 @@ export interface EmployeeProfileFieldRefs {
   readonly employeeCode: Prisma.FieldRef<"EmployeeProfile", 'Int'>
   readonly userId: Prisma.FieldRef<"EmployeeProfile", 'String'>
   readonly companyId: Prisma.FieldRef<"EmployeeProfile", 'String'>
+  readonly departmentId: Prisma.FieldRef<"EmployeeProfile", 'String'>
   readonly designationId: Prisma.FieldRef<"EmployeeProfile", 'String'>
   readonly teamId: Prisma.FieldRef<"EmployeeProfile", 'String'>
   readonly managerId: Prisma.FieldRef<"EmployeeProfile", 'String'>
@@ -4185,6 +4504,25 @@ export type EmployeeProfileDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many EmployeeProfiles to delete.
    */
   limit?: number
+}
+
+/**
+ * EmployeeProfile.department
+ */
+export type EmployeeProfile$departmentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Department
+   */
+  select?: Prisma.DepartmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Department
+   */
+  omit?: Prisma.DepartmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DepartmentInclude<ExtArgs> | null
+  where?: Prisma.DepartmentWhereInput
 }
 
 /**

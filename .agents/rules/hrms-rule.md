@@ -14,3 +14,5 @@ Never invent status. Verify before marking `[x]`.
 Keep documentation concise.
 Never modify application code during `/updatedoc`.
 Always preserve sequential session numbering.
+
+Before reporting completion, inspect the files you created during this task and delete all temporary/test scripts that are no longer required.

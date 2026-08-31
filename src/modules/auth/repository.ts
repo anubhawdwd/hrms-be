@@ -5,7 +5,7 @@ export class AuthRepository {
   findCompanyById(companyId: string) {
     return prisma.company.findUnique({
       where: { id: companyId },
-      select: { id: true, isActive: true },
+      select: { id: true, name: true, isActive: true, usesTeams: true },
     });
   }
 

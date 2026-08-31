@@ -19,3 +19,9 @@ export interface UpdateUserDTO {
   authProvider?: AuthProvider;
   role?: UserRole; 
 }
+
+export interface ResetPasswordDTO {
+  userId: string;
+  companyId: string;
+  manualPassword?: string;
+}

@@ -141,6 +141,34 @@ export async function getAttendanceViolations(req: Request, res: Response) {
   }
 }
 
+export async function listEmployeeAttendanceOverrides(
+  req: Request,
+  res: Response
+) {
+  try {
+    res.json(await service.listEmployeeAttendanceOverrides(req.companyId!));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function deleteEmployeeAttendanceOverride(
+  req: Request,
+  res: Response
+) {
+  try {
+    const { employeeId } = req.params;
+    if (!employeeId || Array.isArray(employeeId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    await service.deleteEmployeeAttendanceOverride(employeeId, req.companyId!);
+    res.json({ message: "Employee attendance override deleted" });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 export async function upsertEmployeeAttendanceOverride(
   req: Request,
   res: Response
@@ -158,8 +186,7 @@ export async function upsertEmployeeAttendanceOverride(
     if (
       !employeeId ||
       typeof autoPresent !== "boolean" ||
-      typeof attendanceExempt !== "boolean" ||
-      !validFrom
+      typeof attendanceExempt !== "boolean"
     ) {
       return res.status(400).json({ message: "Invalid input" });
     }
@@ -171,6 +198,7 @@ export async function upsertEmployeeAttendanceOverride(
       reason,
       validFrom,
       validTo,
+      companyId: req.companyId!,
     });
 
     res.status(201).json(override);
@@ -208,20 +236,46 @@ export async function hrAddAttendanceEvent(req: Request, res: Response) {
 export async function hrUpdateAttendanceDay(req: Request, res: Response) {
   try {
     const { attendanceDayId } = req.params;
-    const { status, totalMinutes } = req.body;
+    const { status, totalMinutes, checkIn, checkOut } = req.body;
 
     if (!attendanceDayId || Array.isArray(attendanceDayId)) {
       return res.status(400).json({ message: "Invalid request" });
     }
 
-    const result = await service.hrUpdateAttendanceDay(
-      attendanceDayId,
+    const result = await service.hrUpdateAttendanceDay(attendanceDayId, {
       status,
-      totalMinutes
-    );
+      totalMinutes,
+      checkIn,
+      checkOut,
+    });
 
     res.json(result);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
 }
+
+export async function getAttendanceDashboard(req: Request, res: Response) {
+  try {
+    const { month } = req.query;
+
+    if (!month || typeof month !== "string") {
+      return res
+        .status(400)
+        .json({ message: "Query parameter 'month' is required in YYYY-MM format" });
+    }
+
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid month format. Expected YYYY-MM (e.g. 2026-08)" });
+    }
+
+    const data = await service.getAttendanceDashboard(req.companyId!, month);
+
+    res.json(data);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+

@@ -10,6 +10,16 @@ import type {
 const repo = new OrganizationRepository();
 
 export class OrganizationService {
+  // =================== COMPANY SETTINGS ===================
+
+  async getTeamsSetting(companyId: string) {
+    return repo.getTeamsSetting(companyId);
+  }
+
+  async updateTeamsSetting(companyId: string, usesTeams: boolean) {
+    return repo.updateTeamsSetting(companyId, Boolean(usesTeams));
+  }
+
   // =================== DEPARTMENTS ===================
 
   async createDepartment(dto: CreateDepartmentDTO) {
@@ -155,5 +165,84 @@ export class OrganizationService {
     designationId: string
   ) {
     return repo.getDesignationAttendancePolicy(companyId, designationId);
+  }
+
+  // =================== WORKING HOURS CONFIG ===================
+
+  async getWorkingHoursConfig(companyId: string) {
+    return repo.getWorkingHoursConfig(companyId);
+  }
+
+  async updateWorkingHoursConfig(
+    companyId: string,
+    dto: {
+      workingMinutes?: number;
+      lunchMinutes?: number;
+      breakMinutes?: number;
+      graceMinutes?: number;
+    }
+  ) {
+    if (dto.workingMinutes !== undefined) {
+      if (
+        typeof dto.workingMinutes !== "number" ||
+        dto.workingMinutes < 60 ||
+        dto.workingMinutes > 1440
+      ) {
+        throw new Error(
+          "Working minutes must be an integer between 60 (1 hour) and 1440 (24 hours)"
+        );
+      }
+    }
+
+    if (dto.lunchMinutes !== undefined) {
+      if (
+        typeof dto.lunchMinutes !== "number" ||
+        dto.lunchMinutes < 0 ||
+        dto.lunchMinutes > 240
+      ) {
+        throw new Error(
+          "Lunch duration must be an integer between 0 and 240 minutes (4 hours)"
+        );
+      }
+    }
+
+    if (dto.breakMinutes !== undefined) {
+      if (
+        typeof dto.breakMinutes !== "number" ||
+        dto.breakMinutes < 0 ||
+        dto.breakMinutes > 240
+      ) {
+        throw new Error(
+          "Break duration must be an integer between 0 and 240 minutes (4 hours)"
+        );
+      }
+    }
+
+    if (dto.graceMinutes !== undefined) {
+      if (
+        typeof dto.graceMinutes !== "number" ||
+        dto.graceMinutes < 0 ||
+        dto.graceMinutes > 120
+      ) {
+        throw new Error(
+          "Grace period must be an integer between 0 and 120 minutes (2 hours)"
+        );
+      }
+    }
+
+    return repo.updateWorkingHoursConfig(companyId, {
+      ...(dto.workingMinutes !== undefined && {
+        workingMinutes: Math.round(dto.workingMinutes),
+      }),
+      ...(dto.lunchMinutes !== undefined && {
+        lunchMinutes: Math.round(dto.lunchMinutes),
+      }),
+      ...(dto.breakMinutes !== undefined && {
+        breakMinutes: Math.round(dto.breakMinutes),
+      }),
+      ...(dto.graceMinutes !== undefined && {
+        graceMinutes: Math.round(dto.graceMinutes),
+      }),
+    });
   }
 }

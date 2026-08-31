@@ -59,6 +59,19 @@ export class AttendanceRepository {
     });
   }
 
+  findUnclosedAttendanceDaysBefore(employeeId: string, beforeDate: Date) {
+    return prisma.attendanceDay.findMany({
+      where: {
+        employeeId,
+        date: { lt: beforeDate },
+      },
+      include: {
+        events: { orderBy: { timestamp: "asc" } },
+      },
+      orderBy: { date: "asc" },
+    });
+  }
+
   getAttendanceByDay(employeeId: string, companyId: string, date: Date) {
     return prisma.attendanceDay.findFirst({
       where: { employeeId, companyId, date },
@@ -138,10 +151,64 @@ export class AttendanceRepository {
 
   // =================== EMPLOYEE OVERRIDE ===================
 
+  listEmployeeAttendanceOverrides(companyId: string) {
+    return prisma.employeeAttendanceOverride.findMany({
+      where: {
+        employee: { companyId },
+      },
+      include: {
+        employee: {
+          select: {
+            id: true,
+            displayName: true,
+            employeeCode: true,
+            designation: {
+              select: {
+                id: true,
+                name: true,
+                attendancePolicy: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   findEmployeeAttendanceOverride(employeeId: string, validFrom: Date) {
     return prisma.employeeAttendanceOverride.findFirst({
       where: { employeeId, validFrom },
     });
+  }
+
+  async upsertEmployeeAttendanceOverride(data: {
+    employeeId: string;
+    autoPresent: boolean;
+    attendanceExempt: boolean;
+    reason?: string;
+    validFrom: Date;
+    validTo?: Date;
+  }) {
+    const existing = await prisma.employeeAttendanceOverride.findFirst({
+      where: { employeeId: data.employeeId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (existing) {
+      return prisma.employeeAttendanceOverride.update({
+        where: { id: existing.id },
+        data: {
+          autoPresent: data.autoPresent,
+          attendanceExempt: data.attendanceExempt,
+          ...(data.reason !== undefined && { reason: data.reason }),
+          validFrom: data.validFrom,
+          ...(data.validTo !== undefined && { validTo: data.validTo }),
+        },
+      });
+    }
+
+    return prisma.employeeAttendanceOverride.create({ data });
   }
 
   createEmployeeAttendanceOverride(data: {
@@ -153,6 +220,17 @@ export class AttendanceRepository {
     validTo?: Date;
   }) {
     return prisma.employeeAttendanceOverride.create({ data });
+  }
+
+  async deleteEmployeeAttendanceOverride(employeeId: string, companyId: string) {
+    const employee = await prisma.employeeProfile.findFirst({
+      where: { id: employeeId, companyId },
+    });
+    if (!employee) throw new Error("Employee not found in this company");
+
+    return prisma.employeeAttendanceOverride.deleteMany({
+      where: { employeeId },
+    });
   }
 
   // =================== HR OPS ===================
@@ -220,5 +298,130 @@ export class AttendanceRepository {
         durationValue: true,
       },
     });
+  }
+
+  // =================== MONTHLY DASHBOARD DATA ===================
+
+  async getMonthlyDashboardData(
+    companyId: string,
+    startOfMonth: Date,
+    endOfMonth: Date
+  ) {
+    const [
+      employees,
+      attendanceDays,
+      leaveRequests,
+      holidays,
+      overrides,
+      company,
+    ] = await Promise.all([
+      prisma.employeeProfile.findMany({
+        where: { companyId, isActive: true },
+        select: {
+          id: true,
+          employeeCode: true,
+          displayName: true,
+          firstName: true,
+          lastName: true,
+          department: {
+            select: {
+              name: true,
+            },
+          },
+          designation: {
+            select: {
+              name: true,
+              attendancePolicy: true,
+            },
+          },
+          team: {
+            select: {
+              name: true,
+              department: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { employeeCode: "asc" },
+      }),
+
+      prisma.attendanceDay.findMany({
+        where: {
+          companyId,
+          date: { gte: startOfMonth, lte: endOfMonth },
+        },
+        include: {
+          events: { orderBy: { timestamp: "asc" } },
+        },
+      }),
+
+      prisma.leaveRequest.findMany({
+        where: {
+          employee: { companyId },
+          status: { in: ["APPROVED", "PENDING"] },
+          fromDate: { lte: endOfMonth },
+          toDate: { gte: startOfMonth },
+        },
+        select: {
+          id: true,
+          employeeId: true,
+          status: true,
+          durationType: true,
+          durationValue: true,
+          startTime: true,
+          endTime: true,
+          fromDate: true,
+          toDate: true,
+          leaveType: {
+            select: {
+              name: true,
+              code: true,
+            },
+          },
+        },
+      }),
+
+      prisma.holiday.findMany({
+        where: {
+          companyId,
+          date: { gte: startOfMonth, lte: endOfMonth },
+        },
+      }),
+
+      prisma.employeeAttendanceOverride.findMany({
+        where: {
+          employee: { companyId },
+          validFrom: { lte: endOfMonth },
+          OR: [{ validTo: null }, { validTo: { gte: startOfMonth } }],
+        },
+      }),
+
+      prisma.company.findUnique({
+        where: { id: companyId },
+        select: {
+          workingMinutes: true,
+          lunchMinutes: true,
+          breakMinutes: true,
+          graceMinutes: true,
+        },
+      }),
+    ]);
+
+    return {
+      employees,
+      attendanceDays,
+      leaveRequests,
+      holidays,
+      overrides,
+      companyConfig: company ?? {
+        workingMinutes: 480,
+        lunchMinutes: 30,
+        breakMinutes: 20,
+        graceMinutes: 10,
+      },
+    };
   }
 }

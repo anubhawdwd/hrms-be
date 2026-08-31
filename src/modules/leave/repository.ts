@@ -90,18 +90,28 @@ export class LeaveRepository {
     });
   }
 
-  getLeavePolicy(params: {
+  async getLeavePolicy(params: {
     companyId: string;
     leaveTypeId: string;
     year: number;
   }) {
-    return prisma.leavePolicy.findUnique({
+    const exact = await prisma.leavePolicy.findUnique({
       where: {
         leaveTypeId_year: {
           leaveTypeId: params.leaveTypeId,
           year: params.year,
         },
       },
+    });
+    if (exact) return exact;
+
+    return prisma.leavePolicy.findFirst({
+      where: {
+        companyId: params.companyId,
+        leaveTypeId: params.leaveTypeId,
+        year: { lte: params.year },
+      },
+      orderBy: { year: "desc" },
     });
   }
 
@@ -419,12 +429,42 @@ export class LeaveRepository {
         employee: {
           select: {
             id: true,
+            employeeCode: true,
             displayName: true,
             designation: { select: { name: true } },
+            team: { select: { name: true } },
           },
         },
       },
       orderBy: { createdAt: "asc" },
+    });
+  }
+
+  // =================== RecentLeaveRequests ===================
+  listRecentLeaveRequests(
+    companyId: string,
+    status: LeaveRequestStatus,
+    sinceDate: Date
+  ) {
+    return prisma.leaveRequest.findMany({
+      where: {
+        status,
+        employee: { companyId },
+        updatedAt: { gte: sinceDate },
+      },
+      include: {
+        leaveType: { select: { name: true, code: true } },
+        employee: {
+          select: {
+            id: true,
+            displayName: true,
+            employeeCode: true,
+            designation: { select: { name: true } },
+            team: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
     });
   }
 

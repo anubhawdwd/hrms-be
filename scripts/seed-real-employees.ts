@@ -222,6 +222,7 @@ async function main() {
             userId: user.id,
             companyId: company!.id,
             designationId: designationId!,
+            departmentId: departmentId!,
             firstName,
             lastName,
             displayName,

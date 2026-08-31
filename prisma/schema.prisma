@@ -28,6 +28,12 @@ model Company {
 
   attendanceViolations  AttendanceViolation[]
   logGeoFenceViolations Boolean               @default(false)
+  usesTeams             Boolean               @default(false)
+
+  workingMinutes Int @default(480)
+  lunchMinutes   Int @default(30)
+  breakMinutes   Int @default(20)
+  graceMinutes   Int @default(10)
 
   designationAttendancePolicies DesignationAttendancePolicy[]
 }
@@ -65,6 +71,7 @@ model Department {
   company   Company @relation(fields: [companyId], references: [id])
   isActive  Boolean @default(true)
   teams     Team[]
+  employees EmployeeProfile[]
 
   createdAt DateTime @default(now())
 
@@ -97,6 +104,7 @@ model Designation {
   createdAt DateTime @default(now())
 
   @@unique([companyId, name])
+  @@index([companyId])
 }
 
 model DesignationAttendancePolicy {
@@ -129,6 +137,9 @@ model EmployeeProfile {
 
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
+
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
 
   designationId String
   designation   Designation @relation(fields: [designationId], references: [id])
@@ -163,6 +174,7 @@ model EmployeeProfile {
 
   @@unique([companyId, employeeCode])
   @@index([companyId])
+  @@index([departmentId])
   @@index([managerId])
 }
 

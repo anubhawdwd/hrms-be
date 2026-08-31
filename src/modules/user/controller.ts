@@ -52,6 +52,24 @@ export async function updateUser(req: Request, res: Response) {
   }
 }
 
+export async function resetPassword(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const { manualPassword } = req.body;
+    if (!userId || Array.isArray(userId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+    const result = await service.resetPassword({
+      userId,
+      companyId: req.companyId!,
+      manualPassword,
+    });
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 export async function deactivateUser(req: Request, res: Response) {
   try {
     const { userId } = req.params;

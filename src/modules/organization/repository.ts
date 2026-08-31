@@ -2,6 +2,24 @@
 import { prisma } from "../../config/prisma.js";
 
 export class OrganizationRepository {
+  // =================== COMPANY SETTINGS ===================
+
+  async getTeamsSetting(companyId: string) {
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+      select: { usesTeams: true },
+    });
+    return company?.usesTeams ?? false;
+  }
+
+  async updateTeamsSetting(companyId: string, usesTeams: boolean) {
+    return prisma.company.update({
+      where: { id: companyId },
+      data: { usesTeams },
+      select: { usesTeams: true },
+    });
+  }
+
   // =================== DEPARTMENTS ===================
 
   createDepartment(name: string, companyId: string) {
@@ -193,6 +211,63 @@ export class OrganizationRepository {
   getDesignationAttendancePolicy(companyId: string, designationId: string) {
     return prisma.designationAttendancePolicy.findFirst({
       where: { companyId, designationId },
+    });
+  }
+
+  // =================== WORKING HOURS CONFIG ===================
+
+  async getWorkingHoursConfig(companyId: string) {
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+      select: {
+        workingMinutes: true,
+        lunchMinutes: true,
+        breakMinutes: true,
+        graceMinutes: true,
+      },
+    });
+
+    return (
+      company ?? {
+        workingMinutes: 480,
+        lunchMinutes: 30,
+        breakMinutes: 20,
+        graceMinutes: 10,
+      }
+    );
+  }
+
+  async updateWorkingHoursConfig(
+    companyId: string,
+    data: {
+      workingMinutes?: number;
+      lunchMinutes?: number;
+      breakMinutes?: number;
+      graceMinutes?: number;
+    }
+  ) {
+    return prisma.company.update({
+      where: { id: companyId },
+      data: {
+        ...(data.workingMinutes !== undefined && {
+          workingMinutes: data.workingMinutes,
+        }),
+        ...(data.lunchMinutes !== undefined && {
+          lunchMinutes: data.lunchMinutes,
+        }),
+        ...(data.breakMinutes !== undefined && {
+          breakMinutes: data.breakMinutes,
+        }),
+        ...(data.graceMinutes !== undefined && {
+          graceMinutes: data.graceMinutes,
+        }),
+      },
+      select: {
+        workingMinutes: true,
+        lunchMinutes: true,
+        breakMinutes: true,
+        graceMinutes: true,
+      },
     });
   }
 }

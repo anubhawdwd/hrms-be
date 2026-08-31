@@ -94,7 +94,12 @@ export const CompanyScalarFieldEnum = {
   name: 'name',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  logGeoFenceViolations: 'logGeoFenceViolations'
+  logGeoFenceViolations: 'logGeoFenceViolations',
+  usesTeams: 'usesTeams',
+  workingMinutes: 'workingMinutes',
+  lunchMinutes: 'lunchMinutes',
+  breakMinutes: 'breakMinutes',
+  graceMinutes: 'graceMinutes'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -169,6 +174,7 @@ export const EmployeeProfileScalarFieldEnum = {
   employeeCode: 'employeeCode',
   userId: 'userId',
   companyId: 'companyId',
+  departmentId: 'departmentId',
   designationId: 'designationId',
   teamId: 'teamId',
   managerId: 'managerId',

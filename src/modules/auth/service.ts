@@ -46,8 +46,10 @@ export class AuthService {
       email: user.email,
       role: user.role,
       companyId: user.companyId,
+      companyName: company.name,
       geoFencingEnabled: office?.geoFencingEnabled ?? false,
       mustChangePassword: user.mustChangePassword ?? false,
+      usesTeams: company.usesTeams ?? false,
     };
   }
 
@@ -108,8 +110,10 @@ export class AuthService {
         email: user.email,
         role: user.role,
         companyId: user.companyId,
+        companyName: company.name,
         geoFencingEnabled: office?.geoFencingEnabled ?? false,
         mustChangePassword: user.mustChangePassword ?? false,
+        usesTeams: company.usesTeams ?? false,
       },
     };
   }
@@ -211,7 +215,7 @@ export class AuthService {
       throw new Error("User not found in company");
     }
 
-    if (user.authProvider !== AuthProvider.GOOGLE) {
+    if (user.authProvider !== AuthProvider.GOOGLE && user.authProvider !== AuthProvider.LOCAL) {
       throw new Error("Use your configured login method");
     }
 
@@ -235,6 +239,7 @@ export class AuthService {
       await repo.clearMustChangePassword(user.id);
     }
 
+    const company = await repo.findCompanyById(user.companyId);
     const office = await repo.findActiveOfficeLocation(user.companyId);
 
     return {
@@ -245,8 +250,10 @@ export class AuthService {
         email: user.email,
         role: user.role,
         companyId: user.companyId,
+        companyName: company?.name || "Company Workspace",
         geoFencingEnabled: office?.geoFencingEnabled ?? false,
         mustChangePassword: false,
+        usesTeams: company?.usesTeams ?? false,
       },
     };
   }
@@ -278,7 +285,7 @@ export class AuthService {
       throw new Error("User not found in company");
     }
 
-    if (user.authProvider !== AuthProvider.MICROSOFT) {
+    if (user.authProvider !== AuthProvider.MICROSOFT && user.authProvider !== AuthProvider.LOCAL) {
       throw new Error("Use your configured login method");
     }
 
@@ -302,6 +309,7 @@ export class AuthService {
       await repo.clearMustChangePassword(user.id);
     }
 
+    const company = await repo.findCompanyById(user.companyId);
     const office = await repo.findActiveOfficeLocation(user.companyId);
 
     return {
@@ -312,8 +320,10 @@ export class AuthService {
         email: user.email,
         role: user.role,
         companyId: user.companyId,
+        companyName: company?.name || "Company Workspace",
         geoFencingEnabled: office?.geoFencingEnabled ?? false,
         mustChangePassword: false,
+        usesTeams: company?.usesTeams ?? false,
       },
     };
   }

@@ -184,6 +184,7 @@ export type DepartmentWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Department"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   teams?: Prisma.TeamListRelationFilter
+  employees?: Prisma.EmployeeProfileListRelationFilter
 }
 
 export type DepartmentOrderByWithRelationInput = {
@@ -194,6 +195,7 @@ export type DepartmentOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
   teams?: Prisma.TeamOrderByRelationAggregateInput
+  employees?: Prisma.EmployeeProfileOrderByRelationAggregateInput
 }
 
 export type DepartmentWhereUniqueInput = Prisma.AtLeast<{
@@ -208,6 +210,7 @@ export type DepartmentWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Department"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   teams?: Prisma.TeamListRelationFilter
+  employees?: Prisma.EmployeeProfileListRelationFilter
 }, "id" | "companyId_name">
 
 export type DepartmentOrderByWithAggregationInput = {
@@ -239,6 +242,7 @@ export type DepartmentCreateInput = {
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutDepartmentsInput
   teams?: Prisma.TeamCreateNestedManyWithoutDepartmentInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutDepartmentInput
 }
 
 export type DepartmentUncheckedCreateInput = {
@@ -248,6 +252,7 @@ export type DepartmentUncheckedCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutDepartmentInput
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutDepartmentInput
 }
 
 export type DepartmentUpdateInput = {
@@ -257,6 +262,7 @@ export type DepartmentUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutDepartmentsNestedInput
   teams?: Prisma.TeamUpdateManyWithoutDepartmentNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutDepartmentNestedInput
 }
 
 export type DepartmentUncheckedUpdateInput = {
@@ -266,6 +272,7 @@ export type DepartmentUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teams?: Prisma.TeamUncheckedUpdateManyWithoutDepartmentNestedInput
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutDepartmentNestedInput
 }
 
 export type DepartmentCreateManyInput = {
@@ -335,6 +342,11 @@ export type DepartmentScalarRelationFilter = {
   isNot?: Prisma.DepartmentWhereInput
 }
 
+export type DepartmentNullableScalarRelationFilter = {
+  is?: Prisma.DepartmentWhereInput | null
+  isNot?: Prisma.DepartmentWhereInput | null
+}
+
 export type DepartmentCreateNestedManyWithoutCompanyInput = {
   create?: Prisma.XOR<Prisma.DepartmentCreateWithoutCompanyInput, Prisma.DepartmentUncheckedCreateWithoutCompanyInput> | Prisma.DepartmentCreateWithoutCompanyInput[] | Prisma.DepartmentUncheckedCreateWithoutCompanyInput[]
   connectOrCreate?: Prisma.DepartmentCreateOrConnectWithoutCompanyInput | Prisma.DepartmentCreateOrConnectWithoutCompanyInput[]
@@ -391,12 +403,29 @@ export type DepartmentUpdateOneRequiredWithoutTeamsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DepartmentUpdateToOneWithWhereWithoutTeamsInput, Prisma.DepartmentUpdateWithoutTeamsInput>, Prisma.DepartmentUncheckedUpdateWithoutTeamsInput>
 }
 
+export type DepartmentCreateNestedOneWithoutEmployeesInput = {
+  create?: Prisma.XOR<Prisma.DepartmentCreateWithoutEmployeesInput, Prisma.DepartmentUncheckedCreateWithoutEmployeesInput>
+  connectOrCreate?: Prisma.DepartmentCreateOrConnectWithoutEmployeesInput
+  connect?: Prisma.DepartmentWhereUniqueInput
+}
+
+export type DepartmentUpdateOneWithoutEmployeesNestedInput = {
+  create?: Prisma.XOR<Prisma.DepartmentCreateWithoutEmployeesInput, Prisma.DepartmentUncheckedCreateWithoutEmployeesInput>
+  connectOrCreate?: Prisma.DepartmentCreateOrConnectWithoutEmployeesInput
+  upsert?: Prisma.DepartmentUpsertWithoutEmployeesInput
+  disconnect?: Prisma.DepartmentWhereInput | boolean
+  delete?: Prisma.DepartmentWhereInput | boolean
+  connect?: Prisma.DepartmentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DepartmentUpdateToOneWithWhereWithoutEmployeesInput, Prisma.DepartmentUpdateWithoutEmployeesInput>, Prisma.DepartmentUncheckedUpdateWithoutEmployeesInput>
+}
+
 export type DepartmentCreateWithoutCompanyInput = {
   id?: string
   name: string
   isActive?: boolean
   createdAt?: Date | string
   teams?: Prisma.TeamCreateNestedManyWithoutDepartmentInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutDepartmentInput
 }
 
 export type DepartmentUncheckedCreateWithoutCompanyInput = {
@@ -405,6 +434,7 @@ export type DepartmentUncheckedCreateWithoutCompanyInput = {
   isActive?: boolean
   createdAt?: Date | string
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutDepartmentInput
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutDepartmentInput
 }
 
 export type DepartmentCreateOrConnectWithoutCompanyInput = {
@@ -450,6 +480,7 @@ export type DepartmentCreateWithoutTeamsInput = {
   isActive?: boolean
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutDepartmentsInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutDepartmentInput
 }
 
 export type DepartmentUncheckedCreateWithoutTeamsInput = {
@@ -458,6 +489,7 @@ export type DepartmentUncheckedCreateWithoutTeamsInput = {
   companyId: string
   isActive?: boolean
   createdAt?: Date | string
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutDepartmentInput
 }
 
 export type DepartmentCreateOrConnectWithoutTeamsInput = {
@@ -482,6 +514,7 @@ export type DepartmentUpdateWithoutTeamsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutDepartmentsNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutDepartmentNestedInput
 }
 
 export type DepartmentUncheckedUpdateWithoutTeamsInput = {
@@ -490,6 +523,59 @@ export type DepartmentUncheckedUpdateWithoutTeamsInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutDepartmentNestedInput
+}
+
+export type DepartmentCreateWithoutEmployeesInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  company: Prisma.CompanyCreateNestedOneWithoutDepartmentsInput
+  teams?: Prisma.TeamCreateNestedManyWithoutDepartmentInput
+}
+
+export type DepartmentUncheckedCreateWithoutEmployeesInput = {
+  id?: string
+  name: string
+  companyId: string
+  isActive?: boolean
+  createdAt?: Date | string
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutDepartmentInput
+}
+
+export type DepartmentCreateOrConnectWithoutEmployeesInput = {
+  where: Prisma.DepartmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DepartmentCreateWithoutEmployeesInput, Prisma.DepartmentUncheckedCreateWithoutEmployeesInput>
+}
+
+export type DepartmentUpsertWithoutEmployeesInput = {
+  update: Prisma.XOR<Prisma.DepartmentUpdateWithoutEmployeesInput, Prisma.DepartmentUncheckedUpdateWithoutEmployeesInput>
+  create: Prisma.XOR<Prisma.DepartmentCreateWithoutEmployeesInput, Prisma.DepartmentUncheckedCreateWithoutEmployeesInput>
+  where?: Prisma.DepartmentWhereInput
+}
+
+export type DepartmentUpdateToOneWithWhereWithoutEmployeesInput = {
+  where?: Prisma.DepartmentWhereInput
+  data: Prisma.XOR<Prisma.DepartmentUpdateWithoutEmployeesInput, Prisma.DepartmentUncheckedUpdateWithoutEmployeesInput>
+}
+
+export type DepartmentUpdateWithoutEmployeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDepartmentsNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutDepartmentNestedInput
+}
+
+export type DepartmentUncheckedUpdateWithoutEmployeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutDepartmentNestedInput
 }
 
 export type DepartmentCreateManyCompanyInput = {
@@ -505,6 +591,7 @@ export type DepartmentUpdateWithoutCompanyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teams?: Prisma.TeamUpdateManyWithoutDepartmentNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutDepartmentNestedInput
 }
 
 export type DepartmentUncheckedUpdateWithoutCompanyInput = {
@@ -513,6 +600,7 @@ export type DepartmentUncheckedUpdateWithoutCompanyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teams?: Prisma.TeamUncheckedUpdateManyWithoutDepartmentNestedInput
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutDepartmentNestedInput
 }
 
 export type DepartmentUncheckedUpdateManyWithoutCompanyInput = {
@@ -529,10 +617,12 @@ export type DepartmentUncheckedUpdateManyWithoutCompanyInput = {
 
 export type DepartmentCountOutputType = {
   teams: number
+  employees: number
 }
 
 export type DepartmentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teams?: boolean | DepartmentCountOutputTypeCountTeamsArgs
+  employees?: boolean | DepartmentCountOutputTypeCountEmployeesArgs
 }
 
 /**
@@ -552,6 +642,13 @@ export type DepartmentCountOutputTypeCountTeamsArgs<ExtArgs extends runtime.Type
   where?: Prisma.TeamWhereInput
 }
 
+/**
+ * DepartmentCountOutputType without action
+ */
+export type DepartmentCountOutputTypeCountEmployeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeProfileWhereInput
+}
+
 
 export type DepartmentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -561,6 +658,7 @@ export type DepartmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   teams?: boolean | Prisma.Department$teamsArgs<ExtArgs>
+  employees?: boolean | Prisma.Department$employeesArgs<ExtArgs>
   _count?: boolean | Prisma.DepartmentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["department"]>
 
@@ -594,6 +692,7 @@ export type DepartmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type DepartmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   teams?: boolean | Prisma.Department$teamsArgs<ExtArgs>
+  employees?: boolean | Prisma.Department$employeesArgs<ExtArgs>
   _count?: boolean | Prisma.DepartmentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DepartmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -608,6 +707,7 @@ export type $DepartmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     company: Prisma.$CompanyPayload<ExtArgs>
     teams: Prisma.$TeamPayload<ExtArgs>[]
+    employees: Prisma.$EmployeeProfilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1011,6 +1111,7 @@ export interface Prisma__DepartmentClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   company<T extends Prisma.CompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   teams<T extends Prisma.Department$teamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Department$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employees<T extends Prisma.Department$employeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Department$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1462,6 +1563,30 @@ export type Department$teamsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.TeamScalarFieldEnum | Prisma.TeamScalarFieldEnum[]
+}
+
+/**
+ * Department.employees
+ */
+export type Department$employeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeProfile
+   */
+  select?: Prisma.EmployeeProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeProfile
+   */
+  omit?: Prisma.EmployeeProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeProfileInclude<ExtArgs> | null
+  where?: Prisma.EmployeeProfileWhereInput
+  orderBy?: Prisma.EmployeeProfileOrderByWithRelationInput | Prisma.EmployeeProfileOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeProfileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeProfileScalarFieldEnum | Prisma.EmployeeProfileScalarFieldEnum[]
 }
 
 /**

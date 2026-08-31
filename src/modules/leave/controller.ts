@@ -411,6 +411,25 @@ export async function listPendingLeaveRequests(req: Request, res: Response) {
   }
 }
 
+// =================== RecentLeaveRequests ===================
+export async function listRecentLeaveRequests(req: Request, res: Response) {
+  try {
+    const { status, days } = req.query;
+
+    const result = await service.listRecentLeaveRequests({
+      companyId: req.companyId!,
+      ...(typeof status === "string" ? { status } : {}),
+      ...(typeof days === "string" && !Number.isNaN(Number(days))
+        ? { days: Number(days) }
+        : {}),
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 // =================== HOLIDAYS ===================
 
 export async function createHoliday(req: Request, res: Response) {
@@ -448,6 +467,21 @@ export async function deleteHoliday(req: Request, res: Response) {
       return res.status(400).json({ message: "Invalid request" });
     }
     res.json(await service.deleteHoliday(holidayId));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+export async function listEmployeeLeaveRequests(req: Request, res: Response) {
+  try {
+    const { employeeId } = req.params;
+    if (!employeeId || Array.isArray(employeeId)) {
+      return res.status(400).json({ message: "Employee ID is required" });
+    }
+    const requests = await service.listEmployeeLeaveRequests(
+      employeeId,
+      req.companyId!
+    );
+    res.json(requests);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }

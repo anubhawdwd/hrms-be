@@ -4,6 +4,30 @@ import { OrganizationService } from "./service.js";
 
 const service = new OrganizationService();
 
+// =================== COMPANY SETTINGS ===================
+
+export async function getTeamsSetting(req: Request, res: Response) {
+  try {
+    const usesTeams = await service.getTeamsSetting(req.companyId!);
+    res.json({ usesTeams });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function updateTeamsSetting(req: Request, res: Response) {
+  try {
+    const { usesTeams } = req.body;
+    if (typeof usesTeams !== "boolean") {
+      return res.status(400).json({ message: "usesTeams must be a boolean" });
+    }
+    const result = await service.updateTeamsSetting(req.companyId!, usesTeams);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 // =================== DEPARTMENTS ===================
 
 export async function createDepartment(req: Request, res: Response) {
@@ -316,3 +340,49 @@ export async function getDesignationAttendancePolicy(
     res.status(400).json({ message: err.message });
   }
 }
+
+export async function getWorkingHours(req: Request, res: Response) {
+  try {
+    const result = await service.getWorkingHoursConfig(req.companyId!);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function updateWorkingHours(req: Request, res: Response) {
+  try {
+    const { workingMinutes, lunchMinutes, breakMinutes, graceMinutes } =
+      req.body;
+
+    if (
+      (workingMinutes !== undefined && typeof workingMinutes !== "number") ||
+      (lunchMinutes !== undefined && typeof lunchMinutes !== "number") ||
+      (breakMinutes !== undefined && typeof breakMinutes !== "number") ||
+      (graceMinutes !== undefined && typeof graceMinutes !== "number")
+    ) {
+      return res.status(400).json({ message: "Duration values must be numbers" });
+    }
+
+    if (
+      workingMinutes === undefined &&
+      lunchMinutes === undefined &&
+      breakMinutes === undefined &&
+      graceMinutes === undefined
+    ) {
+      return res.status(400).json({ message: "Nothing to update" });
+    }
+
+    const result = await service.updateWorkingHoursConfig(req.companyId!, {
+      ...(workingMinutes !== undefined && { workingMinutes }),
+      ...(lunchMinutes !== undefined && { lunchMinutes }),
+      ...(breakMinutes !== undefined && { breakMinutes }),
+      ...(graceMinutes !== undefined && { graceMinutes }),
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+

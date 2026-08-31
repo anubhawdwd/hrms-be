@@ -37,4 +37,19 @@ export interface UpdateOfficeLocationDTO {
   geoFencingEnabled?: boolean;
 }
 
+export interface WorkingHoursConfigDTO {
+  workingMinutes: number;
+  lunchMinutes: number;
+  breakMinutes: number;
+  graceMinutes: number;
+}
+
+export interface UpdateWorkingHoursConfigDTO {
+  workingMinutes?: number;
+  lunchMinutes?: number;
+  breakMinutes?: number;
+  graceMinutes?: number;
+}
+
+
 

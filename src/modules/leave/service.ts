@@ -309,6 +309,16 @@ export class LeaveService {
     });
   }
 
+  async listEmployeeLeaveRequests(employeeId: string, companyId: string) {
+    const employee = await prisma.employeeProfile.findFirst({
+      where: { id: employeeId, companyId },
+    });
+    if (!employee) {
+      throw new Error("Employee not found in this company");
+    }
+    return repo.listLeaveRequestsForEmployee(employeeId);
+  }
+
   async listMyLeaveRequests(userId: string, companyId: string) {
     const employee = await this.resolveEmployee(userId, companyId);
     return repo.listLeaveRequestsForEmployee(employee.id);
@@ -558,6 +568,43 @@ export class LeaveService {
   // =================== PendingLeaveRequest ===================
   async listPendingLeaveRequests(companyId: string) {
     return repo.listPendingLeaveRequests(companyId);
+  }
+
+  // =================== RecentLeaveRequests ===================
+  async listRecentLeaveRequests(params: {
+    companyId: string;
+    status?: string;
+    days?: number;
+  }) {
+    let statusEnum: LeaveRequestStatus = LeaveRequestStatus.APPROVED;
+    if (params.status) {
+      const upper = params.status.toUpperCase();
+      if (
+        Object.values(LeaveRequestStatus).includes(
+          upper as LeaveRequestStatus
+        )
+      ) {
+        statusEnum = upper as LeaveRequestStatus;
+      } else {
+        throw new Error(
+          `Invalid status. Expected one of: ${Object.values(
+            LeaveRequestStatus
+          ).join(", ")}`
+        );
+      }
+    }
+
+    const days =
+      params.days !== undefined && !Number.isNaN(Number(params.days))
+        ? Math.max(1, Math.min(365, Number(params.days)))
+        : 7;
+    const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+    return repo.listRecentLeaveRequests(
+      params.companyId,
+      statusEnum,
+      sinceDate
+    );
   }
 
   // =================== HOLIDAYS ===================

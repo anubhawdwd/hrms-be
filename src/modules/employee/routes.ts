@@ -26,7 +26,11 @@ router.post(
   createEmployee
 );
 
-router.get("/", listEmployees);
+router.get(
+  "/",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  listEmployees
+);
 
 router.get("/me", getMyEmployeeProfile);
 

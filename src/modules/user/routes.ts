@@ -4,6 +4,7 @@ import {
   createUser,
   deactivateUser,
   listUsers,
+  resetPassword,
   updateUser,
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
@@ -24,6 +25,11 @@ router.get(
   "/",
   requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
   listUsers
+);
+router.post(
+  "/:userId/reset-password",
+  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+  resetPassword
 );
 router.patch(
   "/:userId",

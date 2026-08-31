@@ -43,6 +43,7 @@ export class EmployeeService {
     const employee = await repo.createEmployee({
       userId: dto.userId,
       companyId: dto.companyId,
+      ...(dto.departmentId && { departmentId: dto.departmentId }),
       ...(dto.teamId && { teamId: dto.teamId }),
       designationId: dto.designationId,
       ...(dto.managerId && { managerId: dto.managerId }),
@@ -105,10 +106,12 @@ export class EmployeeService {
     employeeId: string,
     companyId: string,
     dto: {
-      teamId?: string;
+      departmentId?: string | null;
+      teamId?: string | null;
       designationId?: string;
       joiningDate?: string;
       isProbation?: boolean;
+      isActive?: boolean;
       firstName?: string;
       middleName?: string;
       lastName?: string;
@@ -117,10 +120,12 @@ export class EmployeeService {
     }
   ) {
     return repo.updateEmployee(employeeId, companyId, {
-      ...(dto.teamId && { teamId: dto.teamId }),
+      ...(dto.departmentId !== undefined && { departmentId: dto.departmentId }),
+      ...(dto.teamId !== undefined && { teamId: dto.teamId }),
       ...(dto.designationId && { designationId: dto.designationId }),
       ...(dto.joiningDate && { joiningDate: new Date(dto.joiningDate) }),
       ...(dto.isProbation !== undefined && { isProbation: dto.isProbation }),
+      ...(dto.isActive !== undefined && { isActive: dto.isActive }),
       ...(dto.firstName && { firstName: dto.firstName }),
       ...(dto.middleName !== undefined && { middleName: dto.middleName }),
       ...(dto.lastName && { lastName: dto.lastName }),
