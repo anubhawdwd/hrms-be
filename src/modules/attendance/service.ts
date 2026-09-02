@@ -75,6 +75,7 @@ export class AttendanceService {
         lunchMinutes: true,
         breakMinutes: true,
         graceMinutes: true,
+        workWeekDays: true,
       },
     });
     const workingMinutes = company?.workingMinutes ?? 480;
@@ -374,7 +375,8 @@ export class AttendanceService {
 
   async getAttendanceDashboard(
     companyId: string,
-    monthStr: string
+    monthStr: string,
+    targetEmployeeId?: string
   ): Promise<AttendanceDashboardResponse> {
     if (!monthStr || !/^\d{4}-(0[1-9]|1[0-2])$/.test(monthStr)) {
       throw new Error("Invalid month format. Expected YYYY-MM");
@@ -406,7 +408,8 @@ export class AttendanceService {
     } = await repo.getMonthlyDashboardData(
       companyId,
       startOfMonth,
-      endOfMonth
+      endOfMonth,
+      targetEmployeeId
     );
 
     const workingMinutes = companyConfig?.workingMinutes ?? 480;
@@ -446,6 +449,7 @@ export class AttendanceService {
     }
 
     // 3. Build days metadata array
+    const workWeekDays = companyConfig?.workWeekDays ?? 5;
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const daysMeta: AttendanceDashboardResponse["days"] = [];
     let totalWorkingDays = 0;
@@ -454,7 +458,10 @@ export class AttendanceService {
       const curDate = new Date(Date.UTC(year, monthIndex, d));
       const dateStr = curDate.toISOString().slice(0, 10);
       const dayOfWeekNum = curDate.getUTCDay();
-      const isWeekend = dayOfWeekNum === 0 || dayOfWeekNum === 6;
+      const isWeekend =
+        workWeekDays === 6
+          ? dayOfWeekNum === 0
+          : dayOfWeekNum === 0 || dayOfWeekNum === 6;
       const holidayName = holidaysMap.get(dateStr) ?? null;
 
       if (!isWeekend && !holidayName) {
@@ -738,6 +745,37 @@ export class AttendanceService {
   }
 
   // =================== VIOLATIONS ===================
+
+  async getMyMonthlyAttendance(params: {
+    companyId: string;
+    userId: string;
+    monthStr: string;
+  }) {
+    const employee = await prisma.employeeProfile.findFirst({
+      where: { userId: params.userId, companyId: params.companyId },
+    });
+    if (!employee) {
+      throw new Error("Employee profile not found");
+    }
+
+    const dashboard = await this.getAttendanceDashboard(
+      params.companyId,
+      params.monthStr,
+      employee.id
+    );
+
+    const employeeRow = dashboard.employees[0] || null;
+
+    return {
+      month: dashboard.month,
+      startDate: dashboard.startDate,
+      endDate: dashboard.endDate,
+      totalDays: dashboard.totalDays,
+      days: dashboard.days,
+      employee: employeeRow,
+      companySummary: dashboard.companySummary,
+    };
+  }
 
   async getAttendanceViolations(
     companyId: string,

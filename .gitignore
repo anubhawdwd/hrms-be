@@ -48,3 +48,8 @@ build/Release/
 
 # Vite
 vite.config.js.timestamp-*
+
+# backups
+backups/*
+
+# TEMPORARY FOR TESTING/DEBUGGING ONLY - REMOVE AFTER FIXING

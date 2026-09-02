@@ -31,6 +31,7 @@ export type CompanyAvgAggregateOutputType = {
   lunchMinutes: number | null
   breakMinutes: number | null
   graceMinutes: number | null
+  workWeekDays: number | null
 }
 
 export type CompanySumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type CompanySumAggregateOutputType = {
   lunchMinutes: number | null
   breakMinutes: number | null
   graceMinutes: number | null
+  workWeekDays: number | null
 }
 
 export type CompanyMinAggregateOutputType = {
@@ -51,6 +53,8 @@ export type CompanyMinAggregateOutputType = {
   lunchMinutes: number | null
   breakMinutes: number | null
   graceMinutes: number | null
+  workWeekDays: number | null
+  sandwichRuleEnabled: boolean | null
 }
 
 export type CompanyMaxAggregateOutputType = {
@@ -64,6 +68,8 @@ export type CompanyMaxAggregateOutputType = {
   lunchMinutes: number | null
   breakMinutes: number | null
   graceMinutes: number | null
+  workWeekDays: number | null
+  sandwichRuleEnabled: boolean | null
 }
 
 export type CompanyCountAggregateOutputType = {
@@ -77,6 +83,8 @@ export type CompanyCountAggregateOutputType = {
   lunchMinutes: number
   breakMinutes: number
   graceMinutes: number
+  workWeekDays: number
+  sandwichRuleEnabled: number
   _all: number
 }
 
@@ -86,6 +94,7 @@ export type CompanyAvgAggregateInputType = {
   lunchMinutes?: true
   breakMinutes?: true
   graceMinutes?: true
+  workWeekDays?: true
 }
 
 export type CompanySumAggregateInputType = {
@@ -93,6 +102,7 @@ export type CompanySumAggregateInputType = {
   lunchMinutes?: true
   breakMinutes?: true
   graceMinutes?: true
+  workWeekDays?: true
 }
 
 export type CompanyMinAggregateInputType = {
@@ -106,6 +116,8 @@ export type CompanyMinAggregateInputType = {
   lunchMinutes?: true
   breakMinutes?: true
   graceMinutes?: true
+  workWeekDays?: true
+  sandwichRuleEnabled?: true
 }
 
 export type CompanyMaxAggregateInputType = {
@@ -119,6 +131,8 @@ export type CompanyMaxAggregateInputType = {
   lunchMinutes?: true
   breakMinutes?: true
   graceMinutes?: true
+  workWeekDays?: true
+  sandwichRuleEnabled?: true
 }
 
 export type CompanyCountAggregateInputType = {
@@ -132,6 +146,8 @@ export type CompanyCountAggregateInputType = {
   lunchMinutes?: true
   breakMinutes?: true
   graceMinutes?: true
+  workWeekDays?: true
+  sandwichRuleEnabled?: true
   _all?: true
 }
 
@@ -232,6 +248,8 @@ export type CompanyGroupByOutputType = {
   lunchMinutes: number
   breakMinutes: number
   graceMinutes: number
+  workWeekDays: number
+  sandwichRuleEnabled: boolean
   _count: CompanyCountAggregateOutputType | null
   _avg: CompanyAvgAggregateOutputType | null
   _sum: CompanySumAggregateOutputType | null
@@ -268,6 +286,8 @@ export type CompanyWhereInput = {
   lunchMinutes?: Prisma.IntFilter<"Company"> | number
   breakMinutes?: Prisma.IntFilter<"Company"> | number
   graceMinutes?: Prisma.IntFilter<"Company"> | number
+  workWeekDays?: Prisma.IntFilter<"Company"> | number
+  sandwichRuleEnabled?: Prisma.BoolFilter<"Company"> | boolean
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
@@ -292,6 +312,8 @@ export type CompanyOrderByWithRelationInput = {
   lunchMinutes?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
   graceMinutes?: Prisma.SortOrder
+  workWeekDays?: Prisma.SortOrder
+  sandwichRuleEnabled?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   departments?: Prisma.DepartmentOrderByRelationAggregateInput
   designations?: Prisma.DesignationOrderByRelationAggregateInput
@@ -319,6 +341,8 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   lunchMinutes?: Prisma.IntFilter<"Company"> | number
   breakMinutes?: Prisma.IntFilter<"Company"> | number
   graceMinutes?: Prisma.IntFilter<"Company"> | number
+  workWeekDays?: Prisma.IntFilter<"Company"> | number
+  sandwichRuleEnabled?: Prisma.BoolFilter<"Company"> | boolean
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
@@ -343,6 +367,8 @@ export type CompanyOrderByWithAggregationInput = {
   lunchMinutes?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
   graceMinutes?: Prisma.SortOrder
+  workWeekDays?: Prisma.SortOrder
+  sandwichRuleEnabled?: Prisma.SortOrder
   _count?: Prisma.CompanyCountOrderByAggregateInput
   _avg?: Prisma.CompanyAvgOrderByAggregateInput
   _max?: Prisma.CompanyMaxOrderByAggregateInput
@@ -364,6 +390,8 @@ export type CompanyScalarWhereWithAggregatesInput = {
   lunchMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
   breakMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
   graceMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
+  workWeekDays?: Prisma.IntWithAggregatesFilter<"Company"> | number
+  sandwichRuleEnabled?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
 }
 
 export type CompanyCreateInput = {
@@ -377,6 +405,8 @@ export type CompanyCreateInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -401,6 +431,8 @@ export type CompanyUncheckedCreateInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -425,6 +457,8 @@ export type CompanyUpdateInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -449,6 +483,8 @@ export type CompanyUncheckedUpdateInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -473,6 +509,8 @@ export type CompanyCreateManyInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
 }
 
 export type CompanyUpdateManyMutationInput = {
@@ -486,6 +524,8 @@ export type CompanyUpdateManyMutationInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CompanyUncheckedUpdateManyInput = {
@@ -499,6 +539,8 @@ export type CompanyUncheckedUpdateManyInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CompanyCountOrderByAggregateInput = {
@@ -512,6 +554,8 @@ export type CompanyCountOrderByAggregateInput = {
   lunchMinutes?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
   graceMinutes?: Prisma.SortOrder
+  workWeekDays?: Prisma.SortOrder
+  sandwichRuleEnabled?: Prisma.SortOrder
 }
 
 export type CompanyAvgOrderByAggregateInput = {
@@ -519,6 +563,7 @@ export type CompanyAvgOrderByAggregateInput = {
   lunchMinutes?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
   graceMinutes?: Prisma.SortOrder
+  workWeekDays?: Prisma.SortOrder
 }
 
 export type CompanyMaxOrderByAggregateInput = {
@@ -532,6 +577,8 @@ export type CompanyMaxOrderByAggregateInput = {
   lunchMinutes?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
   graceMinutes?: Prisma.SortOrder
+  workWeekDays?: Prisma.SortOrder
+  sandwichRuleEnabled?: Prisma.SortOrder
 }
 
 export type CompanyMinOrderByAggregateInput = {
@@ -545,6 +592,8 @@ export type CompanyMinOrderByAggregateInput = {
   lunchMinutes?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
   graceMinutes?: Prisma.SortOrder
+  workWeekDays?: Prisma.SortOrder
+  sandwichRuleEnabled?: Prisma.SortOrder
 }
 
 export type CompanySumOrderByAggregateInput = {
@@ -552,6 +601,7 @@ export type CompanySumOrderByAggregateInput = {
   lunchMinutes?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
   graceMinutes?: Prisma.SortOrder
+  workWeekDays?: Prisma.SortOrder
 }
 
 export type CompanyScalarRelationFilter = {
@@ -744,6 +794,8 @@ export type CompanyCreateWithoutUsersInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -767,6 +819,8 @@ export type CompanyUncheckedCreateWithoutUsersInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -806,6 +860,8 @@ export type CompanyUpdateWithoutUsersInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -829,6 +885,8 @@ export type CompanyUncheckedUpdateWithoutUsersInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -852,6 +910,8 @@ export type CompanyCreateWithoutDepartmentsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -875,6 +935,8 @@ export type CompanyUncheckedCreateWithoutDepartmentsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -914,6 +976,8 @@ export type CompanyUpdateWithoutDepartmentsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -937,6 +1001,8 @@ export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -960,6 +1026,8 @@ export type CompanyCreateWithoutDesignationsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -983,6 +1051,8 @@ export type CompanyUncheckedCreateWithoutDesignationsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -1022,6 +1092,8 @@ export type CompanyUpdateWithoutDesignationsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -1045,6 +1117,8 @@ export type CompanyUncheckedUpdateWithoutDesignationsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1068,6 +1142,8 @@ export type CompanyCreateWithoutDesignationAttendancePoliciesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1091,6 +1167,8 @@ export type CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1130,6 +1208,8 @@ export type CompanyUpdateWithoutDesignationAttendancePoliciesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1153,6 +1233,8 @@ export type CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1176,6 +1258,8 @@ export type CompanyCreateWithoutEmployeesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1199,6 +1283,8 @@ export type CompanyUncheckedCreateWithoutEmployeesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1238,6 +1324,8 @@ export type CompanyUpdateWithoutEmployeesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1261,6 +1349,8 @@ export type CompanyUncheckedUpdateWithoutEmployeesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1284,6 +1374,8 @@ export type CompanyCreateWithoutAttendanceDaysInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1307,6 +1399,8 @@ export type CompanyUncheckedCreateWithoutAttendanceDaysInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1346,6 +1440,8 @@ export type CompanyUpdateWithoutAttendanceDaysInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1369,6 +1465,8 @@ export type CompanyUncheckedUpdateWithoutAttendanceDaysInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1392,6 +1490,8 @@ export type CompanyCreateWithoutAttendanceViolationsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1415,6 +1515,8 @@ export type CompanyUncheckedCreateWithoutAttendanceViolationsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1454,6 +1556,8 @@ export type CompanyUpdateWithoutAttendanceViolationsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1477,6 +1581,8 @@ export type CompanyUncheckedUpdateWithoutAttendanceViolationsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1500,6 +1606,8 @@ export type CompanyCreateWithoutOfficeLocationsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1523,6 +1631,8 @@ export type CompanyUncheckedCreateWithoutOfficeLocationsInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1562,6 +1672,8 @@ export type CompanyUpdateWithoutOfficeLocationsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1585,6 +1697,8 @@ export type CompanyUncheckedUpdateWithoutOfficeLocationsInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1608,6 +1722,8 @@ export type CompanyCreateWithoutLeaveTypesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1631,6 +1747,8 @@ export type CompanyUncheckedCreateWithoutLeaveTypesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1670,6 +1788,8 @@ export type CompanyUpdateWithoutLeaveTypesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1693,6 +1813,8 @@ export type CompanyUncheckedUpdateWithoutLeaveTypesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1716,6 +1838,8 @@ export type CompanyCreateWithoutLeavePoliciesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1739,6 +1863,8 @@ export type CompanyUncheckedCreateWithoutLeavePoliciesInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1778,6 +1904,8 @@ export type CompanyUpdateWithoutLeavePoliciesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1801,6 +1929,8 @@ export type CompanyUncheckedUpdateWithoutLeavePoliciesInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1824,6 +1954,8 @@ export type CompanyCreateWithoutHolidaysInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1847,6 +1979,8 @@ export type CompanyUncheckedCreateWithoutHolidaysInput = {
   lunchMinutes?: number
   breakMinutes?: number
   graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1886,6 +2020,8 @@ export type CompanyUpdateWithoutHolidaysInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1909,6 +2045,8 @@ export type CompanyUncheckedUpdateWithoutHolidaysInput = {
   lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -2053,6 +2191,8 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   lunchMinutes?: boolean
   breakMinutes?: boolean
   graceMinutes?: boolean
+  workWeekDays?: boolean
+  sandwichRuleEnabled?: boolean
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
   designations?: boolean | Prisma.Company$designationsArgs<ExtArgs>
@@ -2078,6 +2218,8 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   lunchMinutes?: boolean
   breakMinutes?: boolean
   graceMinutes?: boolean
+  workWeekDays?: boolean
+  sandwichRuleEnabled?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2091,6 +2233,8 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   lunchMinutes?: boolean
   breakMinutes?: boolean
   graceMinutes?: boolean
+  workWeekDays?: boolean
+  sandwichRuleEnabled?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectScalar = {
@@ -2104,9 +2248,11 @@ export type CompanySelectScalar = {
   lunchMinutes?: boolean
   breakMinutes?: boolean
   graceMinutes?: boolean
+  workWeekDays?: boolean
+  sandwichRuleEnabled?: boolean
 }
 
-export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt" | "logGeoFenceViolations" | "usesTeams" | "workingMinutes" | "lunchMinutes" | "breakMinutes" | "graceMinutes", ExtArgs["result"]["company"]>
+export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt" | "logGeoFenceViolations" | "usesTeams" | "workingMinutes" | "lunchMinutes" | "breakMinutes" | "graceMinutes" | "workWeekDays" | "sandwichRuleEnabled", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
@@ -2150,6 +2296,8 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     lunchMinutes: number
     breakMinutes: number
     graceMinutes: number
+    workWeekDays: number
+    sandwichRuleEnabled: boolean
   }, ExtArgs["result"]["company"]>
   composites: {}
 }
@@ -2594,6 +2742,8 @@ export interface CompanyFieldRefs {
   readonly lunchMinutes: Prisma.FieldRef<"Company", 'Int'>
   readonly breakMinutes: Prisma.FieldRef<"Company", 'Int'>
   readonly graceMinutes: Prisma.FieldRef<"Company", 'Int'>
+  readonly workWeekDays: Prisma.FieldRef<"Company", 'Int'>
+  readonly sandwichRuleEnabled: Prisma.FieldRef<"Company", 'Boolean'>
 }
     
 

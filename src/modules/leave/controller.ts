@@ -12,21 +12,19 @@ const service = new LeaveService();
 
 export async function createLeaveType(req: Request, res: Response) {
   try {
-    const { name, code, isPaid } = req.body;
+    const { name, code, isPaid, autoGrantOnOnboarding, isActive } = req.body;
 
-    if (
-      typeof name !== "string" ||
-      typeof code !== "string" ||
-      typeof isPaid !== "boolean"
-    ) {
-      return res.status(400).json({ message: "Invalid input" });
+    if (typeof name !== "string" || typeof code !== "string") {
+      return res.status(400).json({ message: "name and code are required strings" });
     }
 
     const result = await service.createLeaveType({
       companyId: req.companyId!,
       name,
       code,
-      isPaid,
+      isPaid: typeof isPaid === "boolean" ? isPaid : true,
+      autoGrantOnOnboarding: typeof autoGrantOnOnboarding === "boolean" ? autoGrantOnOnboarding : false,
+      isActive: typeof isActive === "boolean" ? isActive : true,
     });
 
     res.status(201).json(result);
@@ -38,7 +36,7 @@ export async function createLeaveType(req: Request, res: Response) {
 export async function updateLeaveType(req: Request, res: Response) {
   try {
     const { leaveTypeId } = req.params;
-    const { name, isPaid, isActive } = req.body;
+    const { name, code, isPaid, autoGrantOnOnboarding, isActive } = req.body;
 
     if (!leaveTypeId || Array.isArray(leaveTypeId)) {
       return res.status(400).json({ message: "Invalid leaveTypeId" });
@@ -47,7 +45,9 @@ export async function updateLeaveType(req: Request, res: Response) {
     const result = await service.updateLeaveType({
       leaveTypeId,
       ...(typeof name === "string" && { name }),
+      ...(typeof code === "string" && { code }),
       ...(typeof isPaid === "boolean" && { isPaid }),
+      ...(typeof autoGrantOnOnboarding === "boolean" && { autoGrantOnOnboarding }),
       ...(typeof isActive === "boolean" && { isActive }),
     });
 
@@ -79,7 +79,6 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
       probationAllowed,
       genderRestriction,
       monthlyAccrual,
-      sandwichRule,
     } = req.body;
 
     if (
@@ -89,8 +88,7 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
       typeof allowCarryForward !== "boolean" ||
       typeof allowEncashment !== "boolean" ||
       typeof probationAllowed !== "boolean" ||
-      typeof monthlyAccrual !== "boolean" ||
-      typeof sandwichRule !== "boolean"
+      typeof monthlyAccrual !== "boolean"
     ) {
       return res.status(400).json({ message: "Invalid input" });
     }
@@ -110,7 +108,6 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
           ? (genderRestriction as GenderRestriction)
           : null,
       monthlyAccrual,
-      sandwichRule,
     });
 
     res.json(result);
@@ -265,6 +262,29 @@ export async function hrCancelApprovedLeave(req: Request, res: Response) {
   }
 }
 
+export async function updateLeaveRequestDayStatus(req: Request, res: Response) {
+  try {
+    const { requestId, dayId } = req.params;
+    const { status } = req.body;
+
+    if (!requestId || !dayId || !status) {
+      return res.status(400).json({ message: "requestId, dayId, and status are required" });
+    }
+
+    res.json(
+      await service.updateLeaveRequestDayStatus({
+        requestId: String(requestId),
+        dayId: String(dayId),
+        status: status as any,
+        userId: req.user!.userId,
+        companyId: req.companyId!,
+      })
+    );
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 // =================== LEAVE BALANCE ===================
 
 export async function getMyLeaveBalances(req: Request, res: Response) {
@@ -373,7 +393,6 @@ export async function upsertEmployeeLeaveOverride(
       employeeId,
       leaveTypeId,
       year,
-      allowSandwich,
       allowEncashment,
       extraAllocation,
       reason,
@@ -385,11 +404,11 @@ export async function upsertEmployeeLeaveOverride(
 
     res.json(
       await service.upsertEmployeeLeaveOverride({
+        companyId: req.companyId!,
         employeeId,
         leaveTypeId,
         year,
-        allowSandwich:
-          typeof allowSandwich === "boolean" ? allowSandwich : null,
+
         allowEncashment:
           typeof allowEncashment === "boolean" ? allowEncashment : null,
         extraAllocation:
@@ -471,6 +490,132 @@ export async function deleteHoliday(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
+export async function runYearEndRollover(req: Request, res: Response) {
+  try {
+    const { fromYear, toYear } = req.body;
+    if (!fromYear || !toYear) {
+      return res.status(400).json({ message: "fromYear and toYear are required" });
+    }
+
+    const result = await service.runYearEndRollover({
+      companyId: req.companyId!,
+      adminUserId: req.user!.userId,
+      fromYear: Number(fromYear),
+      toYear: Number(toYear),
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function bulkAllocateLeaveBalances(req: Request, res: Response) {
+  try {
+    const { leaveTypeId, year, allocated, scope, isProbation, employeeIds, reason } = req.body;
+
+    if (!leaveTypeId) {
+      return res.status(400).json({ message: "leaveTypeId is required" });
+    }
+    if (!year) {
+      return res.status(400).json({ message: "year is required" });
+    }
+    if (allocated === undefined || Number(allocated) < 0) {
+      return res.status(400).json({ message: "allocated amount must be >= 0" });
+    }
+    if (!scope || !["ALL_ACTIVE", "BY_EMPLOYMENT_TYPE", "SPECIFIC_EMPLOYEES"].includes(scope)) {
+      return res.status(400).json({ message: "Valid scope is required (ALL_ACTIVE | BY_EMPLOYMENT_TYPE | SPECIFIC_EMPLOYEES)" });
+    }
+
+    const result = await service.bulkAllocateLeaves({
+      companyId: req.companyId!,
+      adminUserId: req.user!.userId,
+      leaveTypeId,
+      year: Number(year),
+      allocated: Number(allocated),
+      scope,
+      ...(isProbation !== undefined ? { isProbation: Boolean(isProbation) } : {}),
+      ...(employeeIds ? { employeeIds: Array.isArray(employeeIds) ? employeeIds : [employeeIds] } : {}),
+      ...(reason ? { reason: String(reason) } : {}),
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function updateEmployeeLeaveAllocation(req: Request, res: Response) {
+  try {
+    const { employeeId } = req.params;
+    if (!employeeId || Array.isArray(employeeId)) {
+      return res.status(400).json({ message: "Employee ID is required" });
+    }
+
+    const { leaveTypeId, newBalance, targetBalance, allocated, year, reason } = req.body;
+    if (!leaveTypeId) {
+      return res.status(400).json({ message: "leaveTypeId is required" });
+    }
+
+    const resolvedNewBalance =
+      newBalance !== undefined
+        ? Number(newBalance)
+        : targetBalance !== undefined
+        ? Number(targetBalance)
+        : undefined;
+
+    const result = await service.adjustLeaveAllocation({
+      employeeId,
+      adminUserId: req.user!.userId,
+      companyId: req.companyId!,
+      leaveTypeId,
+      ...(resolvedNewBalance !== undefined ? { newBalance: resolvedNewBalance } : {}),
+      ...(allocated !== undefined && resolvedNewBalance === undefined ? { allocated: Number(allocated) } : {}),
+      ...(year ? { year: Number(year) } : {}),
+      ...(reason ? { reason: String(reason) } : {}),
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function getEmployeeLeaveBalancesAdmin(req: Request, res: Response) {
+  try {
+    const { employeeId } = req.params;
+    if (!employeeId || Array.isArray(employeeId)) {
+      return res.status(400).json({ message: "Employee ID is required" });
+    }
+    const year = req.query.year ? Number(req.query.year) : new Date().getFullYear();
+    const balances = await service.getLeaveBalancesByEmployeeId(
+      employeeId,
+      req.companyId!,
+      year
+    );
+    res.json(balances);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function markLeaveByAdmin(req: Request, res: Response) {
+  try {
+    const { employeeId } = req.body;
+    if (!employeeId) {
+      return res.status(400).json({ message: "Employee ID is required" });
+    }
+    const result = await service.markLeaveByAdmin({
+      ...req.body,
+      adminUserId: req.user!.userId,
+      companyId: req.companyId!,
+    });
+    res.status(201).json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 export async function listEmployeeLeaveRequests(req: Request, res: Response) {
   try {
     const { employeeId } = req.params;
@@ -482,6 +627,59 @@ export async function listEmployeeLeaveRequests(req: Request, res: Response) {
       req.companyId!
     );
     res.json(requests);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+// =================== HR SANDWICH BRIDGE DAY EXCEPTION CONTROLLER ===================
+
+export async function toggleSandwichBridgeDayExemption(req: Request, res: Response) {
+  try {
+    const requestId = req.params.requestId as string;
+    const dayId = req.params.dayId as string;
+    const { exempt } = req.body;
+    const result = await service.toggleSandwichBridgeDayExemption({
+      requestId,
+      dayId,
+      adminUserId: req.user!.userId,
+      companyId: req.companyId!,
+      isExempted: typeof exempt === "boolean" ? exempt : true,
+    });
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function deleteLeaveRequest(req: Request, res: Response) {
+  try {
+    const requestId = req.params.requestId as string;
+    if (!requestId) {
+      return res.status(400).json({ message: "requestId is required" });
+    }
+    const result = await service.deleteLeaveRequest({
+      requestId,
+      adminUserId: req.user!.userId,
+      companyId: req.companyId!,
+    });
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+
+export async function getLwpReport(req: Request, res: Response) {
+  try {
+    const year = req.query.year ? parseInt(req.query.year as string, 10) : new Date().getFullYear();
+    const month = req.query.month ? parseInt(req.query.month as string, 10) : new Date().getMonth() + 1;
+    const result = await service.getLwpReport({
+      companyId: req.companyId!,
+      year,
+      month,
+    });
+    res.status(200).json(result);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }

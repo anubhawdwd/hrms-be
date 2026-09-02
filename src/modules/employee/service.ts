@@ -1,3 +1,6 @@
+import { computeDailyAttendanceSessions } from "../attendance/calculations.js";
+import { AttendanceEventType, AttendanceSource, AttendanceStatus, LeaveRequestStatus } from "../../generated/prisma/enums.js";
+import { prisma } from "../../config/prisma.js";
 // src/modules/employee/service.ts
 import { EmployeeRepository } from "./repository.js";
 import type {
@@ -61,7 +64,23 @@ export class EmployeeService {
       }),
     });
 
-    await this.bootstrapLeaveBalances(employee);
+    if (
+      dto.initialLeaveGrant &&
+      dto.initialLeaveGrant.leaveTypeId &&
+      dto.initialLeaveGrant.allocated >= 0
+    ) {
+      await prisma.leaveBalance.create({
+        data: {
+          employeeId: employee.id,
+          leaveTypeId: dto.initialLeaveGrant.leaveTypeId,
+          year: joiningDate.getFullYear(),
+          allocated: Number(dto.initialLeaveGrant.allocated),
+          used: 0,
+          carriedForward: 0,
+          remaining: Number(dto.initialLeaveGrant.allocated),
+        },
+      });
+    }
 
     return employee;
   }
@@ -72,8 +91,8 @@ export class EmployeeService {
     return employee;
   }
 
-  async listEmployees(companyId: string) {
-    return repo.listEmployees(companyId);
+  async listEmployees(companyId: string, status?: string) {
+    return repo.listEmployees(companyId, status);
   }
 
   async updateMyProfile(
@@ -137,8 +156,156 @@ export class EmployeeService {
     });
   }
 
-  async deactivateEmployee(employeeId: string, companyId: string) {
-    return repo.deactivateEmployee(employeeId, companyId);
+  async deactivateEmployee(
+    employeeId: string,
+    companyId: string,
+    dto?: { effectiveDate?: string; reason?: string }
+  ) {
+    return this.offboardEmployee(employeeId, companyId, dto);
+  }
+
+  async offboardEmployee(
+    employeeId: string,
+    companyId: string,
+    dto?: { effectiveDate?: string; reason?: string }
+  ) {
+    const employee = await prisma.employeeProfile.findFirst({ where: { id: employeeId, companyId }, include: { user: true } });
+    if (!employee) {
+      throw new Error("Employee not found");
+    }
+    if (!employee.isActive) {
+      throw new Error("Employee is already inactive");
+    }
+
+    const effectiveDateStr =
+      dto?.effectiveDate?.trim() || new Date().toISOString().split("T")[0];
+
+    // Atomically execute offboarding workflow
+    await prisma.$transaction(async (tx) => {
+      // 1. Deactivate Employee & User immediately (Decision 1)
+      await tx.employeeProfile.update({
+        where: { id: employeeId },
+        data: { isActive: false },
+      });
+
+      await tx.user.update({
+        where: { id: employee.userId },
+        data: { isActive: false },
+      });
+
+      // Revoke all active sessions and refresh tokens
+      await tx.refreshToken.deleteMany({
+        where: { userId: employee.userId },
+      });
+
+      // 2. Attendance Handling: Close open attendance session at current timestamp (Decision 4)
+      const now = new Date();
+      const todayStart = new Date(now);
+      todayStart.setHours(0, 0, 0, 0);
+
+      const attendanceDay = await tx.attendanceDay.findFirst({
+        where: { employeeId, date: todayStart },
+        include: { events: { orderBy: { timestamp: "asc" } } },
+      });
+
+      if (attendanceDay && attendanceDay.events.length > 0) {
+        const lastEvent = attendanceDay.events[attendanceDay.events.length - 1];
+        if (lastEvent && lastEvent.type === AttendanceEventType.CHECK_IN) {
+          const checkOutEvent = await tx.attendanceEvent.create({
+            data: {
+              attendanceDayId: attendanceDay.id,
+              type: AttendanceEventType.CHECK_OUT,
+              source: AttendanceSource.WEB,
+              timestamp: now,
+            },
+          });
+
+          const updatedEvents = [...attendanceDay.events, checkOutEvent];
+          const calcResult = computeDailyAttendanceSessions(updatedEvents, now);
+
+          await tx.attendanceDay.update({
+            where: { id: attendanceDay.id },
+            data: {
+              totalMinutes: calcResult.completedMinutes,
+              status:
+                calcResult.completedMinutes >= 480
+                  ? AttendanceStatus.PRESENT
+                  : AttendanceStatus.PARTIAL,
+            },
+          });
+        }
+      }
+
+      // 3. Leave Handling: Auto-reject pending leave requests (Decision 3)
+      const pendingLeaves = await tx.leaveRequest.findMany({
+        where: {
+          employeeId,
+          status: LeaveRequestStatus.PENDING,
+        },
+      });
+
+      for (const req of pendingLeaves) {
+        await tx.leaveRequest.update({
+          where: { id: req.id },
+          data: {
+            status: LeaveRequestStatus.REJECTED,
+            reason: req.reason
+              ? `${req.reason} (Rejected: Employee offboarded)`
+              : "Employee offboarded",
+          },
+        });
+      }
+
+      // 4. Leave Handling: Auto-cancel future approved leave requests (Decision 2)
+      const todayEnd = new Date(now);
+      todayEnd.setHours(23, 59, 59, 999);
+
+      const futureApprovedLeaves = await tx.leaveRequest.findMany({
+        where: {
+          employeeId,
+          status: LeaveRequestStatus.APPROVED,
+          fromDate: { gt: todayEnd },
+        },
+      });
+
+      for (const req of futureApprovedLeaves) {
+        await tx.leaveRequest.update({
+          where: { id: req.id },
+          data: {
+            status: LeaveRequestStatus.CANCELLED,
+            reason: req.reason
+              ? `${req.reason} (Cancelled: Offboarded on ${effectiveDateStr})`
+              : `Offboarded on ${effectiveDateStr}`,
+          },
+        });
+      }
+    });
+
+    return { message: "Employee offboarded successfully" };
+  }
+
+  async reactivateEmployee(employeeId: string, companyId: string) {
+    const employee = await prisma.employeeProfile.findFirst({ where: { id: employeeId, companyId }, include: { user: true } });
+    if (!employee) {
+      throw new Error("Employee not found");
+    }
+    if (employee.isActive) {
+      throw new Error("Employee is already active");
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.employeeProfile.update({
+        where: { id: employeeId },
+        data: { isActive: true },
+      });
+
+      await tx.user.update({
+        where: { id: employee.userId },
+        data: { isActive: true },
+      });
+    });
+
+    return { message: "Employee reactivated successfully" };
   }
 
   async changeManager(dto: ChangeManagerDTO) {

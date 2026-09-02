@@ -376,6 +376,12 @@
                 },
                 "graceMinutes": {
                   "example": "any"
+                },
+                "workWeekDays": {
+                  "example": "any"
+                },
+                "sandwichRuleEnabled": {
+                  "example": "any"
                 }
               }
             }
@@ -409,6 +415,12 @@
                   "example": "any"
                 },
                 "graceMinutes": {
+                  "example": "any"
+                },
+                "workWeekDays": {
+                  "example": "any"
+                },
+                "sandwichRuleEnabled": {
                   "example": "any"
                 }
               }
@@ -1039,6 +1051,26 @@
         }
       }
     },
+    "/api/attendance/my-month": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/api/attendance/dashboard": {
       "get": {
         "description": "",
@@ -1475,6 +1507,12 @@
                 },
                 "isPaid": {
                   "example": "any"
+                },
+                "autoGrantOnOnboarding": {
+                  "example": "any"
+                },
+                "isActive": {
+                  "example": "any"
                 }
               }
             }
@@ -1515,7 +1553,13 @@
                 "name": {
                   "example": "any"
                 },
+                "code": {
+                  "example": "any"
+                },
                 "isPaid": {
+                  "example": "any"
+                },
+                "autoGrantOnOnboarding": {
                   "example": "any"
                 },
                 "isActive": {
@@ -1576,9 +1620,6 @@
                   "example": "any"
                 },
                 "monthlyAccrual": {
-                  "example": "any"
-                },
-                "sandwichRule": {
                   "example": "any"
                 }
               }
@@ -1707,6 +1748,33 @@
         }
       }
     },
+    "/api/leave/requests/{requestId}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
     "/api/leave/requests/{requestId}/approve": {
       "patch": {
         "description": "",
@@ -1778,6 +1846,132 @@
               "type": "object",
               "properties": {
                 "reason": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/requests/{requestId}/days/{dayId}/status": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dayId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/requests/{requestId}/sandwich-days/{dayId}/exempt": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dayId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "exempt": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/rollover": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fromYear": {
+                  "example": "any"
+                },
+                "toYear": {
                   "example": "any"
                 }
               }
@@ -1946,9 +2140,6 @@
                 "year": {
                   "example": "any"
                 },
-                "allowSandwich": {
-                  "example": "any"
-                },
                 "allowEncashment": {
                   "example": "any"
                 },
@@ -1992,6 +2183,214 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/balances/employee/{employeeId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "leaveTypeId": {
+                  "example": "any"
+                },
+                "allocated": {
+                  "example": "any"
+                },
+                "year": {
+                  "example": "any"
+                },
+                "reason": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "leaveTypeId": {
+                  "example": "any"
+                },
+                "allocated": {
+                  "example": "any"
+                },
+                "year": {
+                  "example": "any"
+                },
+                "reason": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/balances/bulk-allocate": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "leaveTypeId": {
+                  "example": "any"
+                },
+                "year": {
+                  "example": "any"
+                },
+                "allocated": {
+                  "example": "any"
+                },
+                "scope": {
+                  "example": "any"
+                },
+                "isProbation": {
+                  "example": "any"
+                },
+                "employeeIds": {
+                  "example": "any"
+                },
+                "reason": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/requests/admin/mark": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employeeId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"
@@ -2070,6 +2469,9 @@
                 },
                 "date": {
                   "example": "any"
+                },
+                "duration": {
+                  "example": "any"
                 }
               }
             }
@@ -2129,6 +2531,37 @@
         }
       }
     },
+    "/api/leave/reports/lwp": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
     "/api/employees/": {
       "post": {
         "description": "",
@@ -2149,6 +2582,13 @@
       },
       "get": {
         "description": "",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -2248,6 +2688,60 @@
     },
     "/api/employees/{employeeId}/admin": {
       "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/employees/{employeeId}/offboard": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/employees/{employeeId}/reactivate": {
+      "post": {
         "description": "",
         "parameters": [
           {

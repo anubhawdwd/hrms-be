@@ -4,6 +4,7 @@ import {
   checkIn,
   checkOut,
   getAttendanceDashboard,
+  getMyMonthlyAttendance,
   getAttendanceDay,
   getAttendanceRange,
   getAttendanceViolations,
@@ -28,6 +29,7 @@ router.post("/check-in", checkIn);
 router.post("/check-out", checkOut);
 router.get("/day", getAttendanceDay);
 router.get("/range", getAttendanceRange);
+router.get("/my-month", getMyMonthlyAttendance);
 
 // HR only
 router.get(

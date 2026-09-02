@@ -19,7 +19,8 @@ export async function createEmployee(req: Request, res: Response) {
 
 export async function listEmployees(req: Request, res: Response) {
   try {
-    const employees = await service.listEmployees(req.companyId!);
+    const status = req.query.status as string | undefined;
+    const employees = await service.listEmployees(req.companyId!, status);
     res.json(employees);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
@@ -82,11 +83,30 @@ export async function deactivateEmployee(req: Request, res: Response) {
       return res.status(400).json({ message: "Invalid request" });
     }
 
-    const employee = await service.deactivateEmployee(
+    const result = await service.offboardEmployee(
+      employeeId,
+      req.companyId!,
+      req.body
+    );
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function reactivateEmployee(req: Request, res: Response) {
+  try {
+    const { employeeId } = req.params;
+
+    if (!employeeId || Array.isArray(employeeId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    const result = await service.reactivateEmployee(
       employeeId,
       req.companyId!
     );
-    res.json(employee);
+    res.json(result);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }

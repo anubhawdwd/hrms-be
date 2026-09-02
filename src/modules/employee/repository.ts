@@ -81,9 +81,13 @@ export class EmployeeRepository {
     });
   }
 
-  listEmployees(companyId: string) {
+  listEmployees(companyId: string, status?: string) {
     return prisma.employeeProfile.findMany({
-      where: { companyId },
+      where: {
+        companyId,
+        ...(status === "ACTIVE" ? { isActive: true } : {}),
+        ...(status === "INACTIVE" ? { isActive: false } : {}),
+      },
       orderBy: { employeeCode: "asc" },
       include: {
         user: { select: { email: true } },
@@ -113,12 +117,7 @@ export class EmployeeRepository {
     });
   }
 
-  deactivateEmployee(employeeId: string, companyId: string) {
-    return prisma.employeeProfile.updateMany({
-      where: { id: employeeId, companyId },
-      data: { isActive: false },
-    });
-  }
+
 
   changeManager(
     employeeId: string,
@@ -140,7 +139,15 @@ export class EmployeeRepository {
 
   getLeavePoliciesForCompany(companyId: string, year: number) {
     return prisma.leavePolicy.findMany({
-      where: { companyId, year },
+      where: {
+        companyId,
+        year,
+        leaveType: {
+          autoGrantOnOnboarding: true,
+          isActive: true,
+        },
+      },
+      include: { leaveType: true },
     });
   }
 
@@ -176,14 +183,57 @@ export class EmployeeRepository {
     });
   }
 
-  findByUserId(userId: string, companyId: string) {
-    return prisma.employeeProfile.findFirst({
+  async findByUserId(userId: string, companyId: string) {
+    const employee = await prisma.employeeProfile.findFirst({
       where: { userId, companyId },
       include: {
         user: { select: { email: true } },
-        team: true,
-        designation: true,
+        department: { select: { id: true, name: true } },
+        team: { select: { id: true, name: true } },
+        designation: { select: { id: true, name: true } },
+        manager: {
+          select: {
+            id: true,
+            displayName: true,
+            employeeCode: true,
+            designation: { select: { id: true, name: true } },
+          },
+        },
+        subordinates: {
+          where: { isActive: true },
+          select: {
+            id: true,
+            displayName: true,
+            employeeCode: true,
+            designation: { select: { id: true, name: true } },
+          },
+        },
       },
     });
+
+    if (!employee) return null;
+
+    let peers: any[] = [];
+    if (employee.managerId) {
+      peers = await prisma.employeeProfile.findMany({
+        where: {
+          companyId,
+          managerId: employee.managerId,
+          id: { not: employee.id },
+          isActive: true,
+        },
+        select: {
+          id: true,
+          displayName: true,
+          employeeCode: true,
+          designation: { select: { id: true, name: true } },
+        },
+      });
+    }
+
+    return {
+      ...employee,
+      peers,
+    };
   }
 }

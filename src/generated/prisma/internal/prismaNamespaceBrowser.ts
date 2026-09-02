@@ -70,7 +70,8 @@ export const ModelName = {
   LeaveEncashment: 'LeaveEncashment',
   EmployeeLeaveOverride: 'EmployeeLeaveOverride',
   Holiday: 'Holiday',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  LeaveRequestDay: 'LeaveRequestDay'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -99,7 +100,9 @@ export const CompanyScalarFieldEnum = {
   workingMinutes: 'workingMinutes',
   lunchMinutes: 'lunchMinutes',
   breakMinutes: 'breakMinutes',
-  graceMinutes: 'graceMinutes'
+  graceMinutes: 'graceMinutes',
+  workWeekDays: 'workWeekDays',
+  sandwichRuleEnabled: 'sandwichRuleEnabled'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -271,6 +274,7 @@ export const LeaveTypeScalarFieldEnum = {
   code: 'code',
   isPaid: 'isPaid',
   isActive: 'isActive',
+  autoGrantOnOnboarding: 'autoGrantOnOnboarding',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -290,7 +294,6 @@ export const LeavePolicyScalarFieldEnum = {
   probationAllowed: 'probationAllowed',
   genderRestriction: 'genderRestriction',
   monthlyAccrual: 'monthlyAccrual',
-  sandwichRule: 'sandwichRule',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -353,7 +356,6 @@ export const EmployeeLeaveOverrideScalarFieldEnum = {
   employeeId: 'employeeId',
   leaveTypeId: 'leaveTypeId',
   year: 'year',
-  allowSandwich: 'allowSandwich',
   allowEncashment: 'allowEncashment',
   extraAllocation: 'extraAllocation',
   reason: 'reason',
@@ -385,6 +387,20 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const LeaveRequestDayScalarFieldEnum = {
+  id: 'id',
+  leaveRequestId: 'leaveRequestId',
+  date: 'date',
+  status: 'status',
+  isSandwichDay: 'isSandwichDay',
+  deductDays: 'deductDays',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveRequestDayScalarFieldEnum = (typeof LeaveRequestDayScalarFieldEnum)[keyof typeof LeaveRequestDayScalarFieldEnum]
 
 
 export const SortOrder = {

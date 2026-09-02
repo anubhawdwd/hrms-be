@@ -352,8 +352,14 @@ export async function getWorkingHours(req: Request, res: Response) {
 
 export async function updateWorkingHours(req: Request, res: Response) {
   try {
-    const { workingMinutes, lunchMinutes, breakMinutes, graceMinutes } =
-      req.body;
+    const {
+      workingMinutes,
+      lunchMinutes,
+      breakMinutes,
+      graceMinutes,
+      workWeekDays,
+      sandwichRuleEnabled,
+    } = req.body;
 
     if (
       (workingMinutes !== undefined && typeof workingMinutes !== "number") ||
@@ -364,11 +370,21 @@ export async function updateWorkingHours(req: Request, res: Response) {
       return res.status(400).json({ message: "Duration values must be numbers" });
     }
 
+    if (workWeekDays !== undefined && ![5, 6].includes(workWeekDays)) {
+      return res.status(400).json({ message: "Working week must be either 5 days or 6 days" });
+    }
+
+    if (sandwichRuleEnabled !== undefined && typeof sandwichRuleEnabled !== "boolean") {
+      return res.status(400).json({ message: "sandwichRuleEnabled must be a boolean" });
+    }
+
     if (
       workingMinutes === undefined &&
       lunchMinutes === undefined &&
       breakMinutes === undefined &&
-      graceMinutes === undefined
+      graceMinutes === undefined &&
+      workWeekDays === undefined &&
+      sandwichRuleEnabled === undefined
     ) {
       return res.status(400).json({ message: "Nothing to update" });
     }
@@ -378,6 +394,8 @@ export async function updateWorkingHours(req: Request, res: Response) {
       ...(lunchMinutes !== undefined && { lunchMinutes }),
       ...(breakMinutes !== undefined && { breakMinutes }),
       ...(graceMinutes !== undefined && { graceMinutes }),
+      ...(workWeekDays !== undefined && { workWeekDays }),
+      ...(sandwichRuleEnabled !== undefined && { sandwichRuleEnabled }),
     });
 
     res.json(result);

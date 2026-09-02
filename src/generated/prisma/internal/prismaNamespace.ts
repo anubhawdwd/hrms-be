@@ -403,7 +403,8 @@ export const ModelName = {
   LeaveEncashment: 'LeaveEncashment',
   EmployeeLeaveOverride: 'EmployeeLeaveOverride',
   Holiday: 'Holiday',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  LeaveRequestDay: 'LeaveRequestDay'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "department" | "team" | "designation" | "designationAttendancePolicy" | "employeeProfile" | "attendanceDay" | "attendanceEvent" | "attendanceViolation" | "employeeAttendanceOverride" | "officeLocation" | "leaveType" | "leavePolicy" | "leaveBalance" | "leaveRequest" | "leaveEncashment" | "employeeLeaveOverride" | "holiday" | "refreshToken"
+    modelProps: "company" | "user" | "department" | "team" | "designation" | "designationAttendancePolicy" | "employeeProfile" | "attendanceDay" | "attendanceEvent" | "attendanceViolation" | "employeeAttendanceOverride" | "officeLocation" | "leaveType" | "leavePolicy" | "leaveBalance" | "leaveRequest" | "leaveEncashment" | "employeeLeaveOverride" | "holiday" | "refreshToken" | "leaveRequestDay"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1903,6 +1904,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LeaveRequestDay: {
+      payload: Prisma.$LeaveRequestDayPayload<ExtArgs>
+      fields: Prisma.LeaveRequestDayFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LeaveRequestDayFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LeaveRequestDayFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>
+        }
+        findFirst: {
+          args: Prisma.LeaveRequestDayFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LeaveRequestDayFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>
+        }
+        findMany: {
+          args: Prisma.LeaveRequestDayFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>[]
+        }
+        create: {
+          args: Prisma.LeaveRequestDayCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>
+        }
+        createMany: {
+          args: Prisma.LeaveRequestDayCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LeaveRequestDayCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>[]
+        }
+        delete: {
+          args: Prisma.LeaveRequestDayDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>
+        }
+        update: {
+          args: Prisma.LeaveRequestDayUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>
+        }
+        deleteMany: {
+          args: Prisma.LeaveRequestDayDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LeaveRequestDayUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LeaveRequestDayUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>[]
+        }
+        upsert: {
+          args: Prisma.LeaveRequestDayUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestDayPayload>
+        }
+        aggregate: {
+          args: Prisma.LeaveRequestDayAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLeaveRequestDay>
+        }
+        groupBy: {
+          args: Prisma.LeaveRequestDayGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeaveRequestDayGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LeaveRequestDayCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeaveRequestDayCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1952,7 +2027,9 @@ export const CompanyScalarFieldEnum = {
   workingMinutes: 'workingMinutes',
   lunchMinutes: 'lunchMinutes',
   breakMinutes: 'breakMinutes',
-  graceMinutes: 'graceMinutes'
+  graceMinutes: 'graceMinutes',
+  workWeekDays: 'workWeekDays',
+  sandwichRuleEnabled: 'sandwichRuleEnabled'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -2124,6 +2201,7 @@ export const LeaveTypeScalarFieldEnum = {
   code: 'code',
   isPaid: 'isPaid',
   isActive: 'isActive',
+  autoGrantOnOnboarding: 'autoGrantOnOnboarding',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2143,7 +2221,6 @@ export const LeavePolicyScalarFieldEnum = {
   probationAllowed: 'probationAllowed',
   genderRestriction: 'genderRestriction',
   monthlyAccrual: 'monthlyAccrual',
-  sandwichRule: 'sandwichRule',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2206,7 +2283,6 @@ export const EmployeeLeaveOverrideScalarFieldEnum = {
   employeeId: 'employeeId',
   leaveTypeId: 'leaveTypeId',
   year: 'year',
-  allowSandwich: 'allowSandwich',
   allowEncashment: 'allowEncashment',
   extraAllocation: 'extraAllocation',
   reason: 'reason',
@@ -2238,6 +2314,20 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const LeaveRequestDayScalarFieldEnum = {
+  id: 'id',
+  leaveRequestId: 'leaveRequestId',
+  date: 'date',
+  status: 'status',
+  isSandwichDay: 'isSandwichDay',
+  deductDays: 'deductDays',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveRequestDayScalarFieldEnum = (typeof LeaveRequestDayScalarFieldEnum)[keyof typeof LeaveRequestDayScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2573,6 +2663,7 @@ export type GlobalOmitConfig = {
   employeeLeaveOverride?: Prisma.EmployeeLeaveOverrideOmit
   holiday?: Prisma.HolidayOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  leaveRequestDay?: Prisma.LeaveRequestDayOmit
 }
 
 /* Types for Logging */

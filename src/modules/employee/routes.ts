@@ -11,6 +11,7 @@ import {
   getEmployeeById,
   changeManager,
   deactivateEmployee,
+  reactivateEmployee,
   updateMyProfile,
   updateEmployeeAdmin,
   getMyEmployeeProfile,
@@ -52,6 +53,18 @@ router.delete(
   "/:employeeId",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   deactivateEmployee
+);
+
+router.post(
+  "/:employeeId/offboard",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  deactivateEmployee
+);
+
+router.post(
+  "/:employeeId/reactivate",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  reactivateEmployee
 );
 
 router.patch(

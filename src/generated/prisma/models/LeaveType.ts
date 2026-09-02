@@ -31,6 +31,7 @@ export type LeaveTypeMinAggregateOutputType = {
   code: string | null
   isPaid: boolean | null
   isActive: boolean | null
+  autoGrantOnOnboarding: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -42,6 +43,7 @@ export type LeaveTypeMaxAggregateOutputType = {
   code: string | null
   isPaid: boolean | null
   isActive: boolean | null
+  autoGrantOnOnboarding: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,6 +55,7 @@ export type LeaveTypeCountAggregateOutputType = {
   code: number
   isPaid: number
   isActive: number
+  autoGrantOnOnboarding: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -66,6 +69,7 @@ export type LeaveTypeMinAggregateInputType = {
   code?: true
   isPaid?: true
   isActive?: true
+  autoGrantOnOnboarding?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,6 +81,7 @@ export type LeaveTypeMaxAggregateInputType = {
   code?: true
   isPaid?: true
   isActive?: true
+  autoGrantOnOnboarding?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -88,6 +93,7 @@ export type LeaveTypeCountAggregateInputType = {
   code?: true
   isPaid?: true
   isActive?: true
+  autoGrantOnOnboarding?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -172,6 +178,7 @@ export type LeaveTypeGroupByOutputType = {
   code: string
   isPaid: boolean
   isActive: boolean
+  autoGrantOnOnboarding: boolean
   createdAt: Date
   updatedAt: Date
   _count: LeaveTypeCountAggregateOutputType | null
@@ -204,6 +211,7 @@ export type LeaveTypeWhereInput = {
   code?: Prisma.StringFilter<"LeaveType"> | string
   isPaid?: Prisma.BoolFilter<"LeaveType"> | boolean
   isActive?: Prisma.BoolFilter<"LeaveType"> | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFilter<"LeaveType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
@@ -221,6 +229,7 @@ export type LeaveTypeOrderByWithRelationInput = {
   code?: Prisma.SortOrder
   isPaid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  autoGrantOnOnboarding?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
@@ -242,6 +251,7 @@ export type LeaveTypeWhereUniqueInput = Prisma.AtLeast<{
   code?: Prisma.StringFilter<"LeaveType"> | string
   isPaid?: Prisma.BoolFilter<"LeaveType"> | boolean
   isActive?: Prisma.BoolFilter<"LeaveType"> | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFilter<"LeaveType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
@@ -259,6 +269,7 @@ export type LeaveTypeOrderByWithAggregationInput = {
   code?: Prisma.SortOrder
   isPaid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  autoGrantOnOnboarding?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LeaveTypeCountOrderByAggregateInput
@@ -276,6 +287,7 @@ export type LeaveTypeScalarWhereWithAggregatesInput = {
   code?: Prisma.StringWithAggregatesFilter<"LeaveType"> | string
   isPaid?: Prisma.BoolWithAggregatesFilter<"LeaveType"> | boolean
   isActive?: Prisma.BoolWithAggregatesFilter<"LeaveType"> | boolean
+  autoGrantOnOnboarding?: Prisma.BoolWithAggregatesFilter<"LeaveType"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"LeaveType"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LeaveType"> | Date | string
 }
@@ -286,6 +298,7 @@ export type LeaveTypeCreateInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeaveTypesInput
@@ -303,6 +316,7 @@ export type LeaveTypeUncheckedCreateInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   policies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -318,6 +332,7 @@ export type LeaveTypeUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeaveTypesNestedInput
@@ -335,6 +350,7 @@ export type LeaveTypeUncheckedUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   policies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -351,6 +367,7 @@ export type LeaveTypeCreateManyInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -361,6 +378,7 @@ export type LeaveTypeUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -372,6 +390,7 @@ export type LeaveTypeUncheckedUpdateManyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -398,6 +417,7 @@ export type LeaveTypeCountOrderByAggregateInput = {
   code?: Prisma.SortOrder
   isPaid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  autoGrantOnOnboarding?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -409,6 +429,7 @@ export type LeaveTypeMaxOrderByAggregateInput = {
   code?: Prisma.SortOrder
   isPaid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  autoGrantOnOnboarding?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -420,6 +441,7 @@ export type LeaveTypeMinOrderByAggregateInput = {
   code?: Prisma.SortOrder
   isPaid?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  autoGrantOnOnboarding?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -547,6 +569,7 @@ export type LeaveTypeCreateWithoutCompanyInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   policies?: Prisma.LeavePolicyCreateNestedManyWithoutLeaveTypeInput
@@ -562,6 +585,7 @@ export type LeaveTypeUncheckedCreateWithoutCompanyInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   policies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -607,6 +631,7 @@ export type LeaveTypeScalarWhereInput = {
   code?: Prisma.StringFilter<"LeaveType"> | string
   isPaid?: Prisma.BoolFilter<"LeaveType"> | boolean
   isActive?: Prisma.BoolFilter<"LeaveType"> | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFilter<"LeaveType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
 }
@@ -617,6 +642,7 @@ export type LeaveTypeCreateWithoutPoliciesInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeaveTypesInput
@@ -633,6 +659,7 @@ export type LeaveTypeUncheckedCreateWithoutPoliciesInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -663,6 +690,7 @@ export type LeaveTypeUpdateWithoutPoliciesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeaveTypesNestedInput
@@ -679,6 +707,7 @@ export type LeaveTypeUncheckedUpdateWithoutPoliciesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -693,6 +722,7 @@ export type LeaveTypeCreateWithoutBalancesInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeaveTypesInput
@@ -709,6 +739,7 @@ export type LeaveTypeUncheckedCreateWithoutBalancesInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   policies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -739,6 +770,7 @@ export type LeaveTypeUpdateWithoutBalancesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeaveTypesNestedInput
@@ -755,6 +787,7 @@ export type LeaveTypeUncheckedUpdateWithoutBalancesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   policies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -769,6 +802,7 @@ export type LeaveTypeCreateWithoutRequestsInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeaveTypesInput
@@ -785,6 +819,7 @@ export type LeaveTypeUncheckedCreateWithoutRequestsInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   policies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -815,6 +850,7 @@ export type LeaveTypeUpdateWithoutRequestsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeaveTypesNestedInput
@@ -831,6 +867,7 @@ export type LeaveTypeUncheckedUpdateWithoutRequestsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   policies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -845,6 +882,7 @@ export type LeaveTypeCreateWithoutLeaveEncashmentsInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeaveTypesInput
@@ -861,6 +899,7 @@ export type LeaveTypeUncheckedCreateWithoutLeaveEncashmentsInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   policies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -891,6 +930,7 @@ export type LeaveTypeUpdateWithoutLeaveEncashmentsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeaveTypesNestedInput
@@ -907,6 +947,7 @@ export type LeaveTypeUncheckedUpdateWithoutLeaveEncashmentsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   policies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -921,6 +962,7 @@ export type LeaveTypeCreateWithoutEmployeeLeaveOverridesInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeaveTypesInput
@@ -937,6 +979,7 @@ export type LeaveTypeUncheckedCreateWithoutEmployeeLeaveOverridesInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   policies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -967,6 +1010,7 @@ export type LeaveTypeUpdateWithoutEmployeeLeaveOverridesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeaveTypesNestedInput
@@ -983,6 +1027,7 @@ export type LeaveTypeUncheckedUpdateWithoutEmployeeLeaveOverridesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   policies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -997,6 +1042,7 @@ export type LeaveTypeCreateManyCompanyInput = {
   code: string
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1007,6 +1053,7 @@ export type LeaveTypeUpdateWithoutCompanyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   policies?: Prisma.LeavePolicyUpdateManyWithoutLeaveTypeNestedInput
@@ -1022,6 +1069,7 @@ export type LeaveTypeUncheckedUpdateWithoutCompanyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   policies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -1037,6 +1085,7 @@ export type LeaveTypeUncheckedUpdateManyWithoutCompanyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  autoGrantOnOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1115,6 +1164,7 @@ export type LeaveTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   code?: boolean
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1133,6 +1183,7 @@ export type LeaveTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   code?: boolean
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1145,6 +1196,7 @@ export type LeaveTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   code?: boolean
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1157,11 +1209,12 @@ export type LeaveTypeSelectScalar = {
   code?: boolean
   isPaid?: boolean
   isActive?: boolean
+  autoGrantOnOnboarding?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LeaveTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "code" | "isPaid" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["leaveType"]>
+export type LeaveTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "code" | "isPaid" | "isActive" | "autoGrantOnOnboarding" | "createdAt" | "updatedAt", ExtArgs["result"]["leaveType"]>
 export type LeaveTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   policies?: boolean | Prisma.LeaveType$policiesArgs<ExtArgs>
@@ -1195,6 +1248,7 @@ export type $LeaveTypePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     code: string
     isPaid: boolean
     isActive: boolean
+    autoGrantOnOnboarding: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["leaveType"]>
@@ -1632,6 +1686,7 @@ export interface LeaveTypeFieldRefs {
   readonly code: Prisma.FieldRef<"LeaveType", 'String'>
   readonly isPaid: Prisma.FieldRef<"LeaveType", 'Boolean'>
   readonly isActive: Prisma.FieldRef<"LeaveType", 'Boolean'>
+  readonly autoGrantOnOnboarding: Prisma.FieldRef<"LeaveType", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"LeaveType", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"LeaveType", 'DateTime'>
 }

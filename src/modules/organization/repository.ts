@@ -224,6 +224,8 @@ export class OrganizationRepository {
         lunchMinutes: true,
         breakMinutes: true,
         graceMinutes: true,
+        workWeekDays: true,
+        sandwichRuleEnabled: true,
       },
     });
 
@@ -233,6 +235,8 @@ export class OrganizationRepository {
         lunchMinutes: 30,
         breakMinutes: 20,
         graceMinutes: 10,
+        workWeekDays: 5,
+        sandwichRuleEnabled: false,
       }
     );
   }
@@ -244,6 +248,8 @@ export class OrganizationRepository {
       lunchMinutes?: number;
       breakMinutes?: number;
       graceMinutes?: number;
+      workWeekDays?: number;
+      sandwichRuleEnabled?: boolean;
     }
   ) {
     return prisma.company.update({
@@ -261,12 +267,20 @@ export class OrganizationRepository {
         ...(data.graceMinutes !== undefined && {
           graceMinutes: data.graceMinutes,
         }),
+        ...(data.workWeekDays !== undefined && {
+          workWeekDays: data.workWeekDays,
+        }),
+        ...(data.sandwichRuleEnabled !== undefined && {
+          sandwichRuleEnabled: data.sandwichRuleEnabled,
+        }),
       },
       select: {
         workingMinutes: true,
         lunchMinutes: true,
         breakMinutes: true,
         graceMinutes: true,
+        workWeekDays: true,
+        sandwichRuleEnabled: true,
       },
     });
   }

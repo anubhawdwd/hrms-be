@@ -35,6 +35,9 @@ model Company {
   breakMinutes   Int @default(20)
   graceMinutes   Int @default(10)
 
+  workWeekDays        Int     @default(5)
+  sandwichRuleEnabled Boolean @default(false)
+
   designationAttendancePolicies DesignationAttendancePolicy[]
 }
 
@@ -292,8 +295,9 @@ model LeaveType {
 
   name     String // Casual Leave
   code     String // CL
-  isPaid   Boolean @default(true)
-  isActive Boolean @default(true)
+  isPaid                 Boolean @default(true)
+  isActive               Boolean @default(true)
+  autoGrantOnOnboarding  Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -330,8 +334,6 @@ model LeavePolicy {
   genderRestriction GenderRestriction?
 
   monthlyAccrual Boolean @default(false)
-
-  sandwichRule Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -389,6 +391,7 @@ model LeaveRequest {
 
   approvedById String?
   approvedBy   EmployeeProfile? @relation("LeaveApprover", fields: [approvedById], references: [id])
+  days         LeaveRequestDay[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -430,7 +433,6 @@ model EmployeeLeaveOverride {
 
   year Int
 
-  allowSandwich   Boolean?
   allowEncashment Boolean?
   extraAllocation Float?
 
@@ -527,4 +529,19 @@ enum UserRole {
   COMPANY_ADMIN
   HR
   EMPLOYEE
+}
+
+model LeaveRequestDay {
+  id             String             @id @default(uuid())
+  leaveRequestId String
+  leaveRequest   LeaveRequest       @relation(fields: [leaveRequestId], references: [id], onDelete: Cascade)
+  date           DateTime
+  status         LeaveRequestStatus @default(PENDING)
+  isSandwichDay  Boolean            @default(false)
+  deductDays     Float              @default(1)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@unique([leaveRequestId, date])
+  @@index([date, status])
 }

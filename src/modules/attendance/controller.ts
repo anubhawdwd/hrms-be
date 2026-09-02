@@ -255,6 +255,26 @@ export async function hrUpdateAttendanceDay(req: Request, res: Response) {
   }
 }
 
+export async function getMyMonthlyAttendance(req: Request, res: Response) {
+  try {
+    const { month } = req.query;
+
+    if (!month || typeof month !== "string") {
+      return res.status(400).json({ message: "month is required in YYYY-MM format" });
+    }
+
+    const result = await service.getMyMonthlyAttendance({
+      companyId: req.companyId!,
+      userId: req.user!.userId,
+      monthStr: month,
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 export async function getAttendanceDashboard(req: Request, res: Response) {
   try {
     const { month } = req.query;

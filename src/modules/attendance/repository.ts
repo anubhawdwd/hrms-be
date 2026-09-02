@@ -1,5 +1,6 @@
 // src/modules/attendance/repository.ts
 import { prisma } from "../../config/prisma.js";
+import { LeaveRequestStatus } from "../../generated/prisma/enums.js";
 
 export class AttendanceRepository {
   // =================== EMPLOYEE LOOKUP ===================
@@ -305,8 +306,40 @@ export class AttendanceRepository {
   async getMonthlyDashboardData(
     companyId: string,
     startOfMonth: Date,
-    endOfMonth: Date
+    endOfMonth: Date,
+    targetEmployeeId?: string
   ) {
+    const employeeWhere: any = { companyId, isActive: true };
+    if (targetEmployeeId) {
+      employeeWhere.id = targetEmployeeId;
+    }
+
+    const attendanceWhere: any = {
+      companyId,
+      date: { gte: startOfMonth, lte: endOfMonth },
+    };
+    if (targetEmployeeId) {
+      attendanceWhere.employeeId = targetEmployeeId;
+    }
+
+    const leaveWhere: any = {
+      companyId,
+      status: { in: [LeaveRequestStatus.APPROVED, LeaveRequestStatus.PENDING] },
+      OR: [
+        { fromDate: { lte: endOfMonth }, toDate: { gte: startOfMonth } },
+      ],
+    };
+    if (targetEmployeeId) {
+      leaveWhere.employeeId = targetEmployeeId;
+    }
+
+    const overrideWhere: any = {
+      employee: { companyId },
+    };
+    if (targetEmployeeId) {
+      overrideWhere.employeeId = targetEmployeeId;
+    }
+
     const [
       employees,
       attendanceDays,
@@ -316,7 +349,7 @@ export class AttendanceRepository {
       company,
     ] = await Promise.all([
       prisma.employeeProfile.findMany({
-        where: { companyId, isActive: true },
+        where: employeeWhere,
         select: {
           id: true,
           employeeCode: true,
@@ -349,10 +382,7 @@ export class AttendanceRepository {
       }),
 
       prisma.attendanceDay.findMany({
-        where: {
-          companyId,
-          date: { gte: startOfMonth, lte: endOfMonth },
-        },
+        where: attendanceWhere,
         include: {
           events: { orderBy: { timestamp: "asc" } },
         },
@@ -406,6 +436,7 @@ export class AttendanceRepository {
           lunchMinutes: true,
           breakMinutes: true,
           graceMinutes: true,
+          workWeekDays: true,
         },
       }),
     ]);
@@ -421,6 +452,7 @@ export class AttendanceRepository {
         lunchMinutes: 30,
         breakMinutes: 20,
         graceMinutes: 10,
+        workWeekDays: 5,
       },
     };
   }

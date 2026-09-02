@@ -42,6 +42,8 @@ export interface WorkingHoursConfigDTO {
   lunchMinutes: number;
   breakMinutes: number;
   graceMinutes: number;
+  workWeekDays: number;
+  sandwichRuleEnabled: boolean;
 }
 
 export interface UpdateWorkingHoursConfigDTO {
@@ -49,6 +51,8 @@ export interface UpdateWorkingHoursConfigDTO {
   lunchMinutes?: number;
   breakMinutes?: number;
   graceMinutes?: number;
+  workWeekDays?: number;
+  sandwichRuleEnabled?: boolean;
 }
 
 

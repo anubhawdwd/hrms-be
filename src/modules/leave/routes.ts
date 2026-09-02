@@ -12,6 +12,8 @@ import {
   approveLeave,
   rejectLeave,
   hrCancelApprovedLeave,
+  updateLeaveRequestDayStatus,
+  toggleSandwichBridgeDayExemption,
   getMyLeaveBalances,
   requestLeaveEncashment,
   approveLeaveEncashment,
@@ -24,6 +26,13 @@ import {
   listPendingLeaveRequests,
   listRecentLeaveRequests,
   listEmployeeLeaveRequests,
+  getEmployeeLeaveBalancesAdmin,
+  updateEmployeeLeaveAllocation,
+  bulkAllocateLeaveBalances,
+  runYearEndRollover,
+  markLeaveByAdmin,
+  deleteLeaveRequest,
+  getLwpReport,
 } from "./controller.js";
 
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
@@ -65,6 +74,11 @@ router.get(
 router.post("/requests", applyLeave);
 router.get("/requests/my", listMyLeaveRequests);
 router.patch("/requests/:requestId/cancel", cancelLeaveRequest);
+router.delete(
+  "/requests/:requestId",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  deleteLeaveRequest
+);
 
 // LEAVE APPROVAL (HR)
 router.patch(
@@ -81,6 +95,27 @@ router.patch(
   "/requests/:requestId/hr-cancel",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   hrCancelApprovedLeave
+);
+
+// HR DAY-LEVEL APPROVAL / REJECTION
+router.patch(
+  "/requests/:requestId/days/:dayId/status",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  updateLeaveRequestDayStatus
+);
+
+// HR SANDWICH BRIDGE DAY EXCEPTION
+router.patch(
+  "/requests/:requestId/sandwich-days/:dayId/exempt",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  toggleSandwichBridgeDayExemption
+);
+
+// YEAR-END ROLLOVER
+router.post(
+  "/rollover",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  runYearEndRollover
 );
 
 // LEAVE BALANCE
@@ -117,6 +152,36 @@ router.get(
 );
 
 router.get(
+  "/balances/employee/:employeeId",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  getEmployeeLeaveBalancesAdmin
+);
+
+router.post(
+  "/balances/bulk-allocate",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  bulkAllocateLeaveBalances
+);
+
+router.put(
+  "/balances/employee/:employeeId",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  updateEmployeeLeaveAllocation
+);
+
+router.post(
+  "/balances/employee/:employeeId",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  updateEmployeeLeaveAllocation
+);
+
+router.post(
+  "/requests/admin/mark",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  markLeaveByAdmin
+);
+
+router.get(
   "/requests/pending",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   listPendingLeaveRequests
@@ -141,3 +206,9 @@ router.delete(
 );
 
 export default router;
+// LWP / UNPAID LEAVE REPORT
+router.get(
+  "/reports/lwp",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  getLwpReport
+);

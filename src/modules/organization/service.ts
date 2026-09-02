@@ -1,5 +1,6 @@
 // src/modules/organization/service.ts
 import { OrganizationRepository } from "./repository.js";
+import { prisma } from "../../config/prisma.js";
 import type {
   CreateDepartmentDTO,
   CreateTeamDTO,
@@ -180,6 +181,8 @@ export class OrganizationService {
       lunchMinutes?: number;
       breakMinutes?: number;
       graceMinutes?: number;
+      workWeekDays?: number;
+      sandwichRuleEnabled?: boolean;
     }
   ) {
     if (dto.workingMinutes !== undefined) {
@@ -230,6 +233,18 @@ export class OrganizationService {
       }
     }
 
+    if (dto.workWeekDays !== undefined) {
+      if (![5, 6].includes(dto.workWeekDays)) {
+        throw new Error("Working week must be either 5 days or 6 days");
+      }
+    }
+
+    if (dto.sandwichRuleEnabled !== undefined) {
+      if (typeof dto.sandwichRuleEnabled !== "boolean") {
+        throw new Error("sandwichRuleEnabled must be a boolean");
+      }
+    }
+
     return repo.updateWorkingHoursConfig(companyId, {
       ...(dto.workingMinutes !== undefined && {
         workingMinutes: Math.round(dto.workingMinutes),
@@ -242,6 +257,12 @@ export class OrganizationService {
       }),
       ...(dto.graceMinutes !== undefined && {
         graceMinutes: Math.round(dto.graceMinutes),
+      }),
+      ...(dto.workWeekDays !== undefined && {
+        workWeekDays: dto.workWeekDays,
+      }),
+      ...(dto.sandwichRuleEnabled !== undefined && {
+        sandwichRuleEnabled: dto.sandwichRuleEnabled,
       }),
     });
   }

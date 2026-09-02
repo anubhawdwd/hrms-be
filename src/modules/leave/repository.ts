@@ -20,15 +20,28 @@ export class LeaveRepository {
     companyId: string;
     name: string;
     code: string;
-    isPaid: boolean;
+    isPaid?: boolean;
+    autoGrantOnOnboarding?: boolean;
+    isActive?: boolean;
   }) {
-    return prisma.leaveType.create({ data: params });
+    return prisma.leaveType.create({
+      data: {
+        companyId: params.companyId,
+        name: params.name,
+        code: params.code,
+        isPaid: params.isPaid ?? true,
+        autoGrantOnOnboarding: params.autoGrantOnOnboarding ?? false,
+        isActive: params.isActive ?? true,
+      },
+    });
   }
 
   updateLeaveType(params: {
     leaveTypeId: string;
     name?: string;
+    code?: string;
     isPaid?: boolean;
+    autoGrantOnOnboarding?: boolean;
     isActive?: boolean;
   }) {
     const { leaveTypeId, ...data } = params;
@@ -58,7 +71,6 @@ export class LeaveRepository {
     probationAllowed: boolean;
     genderRestriction?: GenderRestriction | null;
     monthlyAccrual: boolean;
-    sandwichRule: boolean;
   }) {
     const { companyId, leaveTypeId, year, ...rest } = params;
 
@@ -84,7 +96,7 @@ export class LeaveRepository {
     return prisma.leavePolicy.findMany({
       where: { companyId, year },
       include: {
-        leaveType: { select: { name: true, code: true, isPaid: true } },
+        leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
       },
       orderBy: { createdAt: "asc" },
     });
@@ -146,6 +158,10 @@ export class LeaveRepository {
   findLeaveRequestById(requestId: string) {
     return prisma.leaveRequest.findUnique({
       where: { id: requestId },
+      include: {
+        days: { orderBy: { date: "asc" } },
+        leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
+      },
     });
   }
 
@@ -167,7 +183,8 @@ export class LeaveRepository {
     return prisma.leaveRequest.findMany({
       where: { employeeId },
       include: {
-        leaveType: { select: { name: true, code: true } },
+        leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
+        days: { orderBy: { date: "asc" } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -266,7 +283,7 @@ export class LeaveRepository {
         startTime: true,
         endTime: true,
         durationValue: true,
-        leaveType: { select: { name: true, code: true } },
+        leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
       },
     });
   }
@@ -277,7 +294,7 @@ export class LeaveRepository {
     return prisma.leaveBalance.findMany({
       where: { employeeId, year },
       include: {
-        leaveType: { select: { name: true, code: true } },
+        leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
       },
     });
   }
@@ -372,7 +389,6 @@ export class LeaveRepository {
     employeeId: string;
     leaveTypeId: string;
     year: number;
-    allowSandwich?: boolean | null;
     allowEncashment?: boolean | null;
     extraAllocation?: number | null;
     reason?: string | null;
@@ -384,7 +400,6 @@ export class LeaveRepository {
         employeeId_leaveTypeId_year: { employeeId, leaveTypeId, year },
       },
       update: {
-        allowSandwich: rest.allowSandwich ?? null,
         allowEncashment: rest.allowEncashment ?? null,
         extraAllocation: rest.extraAllocation ?? null,
         reason: rest.reason ?? null,
@@ -393,7 +408,6 @@ export class LeaveRepository {
         employeeId,
         leaveTypeId,
         year,
-        allowSandwich: rest.allowSandwich ?? null,
         allowEncashment: rest.allowEncashment ?? null,
         extraAllocation: rest.extraAllocation ?? null,
         reason: rest.reason ?? null,
@@ -425,7 +439,8 @@ export class LeaveRepository {
         employee: { companyId },
       },
       include: {
-        leaveType: { select: { name: true, code: true } },
+        leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
+        days: { orderBy: { date: "asc" } },
         employee: {
           select: {
             id: true,
@@ -453,7 +468,8 @@ export class LeaveRepository {
         updatedAt: { gte: sinceDate },
       },
       include: {
-        leaveType: { select: { name: true, code: true } },
+        leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
+        days: { orderBy: { date: "asc" } },
         employee: {
           select: {
             id: true,

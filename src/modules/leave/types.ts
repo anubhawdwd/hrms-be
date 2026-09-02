@@ -45,7 +45,6 @@ export interface UpsertLeavePolicyDTO {
   genderRestriction?: GenderRestriction | null;
 
   monthlyAccrual: boolean;
-  sandwichRule: boolean;
 }
 
 export interface ListLeavePoliciesDTO {
@@ -115,7 +114,6 @@ export interface UpsertEmployeeLeaveOverrideDTO {
   leaveTypeId: string;
   year: number;
 
-  allowSandwich?: boolean | null;
   allowEncashment?: boolean | null;
   extraAllocation?: number | null;
 

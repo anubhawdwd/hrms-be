@@ -50,7 +50,6 @@ export type LeavePolicyMinAggregateOutputType = {
   probationAllowed: boolean | null
   genderRestriction: $Enums.GenderRestriction | null
   monthlyAccrual: boolean | null
-  sandwichRule: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -67,7 +66,6 @@ export type LeavePolicyMaxAggregateOutputType = {
   probationAllowed: boolean | null
   genderRestriction: $Enums.GenderRestriction | null
   monthlyAccrual: boolean | null
-  sandwichRule: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -84,7 +82,6 @@ export type LeavePolicyCountAggregateOutputType = {
   probationAllowed: number
   genderRestriction: number
   monthlyAccrual: number
-  sandwichRule: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -115,7 +112,6 @@ export type LeavePolicyMinAggregateInputType = {
   probationAllowed?: true
   genderRestriction?: true
   monthlyAccrual?: true
-  sandwichRule?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -132,7 +128,6 @@ export type LeavePolicyMaxAggregateInputType = {
   probationAllowed?: true
   genderRestriction?: true
   monthlyAccrual?: true
-  sandwichRule?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -149,7 +144,6 @@ export type LeavePolicyCountAggregateInputType = {
   probationAllowed?: true
   genderRestriction?: true
   monthlyAccrual?: true
-  sandwichRule?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -253,7 +247,6 @@ export type LeavePolicyGroupByOutputType = {
   probationAllowed: boolean
   genderRestriction: $Enums.GenderRestriction | null
   monthlyAccrual: boolean
-  sandwichRule: boolean
   createdAt: Date
   updatedAt: Date
   _count: LeavePolicyCountAggregateOutputType | null
@@ -293,7 +286,6 @@ export type LeavePolicyWhereInput = {
   probationAllowed?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   genderRestriction?: Prisma.EnumGenderRestrictionNullableFilter<"LeavePolicy"> | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFilter<"LeavePolicy"> | boolean
-  sandwichRule?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   createdAt?: Prisma.DateTimeFilter<"LeavePolicy"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeavePolicy"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
@@ -312,7 +304,6 @@ export type LeavePolicyOrderByWithRelationInput = {
   probationAllowed?: Prisma.SortOrder
   genderRestriction?: Prisma.SortOrderInput | Prisma.SortOrder
   monthlyAccrual?: Prisma.SortOrder
-  sandwichRule?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
@@ -335,7 +326,6 @@ export type LeavePolicyWhereUniqueInput = Prisma.AtLeast<{
   probationAllowed?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   genderRestriction?: Prisma.EnumGenderRestrictionNullableFilter<"LeavePolicy"> | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFilter<"LeavePolicy"> | boolean
-  sandwichRule?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   createdAt?: Prisma.DateTimeFilter<"LeavePolicy"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeavePolicy"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
@@ -354,7 +344,6 @@ export type LeavePolicyOrderByWithAggregationInput = {
   probationAllowed?: Prisma.SortOrder
   genderRestriction?: Prisma.SortOrderInput | Prisma.SortOrder
   monthlyAccrual?: Prisma.SortOrder
-  sandwichRule?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LeavePolicyCountOrderByAggregateInput
@@ -379,7 +368,6 @@ export type LeavePolicyScalarWhereWithAggregatesInput = {
   probationAllowed?: Prisma.BoolWithAggregatesFilter<"LeavePolicy"> | boolean
   genderRestriction?: Prisma.EnumGenderRestrictionNullableWithAggregatesFilter<"LeavePolicy"> | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolWithAggregatesFilter<"LeavePolicy"> | boolean
-  sandwichRule?: Prisma.BoolWithAggregatesFilter<"LeavePolicy"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"LeavePolicy"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LeavePolicy"> | Date | string
 }
@@ -394,7 +382,6 @@ export type LeavePolicyCreateInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeavePoliciesInput
@@ -413,7 +400,6 @@ export type LeavePolicyUncheckedCreateInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -428,7 +414,6 @@ export type LeavePolicyUpdateInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeavePoliciesNestedInput
@@ -447,7 +432,6 @@ export type LeavePolicyUncheckedUpdateInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -464,7 +448,6 @@ export type LeavePolicyCreateManyInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -479,7 +462,6 @@ export type LeavePolicyUpdateManyMutationInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -496,7 +478,6 @@ export type LeavePolicyUncheckedUpdateManyInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -528,7 +509,6 @@ export type LeavePolicyCountOrderByAggregateInput = {
   probationAllowed?: Prisma.SortOrder
   genderRestriction?: Prisma.SortOrder
   monthlyAccrual?: Prisma.SortOrder
-  sandwichRule?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -551,7 +531,6 @@ export type LeavePolicyMaxOrderByAggregateInput = {
   probationAllowed?: Prisma.SortOrder
   genderRestriction?: Prisma.SortOrder
   monthlyAccrual?: Prisma.SortOrder
-  sandwichRule?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -568,7 +547,6 @@ export type LeavePolicyMinOrderByAggregateInput = {
   probationAllowed?: Prisma.SortOrder
   genderRestriction?: Prisma.SortOrder
   monthlyAccrual?: Prisma.SortOrder
-  sandwichRule?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -685,7 +663,6 @@ export type LeavePolicyCreateWithoutCompanyInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   leaveType: Prisma.LeaveTypeCreateNestedOneWithoutPoliciesInput
@@ -702,7 +679,6 @@ export type LeavePolicyUncheckedCreateWithoutCompanyInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -748,7 +724,6 @@ export type LeavePolicyScalarWhereInput = {
   probationAllowed?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   genderRestriction?: Prisma.EnumGenderRestrictionNullableFilter<"LeavePolicy"> | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFilter<"LeavePolicy"> | boolean
-  sandwichRule?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   createdAt?: Prisma.DateTimeFilter<"LeavePolicy"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeavePolicy"> | Date | string
 }
@@ -763,7 +738,6 @@ export type LeavePolicyCreateWithoutLeaveTypeInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutLeavePoliciesInput
@@ -780,7 +754,6 @@ export type LeavePolicyUncheckedCreateWithoutLeaveTypeInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -822,7 +795,6 @@ export type LeavePolicyCreateManyCompanyInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -837,7 +809,6 @@ export type LeavePolicyUpdateWithoutCompanyInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutPoliciesNestedInput
@@ -854,7 +825,6 @@ export type LeavePolicyUncheckedUpdateWithoutCompanyInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -870,7 +840,6 @@ export type LeavePolicyUncheckedUpdateManyWithoutCompanyInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -886,7 +855,6 @@ export type LeavePolicyCreateManyLeaveTypeInput = {
   probationAllowed?: boolean
   genderRestriction?: $Enums.GenderRestriction | null
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -901,7 +869,6 @@ export type LeavePolicyUpdateWithoutLeaveTypeInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutLeavePoliciesNestedInput
@@ -918,7 +885,6 @@ export type LeavePolicyUncheckedUpdateWithoutLeaveTypeInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -934,7 +900,6 @@ export type LeavePolicyUncheckedUpdateManyWithoutLeaveTypeInput = {
   probationAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   genderRestriction?: Prisma.NullableEnumGenderRestrictionFieldUpdateOperationsInput | $Enums.GenderRestriction | null
   monthlyAccrual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sandwichRule?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -953,7 +918,6 @@ export type LeavePolicySelect<ExtArgs extends runtime.Types.Extensions.InternalA
   probationAllowed?: boolean
   genderRestriction?: boolean
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -972,7 +936,6 @@ export type LeavePolicySelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   probationAllowed?: boolean
   genderRestriction?: boolean
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -991,7 +954,6 @@ export type LeavePolicySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   probationAllowed?: boolean
   genderRestriction?: boolean
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1010,12 +972,11 @@ export type LeavePolicySelectScalar = {
   probationAllowed?: boolean
   genderRestriction?: boolean
   monthlyAccrual?: boolean
-  sandwichRule?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LeavePolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "leaveTypeId" | "year" | "yearlyAllocation" | "allowCarryForward" | "maxCarryForward" | "allowEncashment" | "probationAllowed" | "genderRestriction" | "monthlyAccrual" | "sandwichRule" | "createdAt" | "updatedAt", ExtArgs["result"]["leavePolicy"]>
+export type LeavePolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "leaveTypeId" | "year" | "yearlyAllocation" | "allowCarryForward" | "maxCarryForward" | "allowEncashment" | "probationAllowed" | "genderRestriction" | "monthlyAccrual" | "createdAt" | "updatedAt", ExtArgs["result"]["leavePolicy"]>
 export type LeavePolicyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
@@ -1047,7 +1008,6 @@ export type $LeavePolicyPayload<ExtArgs extends runtime.Types.Extensions.Interna
     probationAllowed: boolean
     genderRestriction: $Enums.GenderRestriction | null
     monthlyAccrual: boolean
-    sandwichRule: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["leavePolicy"]>
@@ -1486,7 +1446,6 @@ export interface LeavePolicyFieldRefs {
   readonly probationAllowed: Prisma.FieldRef<"LeavePolicy", 'Boolean'>
   readonly genderRestriction: Prisma.FieldRef<"LeavePolicy", 'GenderRestriction'>
   readonly monthlyAccrual: Prisma.FieldRef<"LeavePolicy", 'Boolean'>
-  readonly sandwichRule: Prisma.FieldRef<"LeavePolicy", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"LeavePolicy", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"LeavePolicy", 'DateTime'>
 }

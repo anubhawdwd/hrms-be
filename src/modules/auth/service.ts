@@ -163,6 +163,11 @@ export class AuthService {
     } catch {
       throw new Error("Invalid refresh token");
     }
+    if (!stored.user.isActive) {
+      await repo.deleteRefreshToken(stored.token);
+      throw new Error("Inactive user account");
+    }
+
     // expiry check 
     if (stored.expiresAt < new Date()) {
       await repo.deleteRefreshToken(stored.token);
@@ -213,6 +218,14 @@ export class AuthService {
 
     if (!user) {
       throw new Error("User not found in company");
+    }
+
+    if (!user.isActive) {
+      throw new Error("Inactive Users not allowed");
+    }
+
+    if (!user.isActive) {
+      throw new Error("Inactive Users not allowed");
     }
 
     if (user.authProvider !== AuthProvider.GOOGLE && user.authProvider !== AuthProvider.LOCAL) {

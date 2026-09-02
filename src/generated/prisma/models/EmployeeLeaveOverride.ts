@@ -41,7 +41,6 @@ export type EmployeeLeaveOverrideMinAggregateOutputType = {
   employeeId: string | null
   leaveTypeId: string | null
   year: number | null
-  allowSandwich: boolean | null
   allowEncashment: boolean | null
   extraAllocation: number | null
   reason: string | null
@@ -53,7 +52,6 @@ export type EmployeeLeaveOverrideMaxAggregateOutputType = {
   employeeId: string | null
   leaveTypeId: string | null
   year: number | null
-  allowSandwich: boolean | null
   allowEncashment: boolean | null
   extraAllocation: number | null
   reason: string | null
@@ -65,7 +63,6 @@ export type EmployeeLeaveOverrideCountAggregateOutputType = {
   employeeId: number
   leaveTypeId: number
   year: number
-  allowSandwich: number
   allowEncashment: number
   extraAllocation: number
   reason: number
@@ -89,7 +86,6 @@ export type EmployeeLeaveOverrideMinAggregateInputType = {
   employeeId?: true
   leaveTypeId?: true
   year?: true
-  allowSandwich?: true
   allowEncashment?: true
   extraAllocation?: true
   reason?: true
@@ -101,7 +97,6 @@ export type EmployeeLeaveOverrideMaxAggregateInputType = {
   employeeId?: true
   leaveTypeId?: true
   year?: true
-  allowSandwich?: true
   allowEncashment?: true
   extraAllocation?: true
   reason?: true
@@ -113,7 +108,6 @@ export type EmployeeLeaveOverrideCountAggregateInputType = {
   employeeId?: true
   leaveTypeId?: true
   year?: true
-  allowSandwich?: true
   allowEncashment?: true
   extraAllocation?: true
   reason?: true
@@ -212,7 +206,6 @@ export type EmployeeLeaveOverrideGroupByOutputType = {
   employeeId: string
   leaveTypeId: string
   year: number
-  allowSandwich: boolean | null
   allowEncashment: boolean | null
   extraAllocation: number | null
   reason: string | null
@@ -247,7 +240,6 @@ export type EmployeeLeaveOverrideWhereInput = {
   employeeId?: Prisma.StringFilter<"EmployeeLeaveOverride"> | string
   leaveTypeId?: Prisma.StringFilter<"EmployeeLeaveOverride"> | string
   year?: Prisma.IntFilter<"EmployeeLeaveOverride"> | number
-  allowSandwich?: Prisma.BoolNullableFilter<"EmployeeLeaveOverride"> | boolean | null
   allowEncashment?: Prisma.BoolNullableFilter<"EmployeeLeaveOverride"> | boolean | null
   extraAllocation?: Prisma.FloatNullableFilter<"EmployeeLeaveOverride"> | number | null
   reason?: Prisma.StringNullableFilter<"EmployeeLeaveOverride"> | string | null
@@ -261,7 +253,6 @@ export type EmployeeLeaveOverrideOrderByWithRelationInput = {
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
   year?: Prisma.SortOrder
-  allowSandwich?: Prisma.SortOrderInput | Prisma.SortOrder
   allowEncashment?: Prisma.SortOrderInput | Prisma.SortOrder
   extraAllocation?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -279,7 +270,6 @@ export type EmployeeLeaveOverrideWhereUniqueInput = Prisma.AtLeast<{
   employeeId?: Prisma.StringFilter<"EmployeeLeaveOverride"> | string
   leaveTypeId?: Prisma.StringFilter<"EmployeeLeaveOverride"> | string
   year?: Prisma.IntFilter<"EmployeeLeaveOverride"> | number
-  allowSandwich?: Prisma.BoolNullableFilter<"EmployeeLeaveOverride"> | boolean | null
   allowEncashment?: Prisma.BoolNullableFilter<"EmployeeLeaveOverride"> | boolean | null
   extraAllocation?: Prisma.FloatNullableFilter<"EmployeeLeaveOverride"> | number | null
   reason?: Prisma.StringNullableFilter<"EmployeeLeaveOverride"> | string | null
@@ -293,7 +283,6 @@ export type EmployeeLeaveOverrideOrderByWithAggregationInput = {
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
   year?: Prisma.SortOrder
-  allowSandwich?: Prisma.SortOrderInput | Prisma.SortOrder
   allowEncashment?: Prisma.SortOrderInput | Prisma.SortOrder
   extraAllocation?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -313,7 +302,6 @@ export type EmployeeLeaveOverrideScalarWhereWithAggregatesInput = {
   employeeId?: Prisma.StringWithAggregatesFilter<"EmployeeLeaveOverride"> | string
   leaveTypeId?: Prisma.StringWithAggregatesFilter<"EmployeeLeaveOverride"> | string
   year?: Prisma.IntWithAggregatesFilter<"EmployeeLeaveOverride"> | number
-  allowSandwich?: Prisma.BoolNullableWithAggregatesFilter<"EmployeeLeaveOverride"> | boolean | null
   allowEncashment?: Prisma.BoolNullableWithAggregatesFilter<"EmployeeLeaveOverride"> | boolean | null
   extraAllocation?: Prisma.FloatNullableWithAggregatesFilter<"EmployeeLeaveOverride"> | number | null
   reason?: Prisma.StringNullableWithAggregatesFilter<"EmployeeLeaveOverride"> | string | null
@@ -323,7 +311,6 @@ export type EmployeeLeaveOverrideScalarWhereWithAggregatesInput = {
 export type EmployeeLeaveOverrideCreateInput = {
   id?: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -337,7 +324,6 @@ export type EmployeeLeaveOverrideUncheckedCreateInput = {
   employeeId: string
   leaveTypeId: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -347,7 +333,6 @@ export type EmployeeLeaveOverrideUncheckedCreateInput = {
 export type EmployeeLeaveOverrideUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -361,7 +346,6 @@ export type EmployeeLeaveOverrideUncheckedUpdateInput = {
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -373,7 +357,6 @@ export type EmployeeLeaveOverrideCreateManyInput = {
   employeeId: string
   leaveTypeId: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -383,7 +366,6 @@ export type EmployeeLeaveOverrideCreateManyInput = {
 export type EmployeeLeaveOverrideUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -395,7 +377,6 @@ export type EmployeeLeaveOverrideUncheckedUpdateManyInput = {
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -423,7 +404,6 @@ export type EmployeeLeaveOverrideCountOrderByAggregateInput = {
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
   year?: Prisma.SortOrder
-  allowSandwich?: Prisma.SortOrder
   allowEncashment?: Prisma.SortOrder
   extraAllocation?: Prisma.SortOrder
   reason?: Prisma.SortOrder
@@ -440,7 +420,6 @@ export type EmployeeLeaveOverrideMaxOrderByAggregateInput = {
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
   year?: Prisma.SortOrder
-  allowSandwich?: Prisma.SortOrder
   allowEncashment?: Prisma.SortOrder
   extraAllocation?: Prisma.SortOrder
   reason?: Prisma.SortOrder
@@ -452,7 +431,6 @@ export type EmployeeLeaveOverrideMinOrderByAggregateInput = {
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
   year?: Prisma.SortOrder
-  allowSandwich?: Prisma.SortOrder
   allowEncashment?: Prisma.SortOrder
   extraAllocation?: Prisma.SortOrder
   reason?: Prisma.SortOrder
@@ -563,7 +541,6 @@ export type NullableFloatFieldUpdateOperationsInput = {
 export type EmployeeLeaveOverrideCreateWithoutEmployeeInput = {
   id?: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -575,7 +552,6 @@ export type EmployeeLeaveOverrideUncheckedCreateWithoutEmployeeInput = {
   id?: string
   leaveTypeId: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -616,7 +592,6 @@ export type EmployeeLeaveOverrideScalarWhereInput = {
   employeeId?: Prisma.StringFilter<"EmployeeLeaveOverride"> | string
   leaveTypeId?: Prisma.StringFilter<"EmployeeLeaveOverride"> | string
   year?: Prisma.IntFilter<"EmployeeLeaveOverride"> | number
-  allowSandwich?: Prisma.BoolNullableFilter<"EmployeeLeaveOverride"> | boolean | null
   allowEncashment?: Prisma.BoolNullableFilter<"EmployeeLeaveOverride"> | boolean | null
   extraAllocation?: Prisma.FloatNullableFilter<"EmployeeLeaveOverride"> | number | null
   reason?: Prisma.StringNullableFilter<"EmployeeLeaveOverride"> | string | null
@@ -626,7 +601,6 @@ export type EmployeeLeaveOverrideScalarWhereInput = {
 export type EmployeeLeaveOverrideCreateWithoutLeaveTypeInput = {
   id?: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -638,7 +612,6 @@ export type EmployeeLeaveOverrideUncheckedCreateWithoutLeaveTypeInput = {
   id?: string
   employeeId: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -675,7 +648,6 @@ export type EmployeeLeaveOverrideCreateManyEmployeeInput = {
   id?: string
   leaveTypeId: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -685,7 +657,6 @@ export type EmployeeLeaveOverrideCreateManyEmployeeInput = {
 export type EmployeeLeaveOverrideUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -697,7 +668,6 @@ export type EmployeeLeaveOverrideUncheckedUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -708,7 +678,6 @@ export type EmployeeLeaveOverrideUncheckedUpdateManyWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -719,7 +688,6 @@ export type EmployeeLeaveOverrideCreateManyLeaveTypeInput = {
   id?: string
   employeeId: string
   year: number
-  allowSandwich?: boolean | null
   allowEncashment?: boolean | null
   extraAllocation?: number | null
   reason?: string | null
@@ -729,7 +697,6 @@ export type EmployeeLeaveOverrideCreateManyLeaveTypeInput = {
 export type EmployeeLeaveOverrideUpdateWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -741,7 +708,6 @@ export type EmployeeLeaveOverrideUncheckedUpdateWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -752,7 +718,6 @@ export type EmployeeLeaveOverrideUncheckedUpdateManyWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.IntFieldUpdateOperationsInput | number
-  allowSandwich?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   allowEncashment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   extraAllocation?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -766,7 +731,6 @@ export type EmployeeLeaveOverrideSelect<ExtArgs extends runtime.Types.Extensions
   employeeId?: boolean
   leaveTypeId?: boolean
   year?: boolean
-  allowSandwich?: boolean
   allowEncashment?: boolean
   extraAllocation?: boolean
   reason?: boolean
@@ -780,7 +744,6 @@ export type EmployeeLeaveOverrideSelectCreateManyAndReturn<ExtArgs extends runti
   employeeId?: boolean
   leaveTypeId?: boolean
   year?: boolean
-  allowSandwich?: boolean
   allowEncashment?: boolean
   extraAllocation?: boolean
   reason?: boolean
@@ -794,7 +757,6 @@ export type EmployeeLeaveOverrideSelectUpdateManyAndReturn<ExtArgs extends runti
   employeeId?: boolean
   leaveTypeId?: boolean
   year?: boolean
-  allowSandwich?: boolean
   allowEncashment?: boolean
   extraAllocation?: boolean
   reason?: boolean
@@ -808,14 +770,13 @@ export type EmployeeLeaveOverrideSelectScalar = {
   employeeId?: boolean
   leaveTypeId?: boolean
   year?: boolean
-  allowSandwich?: boolean
   allowEncashment?: boolean
   extraAllocation?: boolean
   reason?: boolean
   createdAt?: boolean
 }
 
-export type EmployeeLeaveOverrideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "leaveTypeId" | "year" | "allowSandwich" | "allowEncashment" | "extraAllocation" | "reason" | "createdAt", ExtArgs["result"]["employeeLeaveOverride"]>
+export type EmployeeLeaveOverrideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "leaveTypeId" | "year" | "allowEncashment" | "extraAllocation" | "reason" | "createdAt", ExtArgs["result"]["employeeLeaveOverride"]>
 export type EmployeeLeaveOverrideInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.EmployeeProfileDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
@@ -840,7 +801,6 @@ export type $EmployeeLeaveOverridePayload<ExtArgs extends runtime.Types.Extensio
     employeeId: string
     leaveTypeId: string
     year: number
-    allowSandwich: boolean | null
     allowEncashment: boolean | null
     extraAllocation: number | null
     reason: string | null
@@ -1274,7 +1234,6 @@ export interface EmployeeLeaveOverrideFieldRefs {
   readonly employeeId: Prisma.FieldRef<"EmployeeLeaveOverride", 'String'>
   readonly leaveTypeId: Prisma.FieldRef<"EmployeeLeaveOverride", 'String'>
   readonly year: Prisma.FieldRef<"EmployeeLeaveOverride", 'Int'>
-  readonly allowSandwich: Prisma.FieldRef<"EmployeeLeaveOverride", 'Boolean'>
   readonly allowEncashment: Prisma.FieldRef<"EmployeeLeaveOverride", 'Boolean'>
   readonly extraAllocation: Prisma.FieldRef<"EmployeeLeaveOverride", 'Float'>
   readonly reason: Prisma.FieldRef<"EmployeeLeaveOverride", 'String'>

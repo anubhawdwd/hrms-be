@@ -16,6 +16,10 @@ export interface CreateEmployeeDTO {
   managerId?: string;
   joiningDate: string;
   isProbation?: boolean;
+  initialLeaveGrant?: {
+    leaveTypeId: string;
+    allocated: number;
+  } | null;
 }
 
 export interface UpdateEmployeeDTO {
