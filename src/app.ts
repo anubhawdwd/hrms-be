@@ -6,6 +6,7 @@ import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 import path from "path";
 import cookieParser from "cookie-parser";
+import { errorCaptureMiddleware, globalErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.set("trust proxy", 1);
 app.use(cookieParser());
 
 app.use(express.json());
+app.use(errorCaptureMiddleware);
 
 app.get("/", (_, res) => {
   res.status(200).json({ status: "ok" });
@@ -59,5 +61,7 @@ if (fs.existsSync(swaggerPath)) {
 }
 
 app.use("/api", routes);
+
+app.use(globalErrorHandler);
 
 export default app;

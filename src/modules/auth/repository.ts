@@ -2,14 +2,16 @@
 import { prisma } from "../../config/prisma.js";
 
 export class AuthRepository {
-  findCompanyById(companyId: string) {
+  findCompanyById(companyId?: string | null) {
+    if (!companyId) return null;
     return prisma.company.findUnique({
       where: { id: companyId },
       select: { id: true, name: true, isActive: true, usesTeams: true },
     });
   }
 
-  findActiveOfficeLocation(companyId: string) {
+  findActiveOfficeLocation(companyId?: string | null) {
+    if (!companyId) return null;
     return prisma.officeLocation.findFirst({
       where: { companyId, isActive: true },
       select: { geoFencingEnabled: true },

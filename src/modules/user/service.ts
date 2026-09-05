@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
+import { prisma } from "../../config/prisma.js";
 import { UserRepository } from "./repository.js";
-import type { CreateUserDTO, ListUsersDTO, UpdateUserDTO } from "./types.js";
+import type { CreateUserDTO, ListUsersDTO, UpdateUserDTO, UpdateUserEmailDTO } from "./types.js";
 import { AuthProvider, UserRole } from "../../generated/prisma/enums.js";
 import { generateTemporaryPassword } from "../../utils/password.js";
 
@@ -33,6 +34,70 @@ export class UserService {
     return repo.listUsers(dto.companyId);
   }
 
+  async updateUserEmail(dto: UpdateUserEmailDTO) {
+    const newEmail = dto.email?.trim().toLowerCase();
+    if (!newEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      throw new Error("Valid email is required");
+    }
+
+    const user = dto.companyId
+      ? await repo.findById(dto.userId, dto.companyId)
+      : await repo.findById(dto.userId);
+
+    if (!user) {
+      throw new Error("User not found or inactive");
+    }
+    if (!user.isActive) {
+      throw new Error("Cannot update email for inactive user");
+    }
+
+    if (user.authProvider !== AuthProvider.LOCAL) {
+      throw new Error("Email is managed by your SSO provider for this account");
+    }
+
+    if (user.email.toLowerCase() === newEmail) {
+      return { message: "Email is already up to date" };
+    }
+
+    // Global uniqueness validation across all companies
+    const existing = await prisma.user.findFirst({
+      where: {
+        email: newEmail,
+        NOT: { id: dto.userId },
+      },
+    });
+    if (existing) {
+      const err: any = new Error(`A user with email '${newEmail}' already exists`);
+      err.statusCode = 409;
+      throw err;
+    }
+
+    // Update email
+    await prisma.user.update({
+      where: { id: dto.userId },
+      data: { email: newEmail },
+    });
+
+    // Invalidate existing sessions
+    await repo.deleteAllRefreshTokensByUser(dto.userId);
+
+    // Persist audit record
+    await prisma.auditLog.create({
+      data: {
+        action: "USER_EMAIL_UPDATE",
+        actorId: dto.actorUserId ?? null,
+        targetId: dto.userId,
+        companyId: user.companyId ?? dto.companyId ?? null,
+        details: {
+          oldEmail: user.email,
+          newEmail,
+        },
+      },
+    });
+
+    return { message: "User email updated successfully" };
+  }
+
   async updateUser(dto: UpdateUserDTO) {
     if (!dto.email && !dto.authProvider && !dto.role) {
       throw new Error("Nothing to update");
@@ -52,27 +117,39 @@ export class UserService {
       throw new Error("Invalid role");
     }
 
-    const result = await repo.updateUser(
-      dto.userId,
-      dto.companyId,
-      {
-        ...(dto.email && { email: dto.email.trim().toLowerCase() }),
-        ...(dto.authProvider && { authProvider: dto.authProvider }),
-        ...(dto.role && { role: dto.role }),
-      }
-    );
+    if (dto.email) {
+      await this.updateUserEmail({
+        userId: dto.userId,
+        companyId: dto.companyId,
+        email: dto.email,
+        actorUserId: dto.actorUserId,
+      });
+    }
 
-    if (result.count === 0) {
-      throw new Error("User not found or inactive");
+    if (dto.authProvider || dto.role) {
+      const result = await repo.updateUser(
+        dto.userId,
+        dto.companyId,
+        {
+          ...(dto.authProvider && { authProvider: dto.authProvider }),
+          ...(dto.role && { role: dto.role }),
+        }
+      );
+
+      if (result.count === 0) {
+        throw new Error("User not found or inactive");
+      }
     }
 
     return { message: "User updated successfully" };
   }
 
-  async resetPassword(dto: { userId: string; companyId: string; manualPassword?: string }) {
-    const user = await repo.findById(dto.userId, dto.companyId);
+  async resetPassword(dto: { userId: string; companyId?: string | null; manualPassword?: string }) {
+    const user = dto.companyId
+      ? await repo.findById(dto.userId, dto.companyId)
+      : await repo.findById(dto.userId);
     if (!user) {
-      throw new Error("User not found in company");
+      throw new Error("User not found");
     }
     if (!user.isActive) {
       throw new Error("Cannot reset password for inactive user");

@@ -1,6 +1,10 @@
 // tests/attendance.test.ts
 import { computeDailyAttendanceSessions } from "../src/modules/attendance/calculations.js";
-import { AttendanceEventType } from "../src/generated/prisma/enums.js";
+import { AttendanceService } from "../src/modules/attendance/service.js";
+import { EmployeeService } from "../src/modules/employee/service.js";
+import { prisma } from "../src/config/prisma.js";
+import { AttendanceEventType, AuthProvider, UserRole } from "../src/generated/prisma/enums.js";
+import { createIsolatedTestCompany } from "./helpers/isolated-test-context.js";
 
 function assert(condition: boolean, msg: string) {
   if (!condition) throw new Error(`[FAIL] ${msg}`);
@@ -77,4 +81,77 @@ export async function runAttendanceTests() {
   ];
   const res6 = computeDailyAttendanceSessions(openPastDayEvents);
   assert(res6.completedMinutes === 900, "Auto-closed session computes bounded duration to end of day");
+
+  // Test 7: Isolated End-to-End AttendanceService Status Computation & Dashboard Parity
+  console.log("\n    --- AttendanceService & Dashboard Status Resolution (Isolated) ---");
+  const attendanceService = new AttendanceService();
+  const employeeService = new EmployeeService();
+  const ctx = await createIsolatedTestCompany({ setupStandardLeaveTypes: false });
+
+  try {
+    const companyId = ctx.company.id;
+    const user = await prisma.user.create({
+      data: {
+        companyId,
+        email: `att.test.${Date.now()}@isolatedtest.local`,
+        passwordHash: "$2b$10$abcdef",
+        role: UserRole.EMPLOYEE,
+        authProvider: AuthProvider.LOCAL,
+        isActive: true,
+      },
+    });
+
+    const emp = await employeeService.createEmployee({
+      userId: user.id,
+      companyId,
+      designationId: ctx.designation.id,
+      firstName: "AttTest",
+      lastName: "Employee",
+      joiningDate: "2026-01-01",
+      isProbation: false,
+      initialLeaveGrant: null,
+    });
+
+    // 1. Employee checks in today
+    await attendanceService.checkIn({
+      userId: user.id,
+      companyId,
+      source: "WEB",
+    });
+
+    // Today is in-progress: getAttendanceDashboard should show PRESENT
+    const now = new Date();
+    const yearMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+    const todayStr = now.toISOString().slice(0, 10);
+
+    const activeDashboard = await attendanceService.getAttendanceDashboard(companyId, yearMonth, emp.id);
+    const activeCell = activeDashboard.employees[0]?.days[todayStr];
+    assert(activeCell?.status === "PRESENT", "Active in-progress shift today resolves to PRESENT on dashboard");
+
+    // 2. Employee checks out early (completed minutes = 0 or a few seconds, < 520 required minutes)
+    const checkOutRes = await attendanceService.checkOut({
+      userId: user.id,
+      companyId,
+      source: "WEB",
+    });
+
+    // Check checkout returned status
+    assert(checkOutRes.status === "PARTIAL" || checkOutRes.status === "ABSENT", "Checkout with < required minutes returns non-PRESENT (PARTIAL)");
+
+    // 3. Verify getAttendanceDay returns PARTIAL and does NOT mutate to PRESENT
+    const attDayRecord = await attendanceService.getAttendanceDay(user.id, companyId, todayStr);
+    assert(attDayRecord?.status === "PARTIAL" || attDayRecord?.status === "ABSENT", "getAttendanceDay preserves PARTIAL status without overwriting to PRESENT");
+
+    // 4. Verify getAttendanceRange returns PARTIAL
+    const attRangeRecords = await attendanceService.getAttendanceRange(user.id, companyId, todayStr, todayStr);
+    assert(attRangeRecords[0]?.status === "PARTIAL" || attRangeRecords[0]?.status === "ABSENT", "getAttendanceRange returns PARTIAL status");
+
+    // 5. Verify getAttendanceDashboard returns PARTIAL for today once checked out
+    const closedDashboard = await attendanceService.getAttendanceDashboard(companyId, yearMonth, emp.id);
+    const closedCell = closedDashboard.employees[0]?.days[todayStr];
+    assert(closedCell?.status === "PARTIAL" || closedCell?.status === "ABSENT", "Dashboard reflects PARTIAL status once checked out with insufficient hours");
+  } finally {
+    await ctx.cleanup();
+  }
 }
+

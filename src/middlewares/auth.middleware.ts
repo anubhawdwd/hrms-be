@@ -7,7 +7,7 @@ import { UserRole } from "../generated/prisma/enums.js";
 
 export interface AuthPayload {
   userId: string;
-  companyId: string;
+  companyId?: string | null;
   role: UserRole;
 }
 
@@ -39,9 +39,14 @@ export function authenticateJWT(
 
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET) as JwtPayload;
 
+    const hasValidCompanyId =
+      decoded.companyId === null ||
+      decoded.companyId === undefined ||
+      typeof decoded.companyId === "string";
+
     if (
       typeof decoded.sub !== "string" ||
-      typeof decoded.companyId !== "string" ||
+      !hasValidCompanyId ||
       typeof decoded.role !== "string" ||
       !Object.values(UserRole).includes(decoded.role as UserRole)
     ) {
@@ -50,7 +55,7 @@ export function authenticateJWT(
 
     req.user = {
       userId: decoded.sub,
-      companyId: decoded.companyId,
+      companyId: typeof decoded.companyId === "string" ? decoded.companyId : null,
       role: decoded.role as UserRole,
     };
 

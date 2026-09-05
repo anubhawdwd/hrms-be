@@ -1,498 +1,376 @@
-# HRMS Product Requirements Document (PRD)
+# HRMS — Product Requirements Document (PRD)
 
-## 1. Purpose
-
-HRMS is a multi-tenant employee-management system for companies to manage:
-
-- Employees and organizational hierarchy
-- Authentication and role-based access
-- Attendance and working hours
-- Leave types, policies, balances and approvals
-- Holidays and restricted holidays
-- Employee lifecycle / offboarding
-- HR/Admin operations
-- Manager → reportee workflows
-- Super Admin → company onboarding
-
-This document defines **what the product should do**. Implementation tasks and bugs belong in `roadmap.md`.
+> **Product**: Multi-tenant HRMS for small companies (Zoho-People-style), excluding Payroll (future phase).
+> **Audience**: Developers, HR/business stakeholders, LLM coding agents.
+> **Companion document**: `MASTER_ROADMAP.md` (implementation status, tracked by feature ID).
+> **Last updated**: 2026-09-04
 
 ---
 
-# 2. Tenant & Company Model
+## 1. Product Scope
 
-## 2.1 Multi-tenancy
+### 1.1 In Scope (current phase)
+- Multi-tenant company management (SuperAdmin onboarding)
+- Authentication (password + Google/Microsoft SSO), RBAC with multi-role support
+- Organization structure (departments, teams, designations, hierarchy)
+- Attendance (geo-fenced check-in/out, auto-present policies, corrections)
+- Leave management (types, per-company policies, approval workflow, balances, sandwich rule, LWP, holidays, exit-based encashment)
+- Manager self-service (reportee-scoped leave & attendance visibility)
+- Real-time in-app notifications
+- Reports (Employee, Leave — Excel/CSV export)
+- Error logging & retention system
+- SuperAdmin dashboard
 
+### 1.2 Explicitly Out of Scope (this phase)
+- **Payroll** (salary computation, payslips, tax, statutory compliance) — future phase. Leave encashment in this phase only *records* payable data; it does not process payment.
+- **CSV/bulk import via UI** — not currently part of application scope. Bulk data operations (e.g. historical employee migration) go through controlled seed/backfill scripts, not an end-user import feature.
+- Email/SMS/push notifications (in-app + websocket only, for now)
+- Automatic maternity/paternity leave assignment (HR manages manually)
+- Religion-based restricted holiday auto-eligibility
+- Fractional (half-day) holidays
+- Self-service email-based password reset for end users (admin-assisted reset only, for now — self-service may be added later)
+
+---
+
+## 2. Tenant & Company Model
+
+### 2.1 Multi-Tenancy
 - Every company is isolated by `companyId`.
 - Company data must never be accessible across tenants.
-- All company-scoped APIs must enforce tenant isolation.
+- **All company-scoped APIs must enforce tenant isolation at the backend** — this is authoritative, not a frontend convenience (see §16, Security).
 
-## 2.2 Company onboarding
-
-Target onboarding flow:
-
-```text
+### 2.2 Company Onboarding Flow (target end-to-end)
+```
 Super Admin
     ↓
 Create Company
     ↓
 Create Company Admin
     ↓
-Company Admin configures organization
+Company Admin configures organization (departments/teams/designations)
     ↓
 Create / import employees
     ↓
-Configure leave + attendance
+Configure leave + attendance policies
     ↓
-Assign managers
+Assign managers (primary + optional secondary)
     ↓
 Employees start using HRMS
 ```
 
 ---
 
-# 3. Roles & Responsibilities
+## 3. Roles & Permission Model
 
-## Super Admin
+### 3.1 Multi-Role Support
+A single **User** can hold **multiple roles simultaneously**. Confirmed real-world combinations:
+- `EMPLOYEE + HR` — an HR person who also logs their own attendance and applies for their own leave.
+- `EMPLOYEE + COMPANY_ADMIN` — e.g. a director who wants both administrative access and a personal employee profile.
+- `COMPANY_ADMIN` may or may not also hold `EMPLOYEE` — not every admin needs a personal profile.
 
-System-level role.
+**Implication for schema**: `User.role` (single enum) must become a **many-to-many role assignment** (e.g. `UserRole` join table: `userId`, `role`), replacing the single-enum column. Every permission check must evaluate "does this user hold role X" rather than "is this user's role X."
 
-- Create/manage companies.
-- Create initial company administrator.
-- Access company-management dashboard.
-- Must not require company-level HR permissions for system administration.
+### 3.2 Role Definitions & Responsibilities
 
-## Company Admin
+**Super Admin** — system-level, not tied to any company.
+- Create/manage companies; create each company's initial Company Admin.
+- Access the platform-level company-management dashboard and error log dashboard.
+- Must not require any company-level HR permission to perform system administration.
 
-Company-level administrator.
+**Company Admin** — company-level administrator.
+- Manage organization structure, employees, attendance config, leave config, holidays, HR operations, and company user accounts.
 
-- Manage organization.
-- Manage employees.
-- Configure attendance.
-- Configure leave.
-- Manage holidays.
-- Manage HR operations.
-- Manage company users/accounts.
+**HR** — operational role, full access today.
+- Manage employees, attendance, and leave; approve/reject leave per the company's configured workflow; manage employee leave balance corrections; manage restricted-holiday eligibility/allocation; perform offboarding/reactivation.
+- **Future**: Company Admin may restrict a given HR user's permission scope (e.g. "leave-only HR"). Not built yet — design permission checks so this can be layered in later without a rewrite.
 
-## HR
+**Manager** *(derived, not a stored role)* — any employee referenced as `managerId` or `secondaryManagerId` on another `EmployeeProfile`.
+- Views only their direct + secondary reportees.
+- Can approve/reject leave for reportees only.
+- **Must not** approve or manage leave/attendance for employees outside their reportee scope, unless that same person also separately holds an HR/Company Admin role.
 
-Operational HR role.
+**Employee** — self-service only.
+- Login, maintain own profile where allowed, check in/out, view own attendance, apply for leave, cancel eligible own pending leave requests, view own balances and request history.
 
-- Manage employees.
-- Manage attendance.
-- Manage leave.
-- Approve/reject leave according to company workflow.
-- Manage employee leave allocation according to policy.
-- Manage restricted-holiday eligibility/allocation.
-- Perform employee offboarding/reactivation.
-
-## Manager
-
-Manager of assigned reportees.
-
-- View direct reportees.
-- Approve/reject leave requests of reportees.
-- Must not approve/manage unrelated employees' leave.
-
-## Employee
-
-- Login.
-- Maintain own profile where allowed.
-- Check in/out.
-- View attendance.
-- Apply for leave.
-- Cancel eligible own leave requests.
-- View own leave balances and requests.
+### 3.3 Inactive Users
+- An inactive `User` must not be able to authenticate under any circumstance, regardless of role.
 
 ---
 
-# 4. Authentication
+## 4. Authentication
 
 - Email/password login.
-- Short-lived access JWT.
-- HTTP-only refresh-token sessions.
-- Logout.
-- Forced first-login password change for temporary passwords.
-- Role-based authorization.
-- Google SSO.
-- Microsoft SSO.
-- Admin-assisted password reset.
-- Future optional self-service email password reset.
-
-Inactive users must not be able to authenticate.
+- Short-lived access JWT + HTTP-only refresh-token session (rotation on refresh).
+- Logout invalidates the session.
+- **Forced password change on first login** when a temporary password was issued (e.g. by admin-assisted reset or onboarding).
+- Google SSO, Microsoft SSO.
+- Admin-assisted password reset (HR/Company Admin resets an employee; SuperAdmin resets a Company Admin).
+- Role-based authorization on every protected route.
+- *(Deferred: self-service email-based password reset for end users.)*
 
 ---
 
-# 5. Employee Management
+## 5. Employee Management
 
-- Employee directory.
-- Employee profile.
-- Employee self-profile.
-- Employee onboarding.
-- Employee/user account creation.
-- Department assignment.
-- Designation assignment.
-- Team assignment where applicable.
-- Reporting-manager assignment.
-- Employee activation/deactivation.
-- Employee/User status must remain consistent through lifecycle operations.
-- Historical employee data must be preserved after offboarding.
-
-CSV bulk import is **not currently part of the application scope**; controlled seed/backfill scripts may be used for bulk data operations.
+- Employee directory, full profile view, and self-profile (self-service editing is currently deferred at the UI layer — see Roadmap `EMP-06`).
+- Onboarding creates both the `User` (login) and `EmployeeProfile` records.
+- Department, designation, team (where applicable), and reporting-manager (primary + optional secondary) assignment.
+- Activation / deactivation / reactivation — `EmployeeProfile.isActive` and `User.isActive` must always move together and stay consistent through every lifecycle operation.
+- **Historical employee data must be preserved after offboarding** — offboarding deactivates, it never deletes.
 
 ---
 
-# 6. Organization Management
+## 6. Organization Management
 
-Company administrators/HR can manage:
-
-- Departments
-- Teams
-- Designations
-- Reporting hierarchy
-- Designation attendance policies
+Company Admin / HR can manage:
+- Departments, Teams, Designations
+- Reporting hierarchy (primary + secondary manager)
+- Designation-level attendance policies
 - Employee-specific attendance overrides
 
-Attendance precedence:
-
-```text
+**Attendance policy precedence** (existing, confirmed correct):
+```
 Employee Override
        ↓
 Designation Policy
        ↓
 Company/System Default
 ```
+This includes the **Auto-Present** rule: a designation or an individual employee can be marked auto-present (no check-in required, always counted present) — this is a confirmed, already-implemented business rule.
 
 ---
 
-# 7. Attendance
+## 7. Attendance
 
-## Employee attendance
+### 7.1 Employee-Facing Behavior
+- Browser/GPS check-in and check-out.
+- **Multiple attendance sessions per day** are supported, with accurate cumulative worked-time calculation across sessions.
+- **Open-session / live timer** — an in-progress (checked-in, not yet checked-out) session must be reflected live to the employee.
+- **Same-calendar-day boundary** — a session's check-in and check-out are scoped to a single calendar day; sessions do not span midnight.
+- **Forgotten checkout handling** — the system must define and apply a defined behavior when an employee never checks out (e.g. auto-close at day boundary, or flag for HR correction) rather than leaving the session open indefinitely.
+- Attendance history / calendar view.
 
-- Browser/GPS check-in.
-- Check-out.
-- Multiple attendance sessions per day.
-- Accurate cumulative worked time.
-- Open-session/live timer.
-- Same-calendar-day attendance boundary.
-- Forgotten checkout handling.
-- Attendance history/calendar.
+### 7.2 Leave Interaction
+- A full-day **approved** leave blocks/excludes attendance expectations for that day.
+- A partial-day (half/quarter/hourly) approved leave **adjusts** the required working time for that day rather than blocking it entirely.
+- Attendance sufficiency is calculated against the company's configured working-hour settings (§7.4).
 
-## Leave interaction
+### 7.3 Geo-Fencing
+Company-level configuration: enabled/disabled, office latitude/longitude, radius.
+- **When disabled**: browser location permission must **not** be requested, and attendance must not require location at all.
 
-- Full-day approved leave blocks attendance.
-- Partial leave adjusts required working time.
-- Attendance calculation uses company working-hour configuration.
+### 7.4 Working Hours (Company-Level Config)
+- Scheduled work duration, lunch duration, break duration, grace period — all configurable per company.
+- **Configuration changes are forward-only**: changing these settings affects future attendance calculations and must **never rewrite or reinterpret historical** attendance records.
 
-## Geo-fencing
-
-Company-level configuration:
-
-- Enabled/disabled.
-- Office latitude/longitude.
-- Radius.
-
-When disabled:
-
-- Browser location permission must not be requested.
-- Attendance must not require location.
-
-## HR attendance
-
-HR/Admin can:
-
-- View employee attendance by date.
-- Create attendance records.
-- Correct attendance.
-- Add punch events.
-- Review geo-fence violations.
-- View attendance dashboard.
-
-## Working hours
-
-Company-level configurable:
-
-- Scheduled work duration.
-- Lunch duration.
-- Break duration.
-- Grace period.
-
-Configuration changes affect future calculations and do not rewrite historical attendance.
+### 7.5 HR/Admin Attendance Operations
+- View by date, create/correct attendance records, add manual punch events, review geo-fence violation logs, view the monthly attendance dashboard.
 
 ---
 
-# 8. Leave Management — BUSINESS RULES TO BE FINALIZED
+## 8. Leave Management
 
-Leave management is currently undergoing a **business-rule redesign** before the next clean deployment.
+### 8.1 Leave Types & Naming
+- Every company defines **its own leave type names** — no global/shared catalog. Fully company-scoped.
 
-The final model must define:
-
-- Leave types.
-- Leave policies.
-- Annual allocation.
-- Leave balance.
-- Carry-forward.
-- Approval/rejection.
-- Cancellation.
-- Day-level approval/rejection.
-- HR allocation/grant permissions.
-- Sandwich policy.
-- Restricted holidays.
-- Leave encashment.
-
-## Important design question
-
-HR currently has the ability to **add/grant leave**, but the product rule for whether HR can subtract/revoke allocated leave is not yet finalized.
-
-This must be explicitly decided before implementation is considered final.
-
-## Balance invariant
-
-The intended accounting model must always keep:
-
-```text
-Remaining =
-Allocated + Carried Forward - Actual Deducted Leave
+### 8.2 Balance Accounting Model
+The authoritative internal formula (used for computation; **not** what's shown in the UI — see §8.7):
 ```
-
-Actual deductions must reflect the final approved/deducted leave days, including day-level changes and sandwich days.
-
-Parent leave duration must not blindly be used for reversal after individual days have changed.
-
-## Multi-day leave
-
-The system must support:
-
-- Full request approval/rejection.
-- Day-level approval/rejection by authorized roles.
-- Local draft changes before saving.
-- Bulk approve/reject of only currently pending days.
-- Already-approved/rejected days remain unchanged during "remaining" actions.
-- Balance changes must be delta-based and idempotent.
-
-## Sandwich policy
-
-Final intended model:
-
-- Company-wide ON/OFF setting.
-- No leave-type-specific sandwich configuration.
-- When OFF, no sandwich deduction.
-- When ON, applicable weekend/public-holiday bridge days are treated according to the company rule.
-
-Examples must support:
-
-```text
-Friday leave + Monday leave
-→ Friday + Saturday + Sunday + Monday deduction when applicable
+Remaining = Allocated + Carried Forward − Actual Deducted
 ```
+- "Actual Deducted" must reflect the **final** approved/deducted leave days, including any day-level changes (partial approvals, sandwich-day corrections) — not the originally-requested duration blindly re-applied.
+- All balance mutations (apply, approve, reject, cancel, HR-delete, sandwich-day removal, bulk allocation, rollover) must be **delta-based and idempotent** — re-running the same state transition must never double-count or double-reverse a balance change.
 
-The final detailed rule should be documented before implementation is frozen.
+### 8.3 Multi-Day Leave Handling
+- Full-request approval/rejection, and **day-level** approval/rejection by authorized roles (Manager/HR, per the applicable workflow).
+- The HR/Manager day-breakdown UI supports **local draft changes before saving** (edit multiple days, then commit in one save).
+- **Bulk approve/reject** operates only on currently-**pending** days within a request — already-approved or already-rejected days are left untouched by a subsequent bulk action on the "remaining" days.
 
----
+### 8.4 Year-End Treatment (per Leave Type, per Company)
+Applied in this order:
+1. **Carry Forward** — up to a configurable cap (`999` = effectively unlimited).
+2. **Lapse** — any balance remaining above the cap is forfeited. Default outcome if no other rule is configured.
 
-# 9. Leave Types & Policies
+There is **no annual/yearly encashment payout** — encashment is exit-only (§8.5).
 
-The company must be able to define/configure leave types and policies.
+**Current known leave-type carry-forward configuration** (example/reference — each company sets its own via the admin dashboard):
 
-Each policy should explicitly define applicable rules such as:
-
-- Allocation.
-- Paid/unpaid behavior.
-- Carry-forward.
-- Carry-forward limit.
-- Reset period.
-- Approval requirements.
-- Manual allocation/grant rules.
-- Partial-day support.
-- Restricted-holiday eligibility where applicable.
-
-Current expected carry-forward:
-
-| Leave | Carry Forward |
+| Leave Type | Carry Forward |
 |---|---|
-| PL | Yes |
-| SL | No |
-| CLP | No |
-| Marriage ML | No |
-| Maternity MATL | No |
-| Paternity PATL | No |
-| LWP | No |
-| RH | No |
-| COMP_OFF | To be explicitly finalized |
+| PL (Privilege/Paid Leave) | Yes |
+| SL (Sick Leave) | No |
+| CLP (Casual Leave) | No |
+| Marriage Leave (ML) | No |
+| Maternity (MATL) | No |
+| Paternity (PATL) | No |
+| LWP | No (not applicable — no allocation exists to carry) |
+| RH (Restricted Holiday) | No |
+| COMP_OFF | **VERIFY — not yet finalized** |
 
-Zero-entitlement leave types should not clutter the employee leave-selection/balance UI when:
+### 8.5 Leave Encashment (Exit-Only)
+- Encashment applies **only when an employee resigns/exits** (tied to offboarding), and only if the company has enabled encashment for that leave type.
+- On exit, the system calculates and **logs** (does not pay): remaining balance per encashable leave type, encashable days, amount owed (data only). No payment is processed — payroll is out of scope.
+- This is separate from, and does not replace, the leave-cancellation behavior described in §14 (Employee Lifecycle) — the exit encashment log captures what remained *after* those cancellations/rejections are applied.
 
-```text
-allocated = 0
-used = 0
-carriedForward = 0
-remaining = 0
+### 8.6 Sandwich Leave Rule
+- Single **company-wide ON/OFF switch** — no per-employee or per-leave-type sandwich configuration.
+- When OFF: no sandwich deduction ever applies.
+- When ON: applicable weekend/public-holiday bridge days are deducted per the company rule. Example:
+  ```
+  Friday leave + Monday leave
+  → Friday + Saturday + Sunday + Monday all deducted (when the bridge rule applies)
+  ```
+- **Exception handling**: no configurable exemption system. Instead, HR/Company Admin opens the employee's day-wise leave breakdown, identifies the specific sandwich-flagged day, and **permanently hard-deletes** that single day-entry (`LeaveRequestDay`) as a case-by-case exception. Balance is automatically recalculated and restored on deletion. This is a genuine hard delete, not a soft-delete flag.
+
+### 8.7 UI Requirement — Leave Balance Display
+- Across **all screens without exception**, leave balance cards show only **Available Balance** and **Used**.
+- **`Total Allocated` must never be displayed anywhere in the UI**, even though it exists as an internal accounting term (§8.2).
+- To adjust an employee's balance, HR enters a **new balance value** directly (this single mechanic covers both increases and decreases — there is no separate "grant" vs. "revoke" action).
+- **Zero-entitlement leave types must not clutter the employee's leave-selection/balance UI.** A leave type is hidden from that employee's view when `allocated = 0 AND used = 0 AND carriedForward = 0 AND remaining = 0`. HR can still grant/add entitlement for that type when company policy permits, which then makes it visible again.
+
+### 8.8 Leave Approval Workflow
+- **Company-level toggle** between:
+  - **Two-step approval**: Employee applies → Manager approval **and** HR approval both required.
+  - **Direct-to-HR** (current default): HR approval only.
+- **No manager assigned** → routes directly to HR; HR is sole approver.
+- **Visibility**: as soon as an employee applies, the request is visible to **both** Manager and HR simultaneously.
+- **Sequencing** (two-step enabled):
+  1. Employee applies → notify Manager + HR.
+  2. Manager approves → notify HR + Employee. HR cannot approve before this.
+  3. HR approves → notify Employee → status `APPROVED`.
+  4. If Manager hasn't acted, HR sees it as pending-on-manager and cannot approve; HR follows up with the manager outside the system.
+- **Rejection**: Manager rejects → immediately `REJECTED`, Employee notified, HR does not need to act.
+- Status values must clearly distinguish stage: `PENDING_MANAGER`, `PENDING_HR`, `APPROVED`, `REJECTED`.
+
+### 8.9 Manager & Secondary-Manager Dashboard *(new feature — not yet built)*
+- Primary or secondary manager gets a reportee-scoped **Leave dashboard** (pending/approved/rejected for their reportees only) and **Attendance dashboard** (reportee attendance only). Pure data-scoping on existing dashboards — no new stored role.
+
+---
+
+## 9. Restricted Holidays
+
+Restricted holidays are **not hard-coded by religion or any fixed calendar**. Model:
 ```
-
-HR should still be able to grant/add entitlement where company policy permits.
-
----
-
-# 10. Restricted Holidays
-
-Restricted holidays are **not hard-coded by religion**.
-
-The system should model:
-
-```text
-Restricted Holiday
+Restricted Holiday (defined by company, like any other leave type)
        ↓
-HR determines eligible employees
+HR determines which employees are eligible
        ↓
-Eligible employee sees/uses assigned RH
+Eligible employee sees/uses their assigned RH entitlement
 ```
-
-Common company/public holidays remain available according to the normal holiday policy.
-
-HR should be able to assign eligible restricted holidays to individual employees according to company policy.
-
-The exact data model and UX are still to be finalized.
+- Common company-wide/public holidays remain available under the normal Holiday Management rules (§10) regardless of RH eligibility.
+- Exact eligibility data model and UX are still to be finalized — treat as `VERIFY`, not blocked, but don't over-build before the model is confirmed.
 
 ---
 
-# 11. Holiday Management
-
-HR/Admin can:
-
-- Create holidays.
-- Delete holidays.
-- View company holiday list.
-
-Holidays must participate correctly in:
-
-- Attendance.
-- Leave calculation.
-- Sandwich policy.
-- Restricted holiday handling where applicable.
+## 10. Holiday Management
+- HR/Admin can create, delete, and view the company holiday list. Holidays are full-day only (no fractional holidays).
+- Holidays must correctly participate in: attendance calculation, leave-day calculation, the sandwich bridge rule, and restricted-holiday handling where applicable.
 
 ---
 
-# 12. Manager / Reportee Workflow
+## 11. HR/Admin Leave Operations
+HR/Admin needs operational visibility into: pending, approved, rejected, and cancelled leave; who is on leave today; recently approved leave; leave balances; and the day-level leave breakdown per employee (used for both approvals and the sandwich-exception tool in §8.6).
 
-Manager hierarchy must drive approval visibility.
+---
 
-Example:
-
-```text
+## 12. Manager / Reportee Workflow
+```
 Manager A
  ├── Employee 1
  ├── Employee 2
  └── Employee 3
 ```
-
-Manager A can approve/reject leave for Employees 1–3.
-
-Manager A must not approve leave for employees outside their reportee scope unless explicitly granted an appropriate HR/Admin role.
+Manager A can approve/reject leave and view attendance only for Employees 1–3 (their reportees). Manager A must not act on employees outside this scope unless they separately hold an HR/Company Admin role.
 
 ---
 
-# 13. HR/Admin Leave Operations
+## 13. Notifications
+- **Channel**: in-app only (no email/SMS/push this phase).
+- **Delivery**: real-time via WebSocket.
+- **Trigger points** (leave workflow only — no geo-fence violation notifications):
 
-HR/Admin should have operational visibility for:
-
-- Pending leave.
-- Approved leave.
-- Rejected leave.
-- Cancelled leave.
-- Who is on leave today.
-- Recently approved leave.
-- Leave balance.
-- Day-level leave breakdown.
-
-HR/Admin may manage employee leave according to the final allocation/correction rules.
+| Event | Notified |
+|---|---|
+| Employee applies for leave | Manager + HR (or HR only, if no manager) |
+| Manager approves | HR + Employee |
+| HR approves | Employee |
+| HR rejects | Employee |
+| Manager rejects | Employee |
 
 ---
 
-# 14. Employee Lifecycle
+## 14. Employee Lifecycle
 
-Offboarding is immediate after confirmation.
+### 14.1 Offboarding (immediate after confirmation)
+- `EmployeeProfile.isActive` and `User.isActive` → `false`.
+- Inactive user cannot log in; **all existing sessions are invalidated immediately**.
+- Historical attendance and leave data is preserved, never deleted.
+- **Future-dated approved leave is auto-cancelled**, with an audit reason recorded.
+- **Pending leave requests are auto-rejected**, with an audit reason recorded.
+- **Any open (checked-in, not checked-out) attendance session is closed at the current timestamp.**
+- Manager reassignment for this person's former reportees is **manual** (not automatic) — HR/Admin must reassign them.
+- Exit-based leave encashment (§8.5) is calculated and logged as part of this flow.
+- Final financial settlement (leave payout, dues) is **out of scope** — this system only produces the data; settlement itself is a payroll-phase concern.
 
-Expected behavior:
-
-- Employee becomes inactive.
-- User becomes inactive.
-- Inactive user cannot login.
-- Existing sessions are invalidated.
-- Historical data is preserved.
-- Future approved leave is auto-cancelled with audit reason.
-- Pending leave is auto-rejected with audit reason.
-- Open attendance session is closed at the current timestamp.
-- Manager reassignment is currently manual.
-- Leave/payroll final settlement is out of scope.
-
-Reactivation:
-
-- Reuse existing employee record.
-- Restore active user status.
-- Restore login.
-- Preserve historical attendance and leave.
+### 14.2 Reactivation
+- Reuses the existing `EmployeeProfile`/`User` records (never recreated).
+- Restores `isActive` and login access.
+- Historical attendance and leave data remains exactly as it was — nothing is regenerated or reset.
 
 ---
 
-# 15. Dashboards
+## 15. Dashboards
 
-## Super Admin
+**Super Admin**: company management, company onboarding, error log dashboard.
 
-- Company management.
-- Company onboarding.
+**Admin/HR**: operational KPI dashboard, attendance dashboard, leave dashboard, employee directory, organization management, holiday management, geo-fencing settings.
 
-## Admin/HR
+**Manager** *(new)*: reportee-scoped leave dashboard, reportee-scoped attendance dashboard (§8.9).
 
-- Operational KPI dashboard.
-- Attendance dashboard.
-- Leave dashboard.
-- Employee directory.
-- Organization management.
-- Holiday management.
-- Geo-fencing settings.
-
-## Employee
-
-- Attendance.
-- Leave balance.
-- Leave requests.
-- Profile.
-- Daily/weekly attendance information.
+**Employee**: attendance, leave balance (Available + Used only, §8.7), leave requests, profile.
 
 ---
 
-# 16. Security & Authorization
-
-Backend authorization is authoritative.
-
-Every sensitive endpoint must enforce:
-
-- Authentication.
-- Role authorization.
-- Company/tenant isolation.
-- Resource ownership/reportee scope where applicable.
-
-Frontend hiding alone is insufficient.
+## 16. Security & Authorization
+- Backend authorization is **authoritative** — frontend hiding of UI elements is never sufficient on its own.
+- Every sensitive endpoint must enforce: authentication, role authorization, company/tenant isolation, and resource ownership / reportee-scope checks where applicable (e.g. a Manager's leave-approval endpoint must verify the target employee is actually their reportee, not just check the Manager role).
 
 ---
 
-# 17. Non-Functional Requirements
+## 17. Error Logging System
+- **Scope**: all 4xx/5xx errors, from both backend (API) and frontend (React runtime/UI errors).
+- **Per-log fields**: stack trace, endpoint/route, request payload (redact credentials), user ID, company ID, timestamp, IP address, user agent.
+- **Retention**: flat 20-day retention for all logs, auto-purged via scheduled job.
+- **Access**: SuperAdmin-only UI, filterable by company/date/status code/endpoint.
 
-- TypeScript compilation must pass.
-- Production builds must pass.
+---
+
+## 18. Reports
+- **Employee Report**: all employees in selected company, filterable by department/team/status, preview + Excel + CSV. *(Implemented, working.)*
+- **Leave Report**: dynamic per-company leave types, showing Booked + Balance per type, Paid Leaves Total, LWP, Absent Days, decimal precision preserved, preview + Excel + CSV, pending-approval warning.
+  - **Known live defect**: LWP and Absent Days currently render no data, while leave balance renders correctly. Confirmed active bug — tracked P0 in the roadmap.
+
+---
+
+## 19. Known Data-Integrity Issue — Leave Balance Mismatch
+- Confirmed employee-reported mismatches between actual and displayed leave balance.
+- Root cause **unconfirmed** — candidates: (1) logical/mathematical error in an approve/reject/cancel/delete balance-adjustment path, (2) automated agent-run tests mutating real/seeded data during development, (3) incorrect manually-fed/seeded source data.
+- **Requirement**: full logic audit of every `LeaveBalance`-mutating path per §8.2's delta/idempotency rule — not a blind reconciliation patch.
+
+---
+
+## 20. Non-Functional Requirements
+- TypeScript compilation must pass; production builds must pass.
 - Database migrations must be reproducible.
-- APIs must be documented through OpenAPI/Swagger.
-- Test suites must use isolated test data.
-- Automated tests must never modify real application/test-UAT company data.
-- Every test must clean up records it creates.
-- Historical HR data must not be casually hard-deleted.
+- APIs should be documented via OpenAPI/Swagger.
+- Test suites must use isolated test data; automated tests must **never** modify real/UAT company data; every test must clean up records it creates.
+- **Historical HR data must not be casually hard-deleted.** *(Exception, by deliberate documented policy — not "casual" deletion: terminal-status `LeaveRequest` records are automatically hard-deleted 6 months after their terminal date, and error logs are hard-deleted after 20 days — see Roadmap §5/§6 for the retention contract.)*
+- UI has been observed to lag intermittently around check-in/check-out (non-reproducible so far) — flagged for investigation.
 
 ---
 
-# 18. Current Product Principle
-
-Before the first real company onboarding:
-
-```text
+## 21. Current Product Principle (pre-launch sequencing)
+```
 Business rules finalized
         ↓
 Implementation finalized
@@ -507,3 +385,18 @@ Fresh company onboarding
         ↓
 End-to-end UAT
 ```
+
+---
+
+## 22. Open / Deferred Items (do not build without explicit scope change)
+- Automatic maternity/paternity leave assignment
+- Religion-based restricted holiday eligibility
+- Fractional (half-day) holidays
+- Finer-grained HR permission restriction (Company Admin limiting specific HR users) — design permission checks to *allow* this later, don't build the restriction UI now
+- Payroll integration (any form)
+- Email/SMS/push notification channels
+- In-app "remind manager" button (HR reminds manager outside the system for now)
+- Self-service email password reset for end users
+- CSV/UI-based bulk employee import
+- `COMP_OFF` carry-forward rule — **VERIFY**, not yet finalized (see §8.4)
+- Restricted Holiday eligibility data model/UX — **VERIFY**, not yet finalized (see §9)

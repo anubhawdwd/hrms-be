@@ -71,7 +71,9 @@ export const ModelName = {
   EmployeeLeaveOverride: 'EmployeeLeaveOverride',
   Holiday: 'Holiday',
   RefreshToken: 'RefreshToken',
-  LeaveRequestDay: 'LeaveRequestDay'
+  LeaveRequestDay: 'LeaveRequestDay',
+  ErrorLog: 'ErrorLog',
+  AuditLog: 'AuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -181,10 +183,13 @@ export const EmployeeProfileScalarFieldEnum = {
   designationId: 'designationId',
   teamId: 'teamId',
   managerId: 'managerId',
+  secondaryManagerId: 'secondaryManagerId',
   firstName: 'firstName',
   middleName: 'middleName',
   lastName: 'lastName',
   displayName: 'displayName',
+  phone: 'phone',
+  gender: 'gender',
   dateOfBirth: 'dateOfBirth',
   isActive: 'isActive',
   isProbation: 'isProbation',
@@ -403,12 +408,52 @@ export const LeaveRequestDayScalarFieldEnum = {
 export type LeaveRequestDayScalarFieldEnum = (typeof LeaveRequestDayScalarFieldEnum)[keyof typeof LeaveRequestDayScalarFieldEnum]
 
 
+export const ErrorLogScalarFieldEnum = {
+  id: 'id',
+  source: 'source',
+  statusCode: 'statusCode',
+  message: 'message',
+  stackTrace: 'stackTrace',
+  endpoint: 'endpoint',
+  method: 'method',
+  requestBody: 'requestBody',
+  userId: 'userId',
+  companyId: 'companyId',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type ErrorLogScalarFieldEnum = (typeof ErrorLogScalarFieldEnum)[keyof typeof ErrorLogScalarFieldEnum]
+
+
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  actorId: 'actorId',
+  targetId: 'targetId',
+  details: 'details',
+  companyId: 'companyId',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -425,4 +470,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

@@ -41,7 +41,7 @@ hrms_main/
 │   ├── prisma/                 # Database schema, migrations, and seed script
 │   │   ├── migrations/         # Canonical Prisma SQL migrations
 │   │   ├── schema.prisma       # Prisma data model definition
-│   │   └── seed.ts             # Initial database seed script
+│   │   └── seed.ts             # Initial SuperAdmin database seed script
 │   ├── src/                    # Backend application source code
 │   │   ├── config/             # Database and auth config
 │   │   ├── middlewares/        # JWT auth, role validation, company header guards
@@ -82,6 +82,8 @@ hrms_main/
 * **Workplace & Geo-Fencing Settings**: Company-level office location setup (latitude, longitude, radius) with an instant toggle switch, plus company-wide working hours (8h), scheduled lunch (30m), break (20m), and grace period (10m) configurations.
 * **Attendance Dashboard & Day Boundaries**: Batched monthly employee × date matrix endpoint (`GET /api/attendance/dashboard?month=YYYY-MM`) with zero N+1 queries, sticky matrix grid, live search filter, strict calendar-day boundaries, same-day overtime accumulation, and automatic end-of-day checkout at 23:59:59 IST.
 * **HR Leave Dashboard & Approvals**: Card-based operational overview showing employees on leave today, actionable pending approvals (inline approve/reject), recently approved requests (`GET /api/leave/requests/recent`), and transactional HR cancellation with quota restoration.
+* **SuperAdmin Multi-Tenant Management**: Multi-tenant workspace provisioning (`/super-admin`), atomic company and company administrator creation, company directory, and cross-company administrator password reset.
+* **Centralized Error Logging & Telemetry**: Full-stack error capture (Express 4xx/5xx responses with sensitive field sanitization + React `ErrorBoundary` and Axios client error ingestion) with 20-day auto-purge retention and interactive SuperAdmin viewer (`/super-admin/error-logs`).
 * **HR / Admin Operations**: Dedicated admin dashboards, attendance violation logs, manual attendance adjustments (by employee and date without UUID exposure), punch event additions, and holiday management.
 
 ---
@@ -103,7 +105,7 @@ cd hrms-be
 cp .env.example .env     # Configure database and JWT credentials
 npm install
 npx prisma migrate deploy
-npx prisma db seed
+npm run seed             # Provision initial SuperAdmin
 npm run dev
 ```
 * **Backend API**: `http://localhost:4000`
@@ -172,7 +174,22 @@ VITE_MICROSOFT_CLIENT_ID="<microsoft-app-client-id>"
 
 ---
 
+## Testing & Data Isolation Rules
+
+1. **Zero-Mutation on Production/Tenant Data**: Automated test suites and manual exploratory sessions must NEVER mutate real tenant records (`Phibonacci Learnings Pvt Ltd`).
+2. **Dedicated Test Fixtures & Cleanup**: Test suites dynamically create isolated entities and clean them up upon test teardown.
+3. **Mandatory Ad-Hoc Test Naming Convention**:
+   - Company names for ad-hoc/manual verification MUST start with `ZZTEST_` (e.g. `ZZTEST_Staging Co`).
+   - User emails for ad-hoc/manual verification MUST use `@zztest.internal` (e.g. `tester@zztest.internal`).
+4. **Standalone Diagnostic Sweep**:
+   Run the read-only audit tool at any time to inspect the database for anomalous test leftovers or unassigned accounts:
+   ```bash
+   npm run audit:leftovers
+   ```
+
+---
+
 ## Documentation
 
-* **[`ROADMAP.md`](file:///d:/Anubhaw/hrms_main/hrms-be/ROADMAP.md)**: Master implementation checklist and active issue tracker covering both backend and frontend.
-* **[`progress/`](file:///d:/Anubhaw/hrms_main/hrms-be/progress/)**: Sequential session summaries recording accomplished milestones and verified workflows.
+* **[`ROADMAP.md`](/hrms-be/ROADMAP.md)**: Master implementation checklist and active issue tracker covering both backend and frontend.
+* **[`progress/`](/hrms-be/progress/)**: Sequential session summaries recording accomplished milestones and verified workflows.

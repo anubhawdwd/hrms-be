@@ -202,9 +202,15 @@ export async function cleanupIsolatedCompany(companyId: string) {
       where: { companyId },
     });
 
-    // 6. Delete Refresh Tokens
+    // 6. Delete Refresh Tokens, Audit Logs & Error Logs
     await prisma.refreshToken.deleteMany({
       where: { user: { companyId } },
+    });
+    await prisma.auditLog.deleteMany({
+      where: { companyId },
+    });
+    await prisma.errorLog.deleteMany({
+      where: { companyId },
     });
 
     // 7. Delete Employee Profiles & Users

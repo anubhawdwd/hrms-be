@@ -1,16 +1,252 @@
-import { computeDailyAttendanceSessions } from "../attendance/calculations.js";
-import { AttendanceEventType, AttendanceSource, AttendanceStatus, LeaveRequestStatus } from "../../generated/prisma/enums.js";
-import { prisma } from "../../config/prisma.js";
 // src/modules/employee/service.ts
+import bcrypt from "bcrypt";
+import { computeDailyAttendanceSessions } from "../attendance/calculations.js";
+import {
+  AuthProvider,
+  AttendanceEventType,
+  AttendanceSource,
+  AttendanceStatus,
+  Gender,
+  LeaveRequestStatus,
+  UserRole,
+} from "../../generated/prisma/enums.js";
+import { prisma } from "../../config/prisma.js";
 import { EmployeeRepository } from "./repository.js";
 import type {
   CreateEmployeeDTO,
+  OnboardEmployeeDTO,
+  UpdateEmployeeDTO,
   ChangeManagerDTO,
 } from "./types.js";
+import { generateTemporaryPassword } from "../../utils/password.js";
 
 const repo = new EmployeeRepository();
 
 export class EmployeeService {
+  async onboardEmployee(companyId: string, dto: OnboardEmployeeDTO) {
+    // 1. Validate email
+    const email = dto.email?.trim().toLowerCase();
+    if (!email) {
+      const err: any = new Error("Email is required");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      const err: any = new Error("Invalid email format");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: { email },
+    });
+    if (existingUser) {
+      const err: any = new Error("A user with this email already exists");
+      err.statusCode = 409;
+      throw err;
+    }
+
+    // 2. Validate names
+    if (!dto.firstName?.trim() || !dto.lastName?.trim()) {
+      const err: any = new Error("First name and last name are required");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    // 3. Validate joining date
+    const joiningDate = new Date(dto.joiningDate);
+    if (Number.isNaN(joiningDate.getTime())) {
+      const err: any = new Error("Invalid joining date");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    // 4. Validate DOB
+    const dob =
+      dto.dateOfBirth && dto.dateOfBirth.trim()
+        ? new Date(dto.dateOfBirth.trim())
+        : undefined;
+
+    if (dob) {
+      if (Number.isNaN(dob.getTime())) {
+        const err: any = new Error("Invalid dateOfBirth");
+        err.statusCode = 400;
+        throw err;
+      }
+      if (dob > new Date()) {
+        const err: any = new Error("dateOfBirth cannot be in the future");
+        err.statusCode = 400;
+        throw err;
+      }
+    }
+
+    // 5. Validate Designation & Organization
+    if (!dto.designationId) {
+      const err: any = new Error("Designation is required");
+      err.statusCode = 400;
+      throw err;
+    }
+    const designation = await prisma.designation.findFirst({
+      where: { id: dto.designationId, companyId },
+    });
+    if (!designation) {
+      const err: any = new Error("Designation not found in this company");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    if (dto.departmentId) {
+      const department = await prisma.department.findFirst({
+        where: { id: dto.departmentId, companyId },
+      });
+      if (!department) {
+        const err: any = new Error("Department not found in this company");
+        err.statusCode = 400;
+        throw err;
+      }
+    }
+
+    if (dto.teamId) {
+      const team = await prisma.team.findFirst({
+        where: { id: dto.teamId, department: { companyId } },
+      });
+      if (!team) {
+        const err: any = new Error("Team not found in this company");
+        err.statusCode = 400;
+        throw err;
+      }
+    }
+
+    // 6. Strict Tenant Isolation for Managers (Amendment 1)
+    if (dto.managerId) {
+      const manager = await prisma.employeeProfile.findFirst({
+        where: { id: dto.managerId, companyId },
+      });
+      if (!manager) {
+        const err: any = new Error("Reporting manager not found or belongs to a different company");
+        err.statusCode = 400;
+        throw err;
+      }
+    }
+
+    if (dto.secondaryManagerId) {
+      if (dto.managerId && dto.secondaryManagerId === dto.managerId) {
+        const err: any = new Error("Secondary reporting manager cannot be the same as primary manager");
+        err.statusCode = 400;
+        throw err;
+      }
+      const secManager = await prisma.employeeProfile.findFirst({
+        where: { id: dto.secondaryManagerId, companyId },
+      });
+      if (!secManager) {
+        const err: any = new Error("Secondary reporting manager not found or belongs to a different company");
+        err.statusCode = 400;
+        throw err;
+      }
+    }
+
+    // 7. Employee Code Validation & Pre-Check
+    let employeeCode: number;
+    if (
+      dto.employeeCode !== undefined &&
+      dto.employeeCode !== null &&
+      String(dto.employeeCode).trim() !== ""
+    ) {
+      const parsedCode = Number(dto.employeeCode);
+      if (!Number.isInteger(parsedCode) || parsedCode <= 0) {
+        const err: any = new Error("Employee code must be a positive integer");
+        err.statusCode = 400;
+        throw err;
+      }
+      const existingCode = await prisma.employeeProfile.findFirst({
+        where: { companyId, employeeCode: parsedCode },
+      });
+      if (existingCode) {
+        const err: any = new Error(
+          `Employee code ${parsedCode} is already in use for this company`
+        );
+        err.statusCode = 409;
+        throw err;
+      }
+      employeeCode = parsedCode;
+    } else {
+      const last = await repo.getLastEmployeeCode(companyId);
+      employeeCode = (last?.employeeCode ?? 0) + 1;
+    }
+
+    // 8. Auth Credentials & Security (Amendment 3)
+    const authProvider =
+      dto.authProvider && Object.values(AuthProvider).includes(dto.authProvider)
+        ? dto.authProvider
+        : AuthProvider.LOCAL;
+
+    const role =
+      dto.role && Object.values(UserRole).includes(dto.role)
+        ? dto.role
+        : UserRole.EMPLOYEE;
+
+    let passwordHash: string | null = null;
+    let mustChangePassword = false;
+    let temporaryPassword: string | undefined = undefined;
+
+    if (authProvider === AuthProvider.LOCAL) {
+      if (dto.password?.trim()) {
+        if (dto.password.trim().length < 6) {
+          const err: any = new Error("Password must be at least 6 characters long");
+          err.statusCode = 400;
+          throw err;
+        }
+        temporaryPassword = dto.password.trim();
+      } else {
+        temporaryPassword = generateTemporaryPassword();
+      }
+      passwordHash = await bcrypt.hash(temporaryPassword, 12);
+      mustChangePassword = true; // Explicitly set true for LOCAL onboarding per spec
+    }
+
+    const displayName =
+      dto.displayName?.trim() ||
+      [dto.firstName, dto.middleName, dto.lastName].filter(Boolean).join(" ");
+
+    // 9. Execute Atomic Transaction
+    const result = await repo.onboardEmployee(companyId, {
+      user: {
+        email,
+        personalEmail: dto.personalEmail?.trim() || null,
+        passwordHash,
+        mustChangePassword,
+        authProvider,
+        role,
+      },
+      profile: {
+        employeeCode,
+        firstName: dto.firstName.trim(),
+        middleName: dto.middleName?.trim() || null,
+        lastName: dto.lastName.trim(),
+        displayName,
+        personalEmail: dto.personalEmail?.trim() || null,
+        phone: dto.phone?.trim() || null,
+        gender: dto.gender || null,
+        dateOfBirth: dob || null,
+        joiningDate,
+        isProbation: dto.isProbation ?? true,
+        departmentId: dto.departmentId || null,
+        teamId: dto.teamId || null,
+        designationId: dto.designationId,
+        managerId: dto.managerId || null,
+        secondaryManagerId: dto.secondaryManagerId || null,
+      },
+      initialLeaveGrant: dto.initialLeaveGrant,
+    });
+
+    return {
+      ...result,
+      temporaryPassword,
+    };
+  }
+
   async createEmployee(dto: CreateEmployeeDTO) {
     if (!dto.firstName.trim() || !dto.lastName.trim()) {
       throw new Error("First name and last name are required");
@@ -50,6 +286,7 @@ export class EmployeeService {
       ...(dto.teamId && { teamId: dto.teamId }),
       designationId: dto.designationId,
       ...(dto.managerId && { managerId: dto.managerId }),
+      ...(dto.secondaryManagerId && { secondaryManagerId: dto.secondaryManagerId }),
       employeeCode: nextEmployeeCode,
       firstName: dto.firstName.trim(),
       ...(dto.middleName !== undefined && {
@@ -57,6 +294,8 @@ export class EmployeeService {
       }),
       lastName: dto.lastName.trim(),
       displayName,
+      ...(dto.phone !== undefined && { phone: dto.phone.trim() }),
+      ...(dto.gender !== undefined && { gender: dto.gender }),
       ...(dob && { dateOfBirth: dob }),
       joiningDate,
       ...(dto.isProbation !== undefined && {
@@ -104,40 +343,94 @@ export class EmployeeService {
       lastName?: string;
       displayName?: string;
       dateOfBirth?: string | null;
+      personalEmail?: string | null;
+      phone?: string | null;
+      gender?: Gender | null;
     }
   ) {
     const emp = await repo.findByUserId(userId, companyId);
     if (!emp) throw new Error("Employee not found");
 
+    const dob =
+      dto.dateOfBirth !== undefined
+        ? dto.dateOfBirth === null
+          ? null
+          : new Date(dto.dateOfBirth)
+        : undefined;
+
+    if (dob && dob > new Date()) {
+      throw new Error("Date of birth cannot be in the future");
+    }
+
     return repo.updateEmployee(emp.id, companyId, {
-      ...(dto.firstName && { firstName: dto.firstName }),
-      ...(dto.middleName !== undefined && { middleName: dto.middleName }),
-      ...(dto.lastName && { lastName: dto.lastName }),
-      ...(dto.displayName && { displayName: dto.displayName }),
-      ...(dto.dateOfBirth !== undefined && {dateOfBirth: dto.dateOfBirth === null
-        ? null
-        : new Date(dto.dateOfBirth),
-  }),
+      ...(dto.firstName && { firstName: dto.firstName.trim() }),
+      ...(dto.middleName !== undefined && {
+        middleName: dto.middleName ? dto.middleName.trim() : null,
+      }),
+      ...(dto.lastName && { lastName: dto.lastName.trim() }),
+      ...(dto.displayName && { displayName: dto.displayName.trim() }),
+      ...(dto.personalEmail !== undefined && {
+        personalEmail: dto.personalEmail ? dto.personalEmail.trim() : null,
+      }),
+      ...(dto.phone !== undefined && {
+        phone: dto.phone ? dto.phone.trim() : null,
+      }),
+      ...(dto.gender !== undefined && { gender: dto.gender }),
+      ...(dob !== undefined && { dateOfBirth: dob }),
     });
   }
 
   async updateEmployeeAdmin(
     employeeId: string,
     companyId: string,
-    dto: {
-      departmentId?: string | null;
-      teamId?: string | null;
-      designationId?: string;
-      joiningDate?: string;
-      isProbation?: boolean;
-      isActive?: boolean;
-      firstName?: string;
-      middleName?: string;
-      lastName?: string;
-      displayName?: string;
-      dateOfBirth?: string | null;
-    }
+    dto: UpdateEmployeeDTO
   ) {
+    const existing = await repo.findById(employeeId, companyId);
+    if (!existing) {
+      throw new Error("Employee not found");
+    }
+
+    // Manager tenant isolation validation (Amendment 1)
+    if (dto.managerId !== undefined && dto.managerId !== null) {
+      if (dto.managerId === employeeId) {
+        throw new Error("An employee cannot be their own manager");
+      }
+      const mgr = await prisma.employeeProfile.findFirst({
+        where: { id: dto.managerId, companyId },
+      });
+      if (!mgr) {
+        throw new Error("Reporting manager not found or belongs to a different company");
+      }
+    }
+
+    if (dto.secondaryManagerId !== undefined && dto.secondaryManagerId !== null) {
+      if (dto.secondaryManagerId === employeeId) {
+        throw new Error("An employee cannot be their own secondary manager");
+      }
+      const effectivePrimaryManager =
+        dto.managerId !== undefined ? dto.managerId : existing.managerId;
+      if (effectivePrimaryManager && dto.secondaryManagerId === effectivePrimaryManager) {
+        throw new Error("Secondary reporting manager cannot be the same as primary manager");
+      }
+      const secMgr = await prisma.employeeProfile.findFirst({
+        where: { id: dto.secondaryManagerId, companyId },
+      });
+      if (!secMgr) {
+        throw new Error("Secondary reporting manager not found or belongs to a different company");
+      }
+    }
+
+    const dob =
+      dto.dateOfBirth !== undefined
+        ? dto.dateOfBirth === null
+          ? null
+          : new Date(dto.dateOfBirth)
+        : undefined;
+
+    if (dob && dob > new Date()) {
+      throw new Error("dateOfBirth cannot be in the future");
+    }
+
     return repo.updateEmployee(employeeId, companyId, {
       ...(dto.departmentId !== undefined && { departmentId: dto.departmentId }),
       ...(dto.teamId !== undefined && { teamId: dto.teamId }),
@@ -145,14 +438,24 @@ export class EmployeeService {
       ...(dto.joiningDate && { joiningDate: new Date(dto.joiningDate) }),
       ...(dto.isProbation !== undefined && { isProbation: dto.isProbation }),
       ...(dto.isActive !== undefined && { isActive: dto.isActive }),
-      ...(dto.firstName && { firstName: dto.firstName }),
-      ...(dto.middleName !== undefined && { middleName: dto.middleName }),
-      ...(dto.lastName && { lastName: dto.lastName }),
-      ...(dto.displayName && { displayName: dto.displayName }),
-      ...(dto.dateOfBirth !== undefined && {dateOfBirth:dto.dateOfBirth === null 
-        ? null
-        : new Date(dto.dateOfBirth),
+      ...(dto.firstName && { firstName: dto.firstName.trim() }),
+      ...(dto.middleName !== undefined && {
+        middleName: dto.middleName ? dto.middleName.trim() : null,
       }),
+      ...(dto.lastName && { lastName: dto.lastName.trim() }),
+      ...(dto.displayName && { displayName: dto.displayName.trim() }),
+      ...(dto.personalEmail !== undefined && {
+        personalEmail: dto.personalEmail ? dto.personalEmail.trim() : null,
+      }),
+      ...(dto.phone !== undefined && {
+        phone: dto.phone ? dto.phone.trim() : null,
+      }),
+      ...(dto.gender !== undefined && { gender: dto.gender }),
+      ...(dto.managerId !== undefined && { managerId: dto.managerId }),
+      ...(dto.secondaryManagerId !== undefined && {
+        secondaryManagerId: dto.secondaryManagerId,
+      }),
+      ...(dob !== undefined && { dateOfBirth: dob }),
     });
   }
 
@@ -169,7 +472,10 @@ export class EmployeeService {
     companyId: string,
     dto?: { effectiveDate?: string; reason?: string }
   ) {
-    const employee = await prisma.employeeProfile.findFirst({ where: { id: employeeId, companyId }, include: { user: true } });
+    const employee = await prisma.employeeProfile.findFirst({
+      where: { id: employeeId, companyId },
+      include: { user: true },
+    });
     if (!employee) {
       throw new Error("Employee not found");
     }
@@ -285,7 +591,10 @@ export class EmployeeService {
   }
 
   async reactivateEmployee(employeeId: string, companyId: string) {
-    const employee = await prisma.employeeProfile.findFirst({ where: { id: employeeId, companyId }, include: { user: true } });
+    const employee = await prisma.employeeProfile.findFirst({
+      where: { id: employeeId, companyId },
+      include: { user: true },
+    });
     if (!employee) {
       throw new Error("Employee not found");
     }
@@ -309,6 +618,17 @@ export class EmployeeService {
   }
 
   async changeManager(dto: ChangeManagerDTO) {
+    if (dto.managerId && dto.managerId === dto.employeeId) {
+      throw new Error("An employee cannot be their own manager");
+    }
+    if (dto.managerId) {
+      const mgr = await prisma.employeeProfile.findFirst({
+        where: { id: dto.managerId, companyId: dto.companyId },
+      });
+      if (!mgr) {
+        throw new Error("Reporting manager not found or belongs to a different company");
+      }
+    }
     return repo.changeManager(dto.employeeId, dto.companyId, dto.managerId);
   }
 
@@ -316,55 +636,5 @@ export class EmployeeService {
     const emp = await repo.findByUserId(userId, companyId);
     if (!emp) throw new Error("Employee not found");
     return emp;
-  }
-
-  private async bootstrapLeaveBalances(employee: {
-    id: string;
-    companyId: string;
-    joiningDate?: Date | null;
-    isProbation: boolean;
-  }) {
-    if (!employee.joiningDate) {
-      return;
-    }
-
-    const year = employee.joiningDate.getFullYear();
-
-    const policies = await repo.getLeavePoliciesForCompany(
-      employee.companyId,
-      year
-    );
-
-    const joiningMonth = employee.joiningDate.getMonth() + 1;
-    const monthsRemaining = 12 - joiningMonth + 1;
-
-    const balances = [];
-
-    for (const policy of policies) {
-      let totalEntitlement =
-        (policy.yearlyAllocation / 12) * monthsRemaining;
-
-      if (!policy.probationAllowed && employee.isProbation) {
-        totalEntitlement = 0;
-      }
-
-      if (policy.monthlyAccrual) {
-        totalEntitlement = policy.yearlyAllocation / 12;
-      }
-
-      balances.push({
-        employeeId: employee.id,
-        leaveTypeId: policy.leaveTypeId,
-        year,
-        allocated: totalEntitlement,
-        used: 0,
-        carriedForward: 0,
-        remaining: totalEntitlement,
-      });
-    }
-
-    if (balances.length > 0) {
-      await repo.createManyLeaveBalances(balances);
-    }
   }
 }

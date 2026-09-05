@@ -4,6 +4,15 @@ import { EmployeeService } from "./service.js";
 
 const service = new EmployeeService();
 
+export async function onboardEmployee(req: Request, res: Response) {
+  try {
+    const result = await service.onboardEmployee(req.companyId!, req.body);
+    res.status(201).json(result);
+  } catch (err: any) {
+    res.status(err.statusCode || 400).json({ message: err.message });
+  }
+}
+
 export async function createEmployee(req: Request, res: Response) {
   try {
     const employee = await service.createEmployee({
@@ -13,7 +22,7 @@ export async function createEmployee(req: Request, res: Response) {
 
     res.status(201).json(employee);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 
@@ -54,7 +63,7 @@ export async function updateMyProfile(req: Request, res: Response) {
     );
     res.json(result);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 
@@ -71,7 +80,7 @@ export async function updateEmployeeAdmin(req: Request, res: Response) {
     );
     res.json(result);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 
@@ -90,7 +99,7 @@ export async function deactivateEmployee(req: Request, res: Response) {
     );
     res.json(result);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 
@@ -108,7 +117,7 @@ export async function reactivateEmployee(req: Request, res: Response) {
     );
     res.json(result);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 
@@ -129,7 +138,7 @@ export async function changeManager(req: Request, res: Response) {
 
     res.json(employee);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 

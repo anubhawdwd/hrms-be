@@ -6,6 +6,7 @@ import { validateCompanyHeader } from "../../middlewares/validateCompany.js";
 import { UserRole } from "../../generated/prisma/enums.js";
 
 import {
+  onboardEmployee,
   createEmployee,
   listEmployees,
   getEmployeeById,
@@ -20,6 +21,12 @@ import {
 const router = Router();
 
 router.use(authenticateJWT, validateCompanyHeader);
+
+router.post(
+  "/onboard",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  onboardEmployee
+);
 
 router.post(
   "/",
@@ -44,6 +51,12 @@ router.get(
 router.put("/me/profile", updateMyProfile);
 
 router.put(
+  "/:employeeId/admin",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  updateEmployeeAdmin
+);
+
+router.patch(
   "/:employeeId/admin",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   updateEmployeeAdmin

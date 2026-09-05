@@ -52,4 +52,8 @@ vite.config.js.timestamp-*
 # backups
 backups/*
 
-# TEMPORARY FOR TESTING/DEBUGGING ONLY - REMOVE AFTER FIXING
+# Local Data / Employee Rosters / CSV Imports
+*.csv
+*.tsv
+*.xlsx
+*.xls

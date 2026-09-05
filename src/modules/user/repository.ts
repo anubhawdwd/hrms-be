@@ -79,24 +79,24 @@ export class UserRepository {
     });
   }
 
-  async findById(userId: string, companyId: string) {
+  async findById(userId: string, companyId?: string | null) {
     return prisma.user.findFirst({
       where: {
         id: userId,
-        companyId,
+        ...(companyId ? { companyId } : {}),
       },
     });
   }
 
   async resetPassword(
     userId: string,
-    companyId: string,
+    companyId: string | null | undefined,
     passwordHash: string
   ) {
     return prisma.user.updateMany({
       where: {
         id: userId,
-        companyId,
+        ...(companyId ? { companyId } : {}),
         isActive: true,
       },
       data: {

@@ -33,6 +33,23 @@ export class AuthService {
     if (!user || !user.isActive) {
       throw new Error("User inactive");
     }
+
+    if (!user.companyId) {
+      if (user.role === "SUPER_ADMIN") {
+        return {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          companyId: null,
+          companyName: "SuperAdmin Workspace",
+          geoFencingEnabled: false,
+          mustChangePassword: user.mustChangePassword ?? false,
+          usesTeams: false,
+        };
+      }
+      throw new Error("Company inactive");
+    }
+
     const company = await repo.findCompanyById(user.companyId);
 
     if (!company || !company.isActive) {
@@ -64,9 +81,17 @@ export class AuthService {
       throw new Error("Inactive Users not allowed");
     }
 
-    const company = await repo.findCompanyById(user.companyId);
-    if (!company || !company.isActive) {
-      throw new Error("Company inactive");
+    let company = null;
+    let office = null;
+
+    if (user.companyId) {
+      company = await repo.findCompanyById(user.companyId);
+      if (!company || !company.isActive) {
+        throw new Error("Company inactive");
+      }
+      office = await repo.findActiveOfficeLocation(user.companyId);
+    } else if (user.role !== "SUPER_ADMIN") {
+      throw new Error("User has no company assigned");
     }
 
     if (!user.passwordHash) {
@@ -100,8 +125,6 @@ export class AuthService {
       ...(dto.ipAddress && {ipAddress: dto.ipAddress}),
     });
 
-    const office = await repo.findActiveOfficeLocation(user.companyId);
-
     return {
       accessToken,
       refreshToken,
@@ -109,11 +132,11 @@ export class AuthService {
         id: user.id,
         email: user.email,
         role: user.role,
-        companyId: user.companyId,
-        companyName: company.name,
+        companyId: user.companyId ?? null,
+        companyName: company?.name || (user.role === "SUPER_ADMIN" ? "SuperAdmin Workspace" : "Company Workspace"),
         geoFencingEnabled: office?.geoFencingEnabled ?? false,
         mustChangePassword: user.mustChangePassword ?? false,
-        usesTeams: company.usesTeams ?? false,
+        usesTeams: company?.usesTeams ?? false,
       },
     };
   }
@@ -348,11 +371,11 @@ export class AuthService {
 
   private generateAccessToken(user: {
     id: string;
-    companyId: string;
+    companyId?: string | null;
     role: UserRole;
   }) {
     return jwt.sign(
-      { sub: user.id, companyId: user.companyId, role: user.role },
+      { sub: user.id, companyId: user.companyId ?? null, role: user.role },
       JWT_ACCESS_SECRET,
       { expiresIn: ACCESS_TOKEN_TTL }
     );

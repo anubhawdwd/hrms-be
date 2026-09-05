@@ -122,3 +122,13 @@ export type RefreshToken = Prisma.RefreshTokenModel
  * 
  */
 export type LeaveRequestDay = Prisma.LeaveRequestDayModel
+/**
+ * Model ErrorLog
+ * 
+ */
+export type ErrorLog = Prisma.ErrorLogModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel

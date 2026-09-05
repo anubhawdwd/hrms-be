@@ -53,8 +53,8 @@ model User {
 
   role UserRole @default(EMPLOYEE)
 
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id])
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
 
   employee EmployeeProfile?
 
@@ -153,10 +153,16 @@ model EmployeeProfile {
   manager      EmployeeProfile?  @relation("ManagerRelation", fields: [managerId], references: [id])
   subordinates EmployeeProfile[] @relation("ManagerRelation")
 
+  secondaryManagerId    String?
+  secondaryManager      EmployeeProfile?  @relation("SecondaryManagerRelation", fields: [secondaryManagerId], references: [id])
+  secondarySubordinates EmployeeProfile[] @relation("SecondaryManagerRelation")
+
   firstName   String
   middleName  String?
   lastName    String
   displayName String
+  phone       String?
+  gender      Gender?
   dateOfBirth DateTime?
   
   isActive    Boolean   @default(true)
@@ -179,6 +185,7 @@ model EmployeeProfile {
   @@index([companyId])
   @@index([departmentId])
   @@index([managerId])
+  @@index([secondaryManagerId])
 }
 
 // -----ATTENDANCE-----
@@ -524,6 +531,12 @@ enum GenderRestriction {
   OTHER
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 enum UserRole {
   SUPER_ADMIN
   COMPANY_ADMIN
@@ -545,3 +558,40 @@ model LeaveRequestDay {
   @@unique([leaveRequestId, date])
   @@index([date, status])
 }
+
+model ErrorLog {
+  id          String   @id @default(uuid())
+  source      String   // "BACKEND" | "FRONTEND"
+  statusCode  Int?
+  message     String
+  stackTrace  String?  @db.Text
+  endpoint    String?
+  method      String?
+  requestBody Json?
+  userId      String?
+  companyId   String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([companyId, createdAt])
+  @@index([source, createdAt])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String   // e.g. "USER_EMAIL_UPDATE"
+  actorId   String?  // Acting user ID (HR / Admin)
+  targetId  String?  // Target user or entity ID
+  details   Json?    // { oldEmail, newEmail, ... }
+  companyId String?
+  createdAt DateTime @default(now())
+
+  @@index([companyId, createdAt])
+  @@index([targetId])
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
+

@@ -30,6 +30,29 @@ export async function listUsers(req: Request, res: Response) {
   }
 }
 
+export async function updateUserEmail(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const { email } = req.body;
+
+    if (!userId || Array.isArray(userId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    const result = await service.updateUserEmail({
+      userId,
+      companyId: req.companyId!,
+      actorUserId: req.user?.userId,
+      email,
+    });
+    res.json(result);
+  } catch (err: any) {
+    const status =
+      err.statusCode || (err.message?.includes("already exists") ? 409 : 400);
+    res.status(status).json({ message: err.message });
+  }
+}
+
 export async function updateUser(req: Request, res: Response) {
   try {
     const { userId } = req.params;
@@ -42,13 +65,16 @@ export async function updateUser(req: Request, res: Response) {
     const result = await service.updateUser({
       userId,
       companyId: req.companyId!,
+      actorUserId: req.user?.userId,
       email,
       authProvider,
       role,
     });
     res.json(result);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    const status =
+      err.statusCode || (err.message?.includes("already exists") ? 409 : 400);
+    res.status(status).json({ message: err.message });
   }
 }
 

@@ -31,7 +31,7 @@ export interface RawEmployeeInput {
 const employees: RawEmployeeInput[] = [
   // ***********
   // replace it with your data
-    {
+  {
     "employeeId": "49",
     "email": "account@xyz.com",
     "firstName": "Abc",
@@ -40,7 +40,7 @@ const employees: RawEmployeeInput[] = [
     "department": "Accounts",
     "employmentType": "Permanent",
     // add more field as per schema,
-    },
+  },
   // add more employees as per your requirement
 ];
 

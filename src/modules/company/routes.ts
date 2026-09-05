@@ -4,7 +4,9 @@ import { Router } from "express";
 import {
   createCompany,
   getCompany,
+  getCompanyUsers,
   listCompanies,
+  resetCompanyUserPassword,
   updateCompany,
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
@@ -41,5 +43,19 @@ router.patch(
   updateCompany
 );
 
+router.get(
+  "/:companyId/users",
+  authenticateJWT,
+  requireRole(UserRole.SUPER_ADMIN),
+  getCompanyUsers
+);
+
+router.post(
+  "/:companyId/users/:userId/reset-password",
+  authenticateJWT,
+  requireRole(UserRole.SUPER_ADMIN),
+  resetCompanyUserPassword
+);
 
 export default router;
+

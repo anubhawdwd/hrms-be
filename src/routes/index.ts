@@ -8,6 +8,8 @@ import employeeRoutes from "../modules/employee/routes.js";
 import authRoutes from "../modules/auth/routes.js";
 import leaveRoutes from "../modules/leave/routes.js";
 import reportRoutes from "../modules/report/routes.js";
+import errorLogRoutes from "../modules/error-log/routes.js";
+import superadminRoutes from "../modules/superadmin/routes.js";
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -18,5 +20,7 @@ router.use("/users", userRoutes);
 router.use("/leave", leaveRoutes);
 router.use("/employees", employeeRoutes);
 router.use("/reports", reportRoutes);
+router.use("/error-logs", errorLogRoutes);
+router.use("/superadmins", superadminRoutes);
 
 export default router;

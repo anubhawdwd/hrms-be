@@ -12,6 +12,10 @@ import { runMonthlyOverviewTests } from "./monthly-overview.test.js";
 import { runSandwichPolicyTests } from "./sandwich-policy.test.js";
 import { runZohoBalanceEditTests } from "./zoho-balance-edit.test.js";
 import { runReportsTests } from "./reports.test.js";
+import { runSuperAdminAndErrorLogTests } from "./superadmin-errorlog.test.js";
+import { runSuperAdminCapabilitiesTests } from "./superadmin-capabilities.test.js";
+import { runEmployeeOnboardingTests } from "./employee-onboarding.test.js";
+import { runUserEmailUpdateTests } from "./user-email-update.test.js";
 
 interface DatabaseSnapshot {
   companiesCount: number;
@@ -26,6 +30,8 @@ interface DatabaseSnapshot {
   attendanceDaysCount: number;
   attendanceEventsCount: number;
   holidaysCount: number;
+  errorLogsCount: number;
+  auditLogsCount: number;
   leaveBalanceChecksum: string;
 }
 
@@ -43,6 +49,8 @@ async function captureDatabaseSnapshot(): Promise<DatabaseSnapshot> {
     attendanceDaysCount,
     attendanceEventsCount,
     holidaysCount,
+    errorLogsCount,
+    auditLogsCount,
     allBalances,
   ] = await Promise.all([
     prisma.company.count(),
@@ -57,6 +65,8 @@ async function captureDatabaseSnapshot(): Promise<DatabaseSnapshot> {
     prisma.attendanceDay.count(),
     prisma.attendanceEvent.count(),
     prisma.holiday.count(),
+    prisma.errorLog.count(),
+    prisma.auditLog.count(),
     prisma.leaveBalance.findMany({
       select: {
         id: true,
@@ -85,6 +95,8 @@ async function captureDatabaseSnapshot(): Promise<DatabaseSnapshot> {
     attendanceDaysCount,
     attendanceEventsCount,
     holidaysCount,
+    errorLogsCount,
+    auditLogsCount,
     leaveBalanceChecksum,
   };
 }
@@ -106,7 +118,9 @@ async function main() {
     • Leave Policies: ${preSnapshot.leavePoliciesCount}
     • Leave Types: ${preSnapshot.leaveTypesCount}
     • Leave Requests: ${preSnapshot.leaveRequestsCount}
-    • Overrides / Audit: ${preSnapshot.overridesCount}`);
+    • Overrides: ${preSnapshot.overridesCount}
+    • Error Logs: ${preSnapshot.errorLogsCount}
+    • Audit Logs: ${preSnapshot.auditLogsCount}`);
 
   try {
     await runAuthTests();
@@ -121,6 +135,10 @@ async function main() {
     await runSandwichPolicyTests();
     await runZohoBalanceEditTests();
     await runReportsTests();
+    await runSuperAdminAndErrorLogTests();
+    await runSuperAdminCapabilitiesTests();
+    await runEmployeeOnboardingTests();
+    await runUserEmailUpdateTests();
 
     // 2. Post-Test Safety & Zero-Mutation Verification
     console.log("\n[SAFETY CHECK] Verifying zero-mutation on non-test organization data...");
@@ -159,6 +177,12 @@ async function main() {
     }
     if (postSnapshot.attendanceEventsCount !== preSnapshot.attendanceEventsCount) {
       diffs.push(`Attendance events count changed: ${preSnapshot.attendanceEventsCount} -> ${postSnapshot.attendanceEventsCount}`);
+    }
+    if (postSnapshot.errorLogsCount !== preSnapshot.errorLogsCount) {
+      diffs.push(`Error logs count changed: ${preSnapshot.errorLogsCount} -> ${postSnapshot.errorLogsCount}`);
+    }
+    if (postSnapshot.auditLogsCount !== preSnapshot.auditLogsCount) {
+      diffs.push(`Audit logs count changed: ${preSnapshot.auditLogsCount} -> ${postSnapshot.auditLogsCount}`);
     }
     if (postSnapshot.leaveBalanceChecksum !== preSnapshot.leaveBalanceChecksum) {
       diffs.push(`Leave balance values checksum mismatch (one or more existing balances were modified!)`);

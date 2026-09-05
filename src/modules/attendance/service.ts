@@ -29,17 +29,6 @@ export class AttendanceService {
   private resolveAttendanceDayRecord<
     T extends { id: string; status: string; events?: Array<{ type: string }> } | null
   >(day: T): T {
-    if (!day) return day;
-    const hasCheckIn = day.events?.some((e) => e.type === "CHECK_IN");
-    if (hasCheckIn && day.status !== "LEAVE" && day.status !== "PRESENT") {
-      day.status = "PRESENT" as any;
-      prisma.attendanceDay
-        .update({
-          where: { id: day.id },
-          data: { status: "PRESENT" },
-        })
-        .catch(() => {});
-    }
     return day;
   }
 
@@ -550,6 +539,7 @@ export class AttendanceService {
         let checkIn: string | null = null;
         let checkOut: string | null = null;
         let totalMinutes = attDay?.totalMinutes ?? 0;
+        let isCheckedIn = false;
 
         if (attDay?.events && attDay.events.length > 0) {
           const isPastDate = day.date < todayStr;
@@ -572,6 +562,7 @@ export class AttendanceService {
 
           checkIn = calc.firstCheckIn ? calc.firstCheckIn.toISOString() : null;
           checkOut = calc.lastCheckOut ? calc.lastCheckOut.toISOString() : null;
+          isCheckedIn = calc.isCheckedIn;
 
           if (isToday && calc.isCheckedIn) {
             // Active shift today: totalMinutes represents cumulative completed + current live session
@@ -619,7 +610,7 @@ export class AttendanceService {
 
           if (totalMinutes >= effectiveTarget) {
             status = "PRESENT";
-          } else if (isDbPresent && day.date === todayStr) {
+          } else if (isCheckedIn && day.date === todayStr) {
             // In-progress shift for today
             status = "PRESENT";
           } else if (isDbPartial || totalMinutes > 0) {
@@ -1084,37 +1075,35 @@ export class AttendanceService {
     source: "WEB" | "PWA"
   ) {
     const office = await repo.getActiveOfficeLocation(companyId);
+
+    // If no office location is configured, or if the active office has geo-fencing disabled,
+    // geo-fencing is NOT enforced for attendance (per PRD §7.3).
+    if (!office || !office.geoFencingEnabled) {
+      return;
+    }
+
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       select: { logGeoFenceViolations: true },
     });
 
-    if (!office) {
-      if (company?.logGeoFenceViolations && location) {
-        await repo.logViolation({
-          employeeId,
-          companyId,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          distanceM: 0,
-          reason: "NO_OFFICE_CONFIG",
-          source,
-        });
-      }
-      throw new Error("Office location not configured");
-    }
-
-    // Skip radius validation if geo-fencing is disabled company-wide
-    if (!office.geoFencingEnabled) {
-      return;
-    }
-
-    // When geo-fencing is enabled, location must be provided
+    // When geo-fencing is enabled, location coordinates must be provided
     if (
       !location ||
       typeof location.latitude !== "number" ||
       typeof location.longitude !== "number"
     ) {
+      if (company?.logGeoFenceViolations) {
+        await repo.logViolation({
+          employeeId,
+          companyId,
+          latitude: 0,
+          longitude: 0,
+          distanceM: 0,
+          reason: "NO_LOCATION_COORDS",
+          source,
+        });
+      }
       throw new Error("Location coordinates required for geo-fenced attendance");
     }
 
@@ -1126,15 +1115,17 @@ export class AttendanceService {
     );
 
     if (distance > office.radiusM) {
-      await repo.logViolation({
-        employeeId,
-        companyId,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        distanceM: distance,
-        reason: "OUTSIDE_RADIUS",
-        source,
-      });
+      if (company?.logGeoFenceViolations) {
+        await repo.logViolation({
+          employeeId,
+          companyId,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          distanceM: distance,
+          reason: "OUTSIDE_RADIUS",
+          source,
+        });
+      }
       throw new Error("Outside office premises");
     }
   }

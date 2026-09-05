@@ -6,6 +6,7 @@ import {
   listUsers,
   resetPassword,
   updateUser,
+  updateUserEmail,
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/requireRole.js";
@@ -18,27 +19,32 @@ router.use(authenticateJWT, validateCompanyHeader);
 
 router.post(
   "/",
-  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR, UserRole.SUPER_ADMIN),
   createUser
 );
 router.get(
   "/",
-  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR, UserRole.SUPER_ADMIN),
   listUsers
 );
 router.post(
   "/:userId/reset-password",
-  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR, UserRole.SUPER_ADMIN),
   resetPassword
 );
 router.patch(
+  "/:userId/email",
+  requireRole(UserRole.COMPANY_ADMIN, UserRole.HR),
+  updateUserEmail
+);
+router.patch(
   "/:userId",
-  requireRole(UserRole.COMPANY_ADMIN),
+  requireRole(UserRole.COMPANY_ADMIN, UserRole.SUPER_ADMIN),
   updateUser
 );
 router.delete(
   "/:userId",
-  requireRole(UserRole.COMPANY_ADMIN),
+  requireRole(UserRole.COMPANY_ADMIN, UserRole.SUPER_ADMIN),
   deactivateUser
 );
 
