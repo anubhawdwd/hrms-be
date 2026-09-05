@@ -15,13 +15,13 @@
 | Employee Management | COMPLETE | Atomic single-transaction onboarding, full master-data fields (phone, gender, personal email), secondary manager hierarchy, quick edit parity |
 | Organization | COMPLETE | Company, department, team, designation, hierarchy, auto-present policy |
 | Attendance | COMPLETE | Check-in/out, geo-fencing, corrections, violations, auto-present, partial status dashboard |
-| Leave Management | PARTIAL | Core workflow works; year-end treatment, sandwich-exception tooling, 2-step approval, exit-encashment not yet built to new spec |
+| Leave Management | PARTIAL | Core workflow works; per-day approve/reject status transitions, day-level deletion with balance restoration, and cross-request sandwich detection with retroactive balance adjustment complete; year-end treatment, 2-step approval, exit-encashment pending |
 | Manager Self-Service | MISSING | Reportee-scoped dashboards not implemented |
 | Notifications | MISSING | No notification system exists at all |
 | Reports | PARTIAL | Employee report OK; Leave report has a **live P0 bug** (LWP/Absent not showing) |
 | Error Logging | COMPLETE | Ingestion (BE/FE), 20-day retention, SuperAdmin viewer with bulk delete |
 | SuperAdmin Dashboard | COMPLETE | Multi-tenant company provisioning, admin accounts, user directory, error viewer |
-| Testing | COMPLETE | Isolated test-company infrastructure (16 test suites), `audit:leftovers` diagnostic sweep tool, zero-mutation verification |
+| Testing | COMPLETE | Isolated test-company infrastructure (18 test suites), `audit:leftovers` diagnostic sweep tool, zero-mutation verification |
 | Deployment | PARTIAL | Local/LAN hosting only; production hardening pending |
 
 **Overall**: Core single-approver HRMS workflows, atomic employee onboarding with full master-data parity, email-update safeguards, and full SuperAdmin platform tooling/error monitoring exist and function. The next phase includes multi-role support, 2-step approval, manager dashboards, notifications, and leave report fix.
@@ -72,8 +72,8 @@
 | LEV-04 | Leave | Balance allocation / correction | COMPLETE | | Underlying logic needs audit — see LEV-13 |
 | LEV-05 | Leave | Fractional / hourly leave | COMPLETE | | |
 | LEV-06 | Leave | LWP | PARTIAL | **P0** | Balance logic OK; **report display is broken** — see REP-02 |
-| LEV-07 | Leave | Sandwich policy (company-wide switch) | COMPLETE | | |
-| LEV-08 | Leave | **Sandwich-day exception tool** (HR views day-wise breakdown, hard-deletes specific sandwich day, auto-recalculates balance) | MISSING | **P0** | See PRD §6.4. Confirmed: hard delete, no policy config, no soft-delete flag |
+| LEV-07 | Leave | Sandwich policy (company-wide switch) | COMPLETE | | Single-request and cross-request bridging with retroactive balance adjustment |
+| LEV-08 | Leave | **Sandwich-day exception tool & Day Breakdown Deletion** (HR views day-wise breakdown, selects checkboxes / select-all, hard-deletes specific days via `leaveApi.deleteDays`, auto-recalculates duration and restores balance; per-day approve/reject delta handler) | COMPLETE | **P0** | Hard delete + balance restoration + parent status transition + duration recalculation |
 | LEV-09 | Leave | Holiday management | COMPLETE | | Full-day only |
 | LEV-10 | Leave | Restricted Holiday | COMPLETE | | Normal leave type; HR manually grants |
 | LEV-11 | Leave | Maternity / Paternity automation | NOT REQUIRED | | HR manages manually |
@@ -96,8 +96,7 @@
 | SA-05 | SuperAdmin | SuperAdmin Account Management | COMPLETE | **P1** | Add, list, reset password, and deactivate with self-deactivation protection (`/super-admin/admins`) |
 | SA-06 | SuperAdmin | Company User Directory & Reset | COMPLETE | **P1** | View all users across tenant companies and reset credentials |
 | DATA-01 | Data Retention | `LeaveRequest` soft-delete → hard-delete after 6 months (scheduled job) | MISSING | **P1** | See PRD §8 |
-
-| DATA-02 | Data Retention | Sandwich-day hard delete (immediate, on HR action) | MISSING | P0 | Same feature as LEV-08 |
+| DATA-02 | Data Retention | Sandwich-day hard delete (immediate, on HR action) | COMPLETE | P0 | Same feature as LEV-08 |
 | REP-01 | Reports | Employee report | COMPLETE | | |
 | REP-02 | Reports | Leave report — **LWP and Absent Days columns show no data** | **BUG** | **P0 — live defect** | Leave balance renders correctly; LWP/Absent do not. Confirmed reproducible as of yesterday |
 | REP-03 | Reports | Pending approval warning | COMPLETE | | |
@@ -220,7 +219,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [ ] **UI-01** — Remove "Total Allocated" from every leave display, everywhere
 - [ ] **AUTH-04 / TD-03** — Build multi-role model (`UserRole` join table + permission-check rewrite)
 - [ ] **LEV-03** — Build 2-step approval workflow (company-level toggle, new status states)
-- [ ] **LEV-08 / DATA-02** — Build sandwich-day exception tool (day-wise breakdown + hard delete + auto-recalculation)
+- [x] **LEV-08 / DATA-02** — Build sandwich-day exception tool & day-level breakdown deletion (day-wise breakdown + hard delete via `leaveApi.deleteDays` + balance restoration + per-day status transitions)
 - [ ] **LEV-12** — Build year-end treatment engine (carry-forward with cap → lapse)
 - [ ] **NOTIF-01 through 05** — Build real-time in-app notification system for the leave workflow
 - [x] **ERR-01/02/03** — Build error logging capture (frontend + backend) + 20-day auto-purge
@@ -277,8 +276,8 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] Balance management (correction-based)
 - [x] Fractional/hourly values
 - [ ] LWP correctly represented in reports
-- [x] Sandwich detection
-- [ ] Sandwich-day exception tool (hard delete + recalculation)
+- [x] Sandwich detection (including cross-request bridge detection & retroactive adjustment)
+- [x] Sandwich-day exception tool & day-level breakdown deletion (hard delete + recalculation + balance restoration)
 - [x] Holidays
 - [ ] Year-end carry-forward/lapse engine
 - [ ] Exit-based encashment logging
@@ -335,6 +334,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 | 2026-09-04 | Full revision after business-decision clarification round: added multi-role model, 2-step approval workflow, manager dashboards, sandwich-day exception tool, corrected encashment model (exit-only, not annual), notification system, error logging system, data retention rules, SuperAdmin scope, and flagged two live bugs (leave balance mismatch, LWP/Absent report defect). |
 | 2026-09-05 | Implemented SuperAdmin onboarding & account management (Module A: `/api/superadmins`, `/super-admin/admins`), Company User Directory & scoped reset (Module B: `/api/company/:companyId/users*`), and Centralized Error Logging System & telemetry dashboard with From/To date filtering, company resolution, and bulk deletions (Module C: `/api/error-logs*`, `/super-admin/error-logs`). |
 | 2026-09-05 | Implemented Atomic Employee Onboarding & Master Data Parity (`EMP-03`, `EMP-04`, `EMP-05`): added phone, gender, secondary manager, personal email, explicit employee code; updated Quick Edit modal and AdminCreateEmployee; built company email editing endpoint (`PATCH /api/users/:userId/email`) with SSO safeguards, refresh token invalidation, and audit logging; built standalone leftover sweep tool (`npm run audit:leftovers`) and documented testing naming conventions. |
+| 2026-09-05 | Resolved confirmed leave management root causes: configured backend dev server with `tsx --watch` for hot-reloading; upgraded `updateLeaveRequestDayStatus` to a full status-transition engine with per-day approve (deduct) / reject (restore) balance deltas, parent status transitions, and dynamic duration recalculation; enhanced `deleteLeaveRequestDays` to hard-delete days, restore balance on approved days, and adjust parent requests; updated frontend `AdminLeaveDayBreakdownDialog.tsx` with checkboxes, Select All, and "Delete Selected Days (X)" modal wired to `leaveApi.deleteDays`; connected balance refetching on action success; added comprehensive automated tests in `tests/leave-fixes.test.ts` (18 suites total). |
 
 
 ---

@@ -9,6 +9,19 @@ import {
 
 const repo = new LeaveRepository();
 
+export function parseDateToUTC(dateInput: string | Date): Date {
+  if (dateInput instanceof Date) {
+    return new Date(Date.UTC(dateInput.getUTCFullYear(), dateInput.getUTCMonth(), dateInput.getUTCDate()));
+  }
+  const str = String(dateInput).trim();
+  const match = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match && match[1] && match[2] && match[3]) {
+    return new Date(Date.UTC(parseInt(match[1], 10), parseInt(match[2], 10) - 1, parseInt(match[3], 10)));
+  }
+  const d = new Date(str);
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
 export class LeaveService {
   // =================== LEAVE TYPES ===================
 
@@ -99,14 +112,14 @@ export class LeaveService {
   }) {
     const employee = await this.resolveEmployee(params.userId, params.companyId);
 
-    const from = new Date(params.fromDate);
-    const to = new Date(params.toDate);
+    const from = parseDateToUTC(params.fromDate);
+    const to = parseDateToUTC(params.toDate);
 
     if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
       throw new Error("Invalid date");
     }
     if (from > to) throw new Error("fromDate cannot be after toDate");
-    if (from.getFullYear() !== to.getFullYear()) {
+    if (from.getUTCFullYear() !== to.getUTCFullYear()) {
       throw new Error("Leave cannot span across multiple years");
     }
 
@@ -161,14 +174,86 @@ export class LeaveService {
     });
 
     const finalDurationValue = spanResult.effectiveDeductionDays;
+    const totalRetroactiveDays = (spanResult.retroactiveAdjustments || []).reduce(
+      (sum, adj) => sum + adj.bridgeDays.reduce((bSum, d) => bSum + d.deductDays, 0),
+      0
+    );
+    const totalRequired = finalDurationValue + totalRetroactiveDays;
 
-    if (!isUnpaid && balance && balance.remaining < finalDurationValue) {
+    if (!isUnpaid && balance && balance.remaining < totalRequired) {
       throw new Error(
-        `Insufficient leave balance. Required: ${finalDurationValue} days, Available: ${balance.remaining} days`
+        `Insufficient leave balance. Required: ${totalRequired} days (including ${totalRetroactiveDays} bridge days), Available: ${balance.remaining} days`
       );
     }
 
     return prisma.$transaction(async (tx) => {
+      // 1. Process retroactive adjustments on earlier requests
+      if (spanResult.retroactiveAdjustments && spanResult.retroactiveAdjustments.length > 0) {
+        for (const adj of spanResult.retroactiveAdjustments) {
+          const existingDays = await tx.leaveRequestDay.findMany({
+            where: { leaveRequestId: adj.requestId },
+          });
+          const existingDayStrs = new Set(existingDays.map((d) => d.date.toISOString().slice(0, 10)));
+          const newDaysToInsert = adj.bridgeDays.filter(
+            (d) => !existingDayStrs.has(d.date.toISOString().slice(0, 10))
+          );
+
+          if (newDaysToInsert.length > 0) {
+            await tx.leaveRequestDay.createMany({
+              data: newDaysToInsert.map((d) => ({
+                leaveRequestId: adj.requestId,
+                date: d.date,
+                isSandwichDay: true,
+                deductDays: d.deductDays,
+                status: d.status,
+              })),
+            });
+
+            const prevReq = await tx.leaveRequest.findUnique({
+              where: { id: adj.requestId },
+              include: { leaveType: true },
+            });
+
+            if (prevReq) {
+              const addedDeduct = newDaysToInsert.reduce((sum, d) => sum + d.deductDays, 0);
+              const allDays = [...existingDays, ...newDaysToInsert].sort(
+                (a, b) => a.date.getTime() - b.date.getTime()
+              );
+              await tx.leaveRequest.update({
+                where: { id: adj.requestId },
+                data: {
+                  durationValue: { increment: addedDeduct },
+                  toDate: allDays[allDays.length - 1]!.date,
+                },
+              });
+
+              const isPrevPaid = prevReq.leaveType.isPaid && prevReq.leaveType.code !== "LWP";
+              if (prevReq.status === LeaveRequestStatus.APPROVED && isPrevPaid && addedDeduct > 0) {
+                const reqYear = prevReq.fromDate.getFullYear();
+                const prevBalance = await tx.leaveBalance.findUnique({
+                  where: {
+                    employeeId_leaveTypeId_year: {
+                      employeeId: prevReq.employeeId,
+                      leaveTypeId: prevReq.leaveTypeId,
+                      year: reqYear,
+                    },
+                  },
+                });
+                if (prevBalance) {
+                  await tx.leaveBalance.update({
+                    where: { id: prevBalance.id },
+                    data: {
+                      used: { increment: addedDeduct },
+                      remaining: { decrement: addedDeduct },
+                    },
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+
       const leaveRequest = await tx.leaveRequest.create({
         data: {
           employeeId: employee.id,
@@ -232,14 +317,14 @@ export class LeaveService {
     const adminName = adminProfile?.displayName || admin?.email || "HR";
     const approverProfileId = adminProfile?.id || null;
 
-    const from = new Date(params.fromDate);
-    const to = new Date(params.toDate);
+    const from = parseDateToUTC(params.fromDate);
+    const to = parseDateToUTC(params.toDate);
 
     if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
       throw new Error("Invalid date");
     }
     if (from > to) throw new Error("fromDate cannot be after toDate");
-    if (from.getFullYear() !== to.getFullYear()) {
+    if (from.getUTCFullYear() !== to.getUTCFullYear()) {
       throw new Error("Leave cannot span across multiple years");
     }
 
@@ -290,10 +375,15 @@ export class LeaveService {
     });
 
     const finalDurationValue = spanResult.effectiveDeductionDays;
+    const totalRetroactiveDays = (spanResult.retroactiveAdjustments || []).reduce(
+      (sum, adj) => sum + adj.bridgeDays.reduce((bSum, d) => bSum + d.deductDays, 0),
+      0
+    );
+    const totalRequired = finalDurationValue + totalRetroactiveDays;
 
-    if (!isUnpaid && balance && balance.remaining < finalDurationValue) {
+    if (!isUnpaid && balance && balance.remaining < totalRequired) {
       throw new Error(
-        `Insufficient leave balance. Required: ${finalDurationValue} days, Available: ${balance.remaining} days`
+        `Insufficient leave balance. Required: ${totalRequired} days (including ${totalRetroactiveDays} bridge days), Available: ${balance.remaining} days`
       );
     }
 
@@ -302,6 +392,73 @@ export class LeaveService {
       : `[Marked by HR: ${adminName}]`;
 
     return prisma.$transaction(async (tx) => {
+      // Process retroactive adjustments on earlier requests
+      if (spanResult.retroactiveAdjustments && spanResult.retroactiveAdjustments.length > 0) {
+        for (const adj of spanResult.retroactiveAdjustments) {
+          const existingDays = await tx.leaveRequestDay.findMany({
+            where: { leaveRequestId: adj.requestId },
+          });
+          const existingDayStrs = new Set(existingDays.map((d) => d.date.toISOString().slice(0, 10)));
+          const newDaysToInsert = adj.bridgeDays.filter(
+            (d) => !existingDayStrs.has(d.date.toISOString().slice(0, 10))
+          );
+
+          if (newDaysToInsert.length > 0) {
+            await tx.leaveRequestDay.createMany({
+              data: newDaysToInsert.map((d) => ({
+                leaveRequestId: adj.requestId,
+                date: d.date,
+                isSandwichDay: true,
+                deductDays: d.deductDays,
+                status: d.status,
+              })),
+            });
+
+            const prevReq = await tx.leaveRequest.findUnique({
+              where: { id: adj.requestId },
+              include: { leaveType: true },
+            });
+
+            if (prevReq) {
+              const addedDeduct = newDaysToInsert.reduce((sum, d) => sum + d.deductDays, 0);
+              const allDays = [...existingDays, ...newDaysToInsert].sort(
+                (a, b) => a.date.getTime() - b.date.getTime()
+              );
+              await tx.leaveRequest.update({
+                where: { id: adj.requestId },
+                data: {
+                  durationValue: { increment: addedDeduct },
+                  toDate: allDays[allDays.length - 1]!.date,
+                },
+              });
+
+              const isPrevPaid = prevReq.leaveType.isPaid && prevReq.leaveType.code !== "LWP";
+              if (prevReq.status === LeaveRequestStatus.APPROVED && isPrevPaid && addedDeduct > 0) {
+                const reqYear = prevReq.fromDate.getFullYear();
+                const prevBalance = await tx.leaveBalance.findUnique({
+                  where: {
+                    employeeId_leaveTypeId_year: {
+                      employeeId: prevReq.employeeId,
+                      leaveTypeId: prevReq.leaveTypeId,
+                      year: reqYear,
+                    },
+                  },
+                });
+                if (prevBalance) {
+                  await tx.leaveBalance.update({
+                    where: { id: prevBalance.id },
+                    data: {
+                      used: { increment: addedDeduct },
+                      remaining: { decrement: addedDeduct },
+                    },
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+
       const leaveRequest = await tx.leaveRequest.create({
         data: {
           employeeId: employee.id,
@@ -418,7 +575,14 @@ export class LeaveService {
     companyId?: string;
     reason?: string;
   }) {
-    const approverId = params.approverUserId || params.userId;
+    const approverParam = params.approverUserId || params.userId;
+    const approver = approverParam
+      ? await prisma.employeeProfile.findFirst({
+          where: { OR: [{ id: approverParam }, { userId: approverParam }] },
+        })
+      : null;
+    const approverProfileId = approver?.id || null;
+
     const leaveRequest = await prisma.leaveRequest.findUnique({
       where: { id: params.requestId },
     });
@@ -434,7 +598,7 @@ export class LeaveService {
         where: { id: params.requestId },
         data: {
           status: LeaveRequestStatus.REJECTED,
-          ...(approverId ? { approvedById: approverId } : {}),
+          approvedById: approverProfileId,
           reason: leaveRequest.reason ? `${leaveRequest.reason} | ${reasonPrefix}` : reasonPrefix,
         },
       });
@@ -596,6 +760,109 @@ export class LeaveService {
       return tx.leaveRequest.delete({
         where: { id: params.requestId },
       });
+    });
+  }
+
+  async deleteLeaveRequestDays(params: {
+    requestId: string;
+    dayIds: string[];
+    adminUserId: string;
+    companyId: string;
+  }) {
+    if (!params.dayIds || !Array.isArray(params.dayIds) || params.dayIds.length === 0) {
+      throw new Error("No days specified for deletion");
+    }
+
+    const leaveRequest = await prisma.leaveRequest.findUnique({
+      where: { id: params.requestId },
+      include: { leaveType: true, days: { orderBy: { date: "asc" } } },
+    });
+    if (!leaveRequest) throw new Error("Leave request not found");
+
+    const daysToDelete = leaveRequest.days.filter((d) => params.dayIds.includes(d.id));
+    if (daysToDelete.length === 0) {
+      throw new Error("Specified days not found in this leave request");
+    }
+
+    const isPaid = leaveRequest.leaveType.isPaid && leaveRequest.leaveType.code !== "LWP";
+    const year = leaveRequest.fromDate.getFullYear();
+
+    let daysToRestore = 0;
+    if (isPaid) {
+      daysToRestore = daysToDelete
+        .filter((d) => d.status === LeaveRequestStatus.APPROVED)
+        .reduce((sum, d) => sum + d.deductDays, 0);
+    }
+
+    const remainingDays = leaveRequest.days.filter((d) => !params.dayIds.includes(d.id));
+
+    return prisma.$transaction(async (tx) => {
+      if (daysToRestore > 0) {
+        const balance = await tx.leaveBalance.findUnique({
+          where: {
+            employeeId_leaveTypeId_year: {
+              employeeId: leaveRequest.employeeId,
+              leaveTypeId: leaveRequest.leaveTypeId,
+              year,
+            },
+          },
+        });
+
+        if (balance) {
+          await tx.leaveBalance.update({
+            where: { id: balance.id },
+            data: {
+              used: { decrement: daysToRestore },
+              remaining: { increment: daysToRestore },
+            },
+          });
+        }
+      }
+
+      await tx.leaveRequestDay.deleteMany({
+        where: {
+          id: { in: params.dayIds },
+          leaveRequestId: params.requestId,
+        },
+      });
+
+      if (remainingDays.length === 0) {
+        await tx.leaveRequest.delete({
+          where: { id: params.requestId },
+        });
+        return { deletedRequestId: params.requestId, remainingDaysCount: 0, revertedDays: daysToRestore };
+      }
+
+      const newDurationValue = remainingDays
+        .filter((d) => d.status !== LeaveRequestStatus.REJECTED && d.status !== LeaveRequestStatus.CANCELLED)
+        .reduce((sum, d) => sum + d.deductDays, 0);
+      const newFromDate = remainingDays[0]!.date;
+      const newToDate = remainingDays[remainingDays.length - 1]!.date;
+
+      let newParentStatus = leaveRequest.status;
+      const allResolved = remainingDays.every(
+        (d) =>
+          d.status === LeaveRequestStatus.APPROVED ||
+          d.status === LeaveRequestStatus.REJECTED ||
+          d.status === LeaveRequestStatus.CANCELLED
+      );
+      if (allResolved) {
+        const hasApproved = remainingDays.some((d) => d.status === LeaveRequestStatus.APPROVED);
+        newParentStatus = hasApproved ? LeaveRequestStatus.APPROVED : LeaveRequestStatus.REJECTED;
+      }
+
+      const updated = await tx.leaveRequest.update({
+        where: { id: params.requestId },
+        data: {
+          durationValue: newDurationValue,
+          fromDate: newFromDate,
+          toDate: newToDate,
+          status: newParentStatus,
+        },
+        include: { days: { orderBy: { date: "asc" } }, leaveType: true, employee: true },
+      });
+
+      return { ...updated, revertedDays: daysToRestore };
     });
   }
 
@@ -1109,13 +1376,115 @@ export class LeaveService {
 
     const day = await prisma.leaveRequestDay.findUnique({
       where: { id: dayId },
-      include: { leaveRequest: { include: { leaveType: true, employee: true } } },
+      include: {
+        leaveRequest: {
+          include: {
+            leaveType: true,
+            employee: true,
+            days: true,
+          },
+        },
+      },
     });
     if (!day) throw new Error("Leave request day not found");
 
-    return prisma.leaveRequestDay.update({
-      where: { id: dayId },
-      data: { status: params.status },
+    const leaveRequest = day.leaveRequest;
+    const oldStatus = day.status;
+    const newStatus = params.status;
+
+    if (oldStatus === newStatus) {
+      return prisma.leaveRequest.findUnique({
+        where: { id: leaveRequest.id },
+        include: { days: { orderBy: { date: "asc" } }, leaveType: true, employee: true },
+      });
+    }
+
+    const isPaid = leaveRequest.leaveType.isPaid && leaveRequest.leaveType.code !== "LWP";
+    const year = day.date.getFullYear();
+
+    let balanceDelta = 0;
+    if (isPaid) {
+      if (newStatus === LeaveRequestStatus.APPROVED && oldStatus !== LeaveRequestStatus.APPROVED) {
+        balanceDelta = day.deductDays;
+      } else if (oldStatus === LeaveRequestStatus.APPROVED && newStatus !== LeaveRequestStatus.APPROVED) {
+        balanceDelta = -day.deductDays;
+      }
+    }
+
+    const approverParam = params.adminUserId || params.userId;
+    const approver = approverParam
+      ? await prisma.employeeProfile.findFirst({
+          where: { OR: [{ id: approverParam }, { userId: approverParam }] },
+        })
+      : null;
+    const approverProfileId = approver?.id || null;
+
+    return prisma.$transaction(async (tx) => {
+      await tx.leaveRequestDay.update({
+        where: { id: dayId },
+        data: { status: newStatus },
+      });
+
+      if (balanceDelta !== 0) {
+        const balance = await tx.leaveBalance.findUnique({
+          where: {
+            employeeId_leaveTypeId_year: {
+              employeeId: leaveRequest.employeeId,
+              leaveTypeId: leaveRequest.leaveTypeId,
+              year,
+            },
+          },
+        });
+
+        if (balance) {
+          if (balanceDelta > 0 && balance.remaining < balanceDelta) {
+            throw new Error("Insufficient leave balance to approve this day");
+          }
+          await tx.leaveBalance.update({
+            where: { id: balance.id },
+            data: {
+              used: { increment: balanceDelta },
+              remaining: { decrement: balanceDelta },
+            },
+          });
+        }
+      }
+
+      const allDays = await tx.leaveRequestDay.findMany({
+        where: { leaveRequestId: leaveRequest.id },
+        orderBy: { date: "asc" },
+      });
+
+      const approvedDays = allDays.filter((d) => d.status === LeaveRequestStatus.APPROVED);
+      const pendingDays = allDays.filter((d) => d.status === LeaveRequestStatus.PENDING);
+
+      let parentStatus: LeaveRequestStatus = LeaveRequestStatus.PENDING;
+      if (pendingDays.length === 0) {
+        if (approvedDays.length > 0) {
+          parentStatus = LeaveRequestStatus.APPROVED;
+        } else {
+          parentStatus = LeaveRequestStatus.REJECTED;
+        }
+      } else {
+        parentStatus = LeaveRequestStatus.PENDING;
+      }
+
+      const activeDays = allDays.filter(
+        (d) => d.status !== LeaveRequestStatus.REJECTED && d.status !== LeaveRequestStatus.CANCELLED
+      );
+      const newDurationValue = activeDays.reduce((sum, d) => sum + d.deductDays, 0);
+
+      const updatedRequest = await tx.leaveRequest.update({
+        where: { id: leaveRequest.id },
+        data: {
+          status: parentStatus,
+          durationValue: newDurationValue,
+          ...(approverProfileId && parentStatus === LeaveRequestStatus.APPROVED ? { approvedById: approverProfileId } : {}),
+        },
+        include: { days: { orderBy: { date: "asc" } }, leaveType: true, employee: true },
+      });
+
+      return updatedRequest;
     });
   }
 
@@ -1300,6 +1669,15 @@ export class LeaveService {
     }>;
     effectiveDeductionDays: number;
     sandwichBridgeApplied: boolean;
+    retroactiveAdjustments: Array<{
+      requestId: string;
+      bridgeDays: Array<{
+        date: Date;
+        isSandwichDay: boolean;
+        deductDays: number;
+        status: LeaveRequestStatus;
+      }>;
+    }>;
   }> {
     const {
       companyId,
@@ -1323,6 +1701,7 @@ export class LeaveService {
         ],
         effectiveDeductionDays: durationValue,
         sandwichBridgeApplied: false,
+        retroactiveAdjustments: [],
       };
     }
 
@@ -1339,9 +1718,9 @@ export class LeaveService {
       return workWeekDays === 6 ? day === 0 : day === 0 || day === 6;
     };
 
-    const scanWindowStart = new Date(fromDate);
+    const scanWindowStart = new Date(Date.UTC(fromDate.getUTCFullYear(), fromDate.getUTCMonth(), fromDate.getUTCDate()));
     scanWindowStart.setUTCDate(scanWindowStart.getUTCDate() - 15);
-    const scanWindowEnd = new Date(toDate);
+    const scanWindowEnd = new Date(Date.UTC(toDate.getUTCFullYear(), toDate.getUTCMonth(), toDate.getUTCDate()));
     scanWindowEnd.setUTCDate(scanWindowEnd.getUTCDate() + 15);
 
     const [holidays, existingLeaves, attendanceDays] = await Promise.all([
@@ -1432,6 +1811,7 @@ export class LeaveService {
         dayRecords,
         effectiveDeductionDays: dayRecords.length,
         sandwichBridgeApplied: false,
+        retroactiveAdjustments: [],
       };
     }
 
@@ -1447,6 +1827,10 @@ export class LeaveService {
     }
 
     let sandwichBridgeApplied = false;
+    const retroactiveAdjustments: Array<{
+      requestId: string;
+      bridgeDays: typeof dayRecords;
+    }> = [];
 
     // Backward Scan
     const backCursor = new Date(Date.UTC(fromDate.getUTCFullYear(), fromDate.getUTCMonth(), fromDate.getUTCDate()));
@@ -1468,9 +1852,35 @@ export class LeaveService {
       backCursor.setUTCDate(backCursor.getUTCDate() - 1);
     }
 
-    if (!backwardBrokenByWork && backwardBridgeDays.length > 0 && existingLeaveDates.has(backCursor.toISOString().slice(0, 10))) {
-      dayRecords.unshift(...backwardBridgeDays);
-      sandwichBridgeApplied = true;
+    const backDateStr = backCursor.toISOString().slice(0, 10);
+    if (!backwardBrokenByWork && backwardBridgeDays.length > 0 && existingLeaveDates.has(backDateStr)) {
+      const prevRequest = existingLeaves.find((req) => {
+        if (req.days && req.days.length > 0) {
+          return req.days.some(
+            (d) =>
+              d.date.toISOString().slice(0, 10) === backDateStr &&
+              d.status !== LeaveRequestStatus.REJECTED &&
+              d.status !== LeaveRequestStatus.CANCELLED
+          );
+        }
+        const fStr = req.fromDate.toISOString().slice(0, 10);
+        const tStr = req.toDate.toISOString().slice(0, 10);
+        return backDateStr >= fStr && backDateStr <= tStr;
+      });
+
+      if (prevRequest) {
+        retroactiveAdjustments.push({
+          requestId: prevRequest.id,
+          bridgeDays: backwardBridgeDays.map((d) => ({
+            ...d,
+            status: prevRequest.status,
+          })),
+        });
+        sandwichBridgeApplied = true;
+      } else {
+        dayRecords.unshift(...backwardBridgeDays);
+        sandwichBridgeApplied = true;
+      }
     }
 
     // Forward Scan
@@ -1493,7 +1903,8 @@ export class LeaveService {
       forwardCursor.setUTCDate(forwardCursor.getUTCDate() + 1);
     }
 
-    if (!forwardBrokenByWork && forwardBridgeDays.length > 0 && existingLeaveDates.has(forwardCursor.toISOString().slice(0, 10))) {
+    const forwardDateStr = forwardCursor.toISOString().slice(0, 10);
+    if (!forwardBrokenByWork && forwardBridgeDays.length > 0 && existingLeaveDates.has(forwardDateStr)) {
       dayRecords.push(...forwardBridgeDays);
       sandwichBridgeApplied = true;
     }
@@ -1502,6 +1913,7 @@ export class LeaveService {
       dayRecords,
       effectiveDeductionDays: dayRecords.length,
       sandwichBridgeApplied,
+      retroactiveAdjustments,
     };
   }
 

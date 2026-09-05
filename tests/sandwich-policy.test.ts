@@ -209,8 +209,10 @@ export async function runSandwichPolicyTests() {
       reason: "Monday leave after Easter weekend",
     });
 
-    assert(reqMonHoliday.durationValue === 4, "Scenario 4: Monday request bridges Good Friday + Sat + Sun + Mon = 4 days (found 4)");
-    assert(reqThuHoliday.durationValue + reqMonHoliday.durationValue === 5, "Scenario 4: Total combined deduction across Thu leave + Fri holiday + Sat + Sun + Mon leave = 5 days (found 5)");
+    const reqThuHolidayUpdated = await prisma.leaveRequest.findUnique({ where: { id: reqThuHoliday.id } });
+    assert(reqThuHolidayUpdated!.durationValue === 4, "Scenario 4: Thursday request retroactively bridges Good Friday + Sat + Sun = 4 days");
+    assert(reqMonHoliday.durationValue === 1, "Scenario 4: Monday request is 1 day (Monday)");
+    assert(reqThuHolidayUpdated!.durationValue + reqMonHoliday.durationValue === 5, "Scenario 4: Total combined deduction across Thu leave + Fri holiday + Sat + Sun + Mon leave = 5 days");
 
     await prisma.leaveRequestDay.deleteMany({ where: { leaveRequestId: { in: [reqThuHoliday.id, reqMonHoliday.id] } } });
     await prisma.leaveRequest.deleteMany({ where: { id: { in: [reqThuHoliday.id, reqMonHoliday.id] } } });
@@ -281,8 +283,10 @@ export async function runSandwichPolicyTests() {
       reason: "Monday leave",
     });
 
-    assert(reqMon6.durationValue === 3, "Scenario 6: Weekend between leaves bridges Sat + Sun + Mon = 3 days");
-    assert(reqFri6.durationValue + reqMon6.durationValue === 4, "Scenario 6: Total combined deduction is 4 days (Fri + Sat + Sun + Mon)");
+    const reqFri6Updated = await prisma.leaveRequest.findUnique({ where: { id: reqFri6.id } });
+    assert(reqFri6Updated!.durationValue === 3, "Scenario 6: Friday request retroactively bridges Sat + Sun = 3 days");
+    assert(reqMon6.durationValue === 1, "Scenario 6: Monday request is 1 day");
+    assert(reqFri6Updated!.durationValue + reqMon6.durationValue === 4, "Scenario 6: Total combined deduction is 4 days (Fri + Sat + Sun + Mon)");
 
     // ==============================================================
     // SCENARIO 8: Multiple holidays & weekends between leaves
@@ -316,8 +320,10 @@ export async function runSandwichPolicyTests() {
       reason: "Post-Christmas leave",
     });
 
-    assert(reqMon8.durationValue === 5, "Scenario 8: Monday bridges 2 holidays + 2 weekend days + 1 Mon = 5 days");
-    assert(reqWed8.durationValue + reqMon8.durationValue === 6, "Scenario 8: Total combined deduction across multiple holidays and weekends is 6 days");
+    const reqWed8Updated = await prisma.leaveRequest.findUnique({ where: { id: reqWed8.id } });
+    assert(reqWed8Updated!.durationValue === 5, "Scenario 8: Wednesday request retroactively bridges 2 holidays + 2 weekend days = 5 days");
+    assert(reqMon8.durationValue === 1, "Scenario 8: Monday request is 1 day");
+    assert(reqWed8Updated!.durationValue + reqMon8.durationValue === 6, "Scenario 8: Total combined deduction across multiple holidays and weekends is 6 days");
 
     // ==============================================================
     // SCENARIO 10 & 11: Approved Leave Deletion & Idempotent Balance Restoration

@@ -226,6 +226,7 @@ export async function approveLeave(req: Request, res: Response) {
 export async function rejectLeave(req: Request, res: Response) {
   try {
     const { requestId } = req.params;
+    const { reason } = req.body || {};
     if (!requestId || Array.isArray(requestId)) {
       return res.status(400).json({ message: "Invalid request" });
     }
@@ -235,6 +236,7 @@ export async function rejectLeave(req: Request, res: Response) {
         requestId,
         userId: req.user!.userId,
         companyId: req.companyId!,
+        reason,
       })
     );
   } catch (err: any) {
@@ -663,6 +665,32 @@ export async function deleteLeaveRequest(req: Request, res: Response) {
       adminUserId: req.user!.userId,
       companyId: req.companyId!,
     });
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+export async function deleteLeaveRequestDays(req: Request, res: Response) {
+  try {
+    const { requestId } = req.params;
+    const { dayIds } = req.body || {};
+
+    if (!requestId || Array.isArray(requestId)) {
+      return res.status(400).json({ message: "Invalid requestId" });
+    }
+
+    if (!dayIds || !Array.isArray(dayIds) || dayIds.length === 0) {
+      return res.status(400).json({ message: "dayIds must be a non-empty array of strings" });
+    }
+
+    const result = await service.deleteLeaveRequestDays({
+      requestId,
+      dayIds,
+      adminUserId: req.user!.userId,
+      companyId: req.companyId!,
+    });
+
     res.json(result);
   } catch (err: any) {
     res.status(400).json({ message: err.message });

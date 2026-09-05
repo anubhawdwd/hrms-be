@@ -32,6 +32,7 @@ import {
   runYearEndRollover,
   markLeaveByAdmin,
   deleteLeaveRequest,
+  deleteLeaveRequestDays,
   getLwpReport,
 } from "./controller.js";
 
@@ -78,6 +79,11 @@ router.delete(
   "/requests/:requestId",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   deleteLeaveRequest
+);
+router.delete(
+  "/requests/:requestId/days",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  deleteLeaveRequestDays
 );
 
 // LEAVE APPROVAL (HR)
