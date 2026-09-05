@@ -29,6 +29,7 @@ export type HolidayMinAggregateOutputType = {
   companyId: string | null
   name: string | null
   date: Date | null
+  type: $Enums.HolidayType | null
   createdAt: Date | null
 }
 
@@ -37,6 +38,7 @@ export type HolidayMaxAggregateOutputType = {
   companyId: string | null
   name: string | null
   date: Date | null
+  type: $Enums.HolidayType | null
   createdAt: Date | null
 }
 
@@ -45,6 +47,7 @@ export type HolidayCountAggregateOutputType = {
   companyId: number
   name: number
   date: number
+  type: number
   createdAt: number
   _all: number
 }
@@ -55,6 +58,7 @@ export type HolidayMinAggregateInputType = {
   companyId?: true
   name?: true
   date?: true
+  type?: true
   createdAt?: true
 }
 
@@ -63,6 +67,7 @@ export type HolidayMaxAggregateInputType = {
   companyId?: true
   name?: true
   date?: true
+  type?: true
   createdAt?: true
 }
 
@@ -71,6 +76,7 @@ export type HolidayCountAggregateInputType = {
   companyId?: true
   name?: true
   date?: true
+  type?: true
   createdAt?: true
   _all?: true
 }
@@ -152,6 +158,7 @@ export type HolidayGroupByOutputType = {
   companyId: string
   name: string
   date: Date
+  type: $Enums.HolidayType
   createdAt: Date
   _count: HolidayCountAggregateOutputType | null
   _min: HolidayMinAggregateOutputType | null
@@ -181,6 +188,7 @@ export type HolidayWhereInput = {
   companyId?: Prisma.StringFilter<"Holiday"> | string
   name?: Prisma.StringFilter<"Holiday"> | string
   date?: Prisma.DateTimeFilter<"Holiday"> | Date | string
+  type?: Prisma.EnumHolidayTypeFilter<"Holiday"> | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFilter<"Holiday"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
 }
@@ -190,6 +198,7 @@ export type HolidayOrderByWithRelationInput = {
   companyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
 }
@@ -203,6 +212,7 @@ export type HolidayWhereUniqueInput = Prisma.AtLeast<{
   companyId?: Prisma.StringFilter<"Holiday"> | string
   name?: Prisma.StringFilter<"Holiday"> | string
   date?: Prisma.DateTimeFilter<"Holiday"> | Date | string
+  type?: Prisma.EnumHolidayTypeFilter<"Holiday"> | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFilter<"Holiday"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
 }, "id" | "companyId_date">
@@ -212,6 +222,7 @@ export type HolidayOrderByWithAggregationInput = {
   companyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.HolidayCountOrderByAggregateInput
   _max?: Prisma.HolidayMaxOrderByAggregateInput
@@ -226,6 +237,7 @@ export type HolidayScalarWhereWithAggregatesInput = {
   companyId?: Prisma.StringWithAggregatesFilter<"Holiday"> | string
   name?: Prisma.StringWithAggregatesFilter<"Holiday"> | string
   date?: Prisma.DateTimeWithAggregatesFilter<"Holiday"> | Date | string
+  type?: Prisma.EnumHolidayTypeWithAggregatesFilter<"Holiday"> | $Enums.HolidayType
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Holiday"> | Date | string
 }
 
@@ -233,6 +245,7 @@ export type HolidayCreateInput = {
   id?: string
   name: string
   date: Date | string
+  type?: $Enums.HolidayType
   createdAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutHolidaysInput
 }
@@ -242,6 +255,7 @@ export type HolidayUncheckedCreateInput = {
   companyId: string
   name: string
   date: Date | string
+  type?: $Enums.HolidayType
   createdAt?: Date | string
 }
 
@@ -249,6 +263,7 @@ export type HolidayUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumHolidayTypeFieldUpdateOperationsInput | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutHolidaysNestedInput
 }
@@ -258,6 +273,7 @@ export type HolidayUncheckedUpdateInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumHolidayTypeFieldUpdateOperationsInput | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -266,6 +282,7 @@ export type HolidayCreateManyInput = {
   companyId: string
   name: string
   date: Date | string
+  type?: $Enums.HolidayType
   createdAt?: Date | string
 }
 
@@ -273,6 +290,7 @@ export type HolidayUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumHolidayTypeFieldUpdateOperationsInput | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -281,6 +299,7 @@ export type HolidayUncheckedUpdateManyInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumHolidayTypeFieldUpdateOperationsInput | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -304,6 +323,7 @@ export type HolidayCountOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -312,6 +332,7 @@ export type HolidayMaxOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -320,6 +341,7 @@ export type HolidayMinOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -365,10 +387,15 @@ export type HolidayUncheckedUpdateManyWithoutCompanyNestedInput = {
   deleteMany?: Prisma.HolidayScalarWhereInput | Prisma.HolidayScalarWhereInput[]
 }
 
+export type EnumHolidayTypeFieldUpdateOperationsInput = {
+  set?: $Enums.HolidayType
+}
+
 export type HolidayCreateWithoutCompanyInput = {
   id?: string
   name: string
   date: Date | string
+  type?: $Enums.HolidayType
   createdAt?: Date | string
 }
 
@@ -376,6 +403,7 @@ export type HolidayUncheckedCreateWithoutCompanyInput = {
   id?: string
   name: string
   date: Date | string
+  type?: $Enums.HolidayType
   createdAt?: Date | string
 }
 
@@ -413,6 +441,7 @@ export type HolidayScalarWhereInput = {
   companyId?: Prisma.StringFilter<"Holiday"> | string
   name?: Prisma.StringFilter<"Holiday"> | string
   date?: Prisma.DateTimeFilter<"Holiday"> | Date | string
+  type?: Prisma.EnumHolidayTypeFilter<"Holiday"> | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFilter<"Holiday"> | Date | string
 }
 
@@ -420,6 +449,7 @@ export type HolidayCreateManyCompanyInput = {
   id?: string
   name: string
   date: Date | string
+  type?: $Enums.HolidayType
   createdAt?: Date | string
 }
 
@@ -427,6 +457,7 @@ export type HolidayUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumHolidayTypeFieldUpdateOperationsInput | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -434,6 +465,7 @@ export type HolidayUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumHolidayTypeFieldUpdateOperationsInput | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -441,6 +473,7 @@ export type HolidayUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumHolidayTypeFieldUpdateOperationsInput | $Enums.HolidayType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -451,6 +484,7 @@ export type HolidaySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   companyId?: boolean
   name?: boolean
   date?: boolean
+  type?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["holiday"]>
@@ -460,6 +494,7 @@ export type HolidaySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   companyId?: boolean
   name?: boolean
   date?: boolean
+  type?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["holiday"]>
@@ -469,6 +504,7 @@ export type HolidaySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   companyId?: boolean
   name?: boolean
   date?: boolean
+  type?: boolean
   createdAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["holiday"]>
@@ -478,10 +514,11 @@ export type HolidaySelectScalar = {
   companyId?: boolean
   name?: boolean
   date?: boolean
+  type?: boolean
   createdAt?: boolean
 }
 
-export type HolidayOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "date" | "createdAt", ExtArgs["result"]["holiday"]>
+export type HolidayOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "date" | "type" | "createdAt", ExtArgs["result"]["holiday"]>
 export type HolidayInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }
@@ -502,6 +539,7 @@ export type $HolidayPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     companyId: string
     name: string
     date: Date
+    type: $Enums.HolidayType
     createdAt: Date
   }, ExtArgs["result"]["holiday"]>
   composites: {}
@@ -931,6 +969,7 @@ export interface HolidayFieldRefs {
   readonly companyId: Prisma.FieldRef<"Holiday", 'String'>
   readonly name: Prisma.FieldRef<"Holiday", 'String'>
   readonly date: Prisma.FieldRef<"Holiday", 'DateTime'>
+  readonly type: Prisma.FieldRef<"Holiday", 'HolidayType'>
   readonly createdAt: Prisma.FieldRef<"Holiday", 'DateTime'>
 }
     

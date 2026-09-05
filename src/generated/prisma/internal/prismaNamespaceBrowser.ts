@@ -375,6 +375,7 @@ export const HolidayScalarFieldEnum = {
   companyId: 'companyId',
   name: 'name',
   date: 'date',
+  type: 'type',
   createdAt: 'createdAt'
 } as const
 

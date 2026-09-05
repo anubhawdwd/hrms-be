@@ -287,7 +287,7 @@ export class ReportService {
           companyId,
           date: { gte: rangeStart, lte: rangeEnd },
         },
-        select: { date: true },
+        select: { date: true, type: true },
       }),
       prisma.attendanceDay.findMany({
         where: {
@@ -384,10 +384,12 @@ export class ReportService {
       }
     }
 
-    // Holiday dates set
+    // Holiday dates set (normal company holidays only)
     const holidaysSet = new Set<string>();
     for (const h of companyHolidays) {
-      holidaysSet.add(formatDateUTC(h.date));
+      if (h.type !== "RESTRICTED") {
+        holidaysSet.add(formatDateUTC(h.date));
+      }
     }
 
     // Attendance records map: `${empId}:${YYYY-MM-DD}` -> AttendanceDay
@@ -397,66 +399,119 @@ export class ReportService {
       attendanceMap.set(`${att.employeeId}:${dStr}`, att);
     }
 
-    // Absent dates set by employee (employeeId -> Set<YYYY-MM-DD>)
-    const absentDatesByEmp = new Map<string, Set<string>>();
+    // Today in UTC
+    const now = new Date();
+    const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const todayStr = formatDateUTC(todayUtc);
     const workWeekDays = company.workWeekDays ?? 5;
-
-    for (const att of attendanceDays) {
-      const empId = att.employeeId;
-      const dStr = att.date.toISOString().slice(0, 10);
-      const dayOfWeek = att.date.getUTCDay();
-      const isWeekend =
-        workWeekDays === 6
-          ? dayOfWeek === 0
-          : dayOfWeek === 0 || dayOfWeek === 6;
-
-      if (att.status === "ABSENT") {
-        if (isWeekend) continue;
-        if (holidaysSet.has(dStr)) continue;
-
-        const empApprovedLeaves = approvedLeaveDatesByEmp.get(empId);
-        if (empApprovedLeaves && empApprovedLeaves.has(dStr)) continue;
-
-        if (att.totalMinutes > 0 || (att.events && att.events.length > 0)) continue;
-
-        if (!absentDatesByEmp.has(empId)) {
-          absentDatesByEmp.set(empId, new Set());
-        }
-        absentDatesByEmp.get(empId)!.add(dStr);
-      }
-    }
 
     // Generate Rows (all employees included)
     const rows: LeaveReportEmployeeRow[] = employees.map((emp) => {
       const empBalances = balanceMap.get(emp.id);
       const empUsage = leaveUsageMap.get(emp.id);
 
-      const leaveTypeMetrics: Record<string, { booked: number; balance: number }> = {};
+      const leaveTypeMetrics: Record<
+        string,
+        {
+          used: number;
+          balance: number;
+          booked?: number;
+        }
+      > = {};
 
       for (const lt of leaveTypes) {
         const bal = empBalances?.get(lt.id);
-        const booked = bal ? bal.used : (empUsage?.byType.get(lt.id) || 0);
+        const used = bal ? bal.used : (empUsage?.byType.get(lt.id) || 0);
         const balance = bal ? bal.remaining : 0;
 
         leaveTypeMetrics[lt.id] = {
-          booked: Number(booked.toFixed(2)),
+          used: Number(used.toFixed(2)),
           balance: Number(balance.toFixed(2)),
+          booked: Number(used.toFixed(2)),
         };
       }
 
-      // Paid Leaves Total: SUM of Booked values for all PAID leave types
-      let paidLeavesTotal = 0;
+      // Paid Leaves Used & Balance: SUM across all PAID leave types (excluding LWP)
+      let paidLeavesUsed = 0;
+      let paidLeavesBalance = 0;
       for (const lt of leaveTypes) {
         if (lt.isPaid && lt.code !== "LWP") {
-          paidLeavesTotal += leaveTypeMetrics[lt.id]?.booked || 0;
+          paidLeavesUsed += leaveTypeMetrics[lt.id]?.used || 0;
+          paidLeavesBalance += leaveTypeMetrics[lt.id]?.balance || 0;
         }
       }
 
-      // LWP Total: SUM of approved Leave Without Pay / Unpaid leave booked
-      const unpaidBooked = leaveTypes
+      // LWP Total: SUM of approved Leave Without Pay / Unpaid leave used
+      const unpaidUsed = leaveTypes
         .filter((lt) => !lt.isPaid || lt.code === "LWP")
-        .reduce((sum, lt) => sum + (leaveTypeMetrics[lt.id]?.booked || 0), 0);
-      const lwpTotal = Math.max(empUsage?.lwpTotal || 0, unpaidBooked);
+        .reduce((sum, lt) => sum + (leaveTypeMetrics[lt.id]?.used || 0), 0);
+      const lwpTotal = Math.max(empUsage?.lwpTotal || 0, unpaidUsed);
+
+      // Absent Days: dynamic evaluation of past working days on or after joiningDate
+      const empJoiningDateStr = emp.joiningDate
+        ? formatDateUTC(emp.joiningDate)
+        : null;
+      const empApprovedLeaves = approvedLeaveDatesByEmp.get(emp.id);
+
+      let absentDaysCount = 0;
+      const cur = new Date(rangeStart);
+      while (cur <= rangeEnd) {
+        const dStr = formatDateUTC(cur);
+
+        // Do not evaluate future dates
+        if (dStr > todayStr) {
+          cur.setUTCDate(cur.getUTCDate() + 1);
+          continue;
+        }
+
+        // Skip any date before employee's joining date
+        if (empJoiningDateStr && dStr < empJoiningDateStr) {
+          cur.setUTCDate(cur.getUTCDate() + 1);
+          continue;
+        }
+
+        // Skip weekends
+        const dayOfWeek = cur.getUTCDay();
+        const isWeekend =
+          workWeekDays === 6
+            ? dayOfWeek === 0
+            : dayOfWeek === 0 || dayOfWeek === 6;
+        if (isWeekend) {
+          cur.setUTCDate(cur.getUTCDate() + 1);
+          continue;
+        }
+
+        // Skip normal holidays
+        if (holidaysSet.has(dStr)) {
+          cur.setUTCDate(cur.getUTCDate() + 1);
+          continue;
+        }
+
+        // Skip approved leaves
+        if (empApprovedLeaves && empApprovedLeaves.has(dStr)) {
+          cur.setUTCDate(cur.getUTCDate() + 1);
+          continue;
+        }
+
+        // Check attendance record
+        const att = attendanceMap.get(`${emp.id}:${dStr}`);
+        if (att) {
+          if (
+            att.status === "PRESENT" ||
+            att.status === "PARTIAL" ||
+            att.status === "LEAVE" ||
+            att.totalMinutes > 0 ||
+            (att.events && att.events.length > 0)
+          ) {
+            cur.setUTCDate(cur.getUTCDate() + 1);
+            continue;
+          }
+        }
+
+        // Unrecorded working day on/after joining date = Absent
+        absentDaysCount++;
+        cur.setUTCDate(cur.getUTCDate() + 1);
+      }
 
       return {
         employeeId: emp.id,
@@ -467,9 +522,11 @@ export class ReportService {
         designation: emp.designation?.name || "N/A",
         team: emp.team?.name || "N/A",
         leaveTypeMetrics,
-        paidLeavesTotal: Number(paidLeavesTotal.toFixed(2)),
+        paidLeavesUsed: Number(paidLeavesUsed.toFixed(2)),
+        paidLeavesBalance: Number(paidLeavesBalance.toFixed(2)),
+        paidLeavesTotal: Number(paidLeavesUsed.toFixed(2)),
         lwpTotal: Number(lwpTotal.toFixed(2)),
-        absentDays: absentDatesByEmp.get(emp.id)?.size || 0,
+        absentDays: absentDaysCount,
       };
     });
 
@@ -597,7 +654,7 @@ export class ReportService {
 
     if (report.hasPendingWarning) {
       worksheet.addRow([
-        `NOTE: There are ${report.pendingCount} pending leave requests (${report.pendingTotalDays} days). Pending leaves are EXCLUDED from Booked/Used totals until approved.`,
+        `NOTE: There are ${report.pendingCount} pending leave requests (${report.pendingTotalDays} days). Pending leaves are EXCLUDED from Used totals until approved.`,
       ]);
       worksheet.getRow(3).font = { bold: true, color: { argb: "FFB45309" }, italic: true };
     } else {
@@ -608,8 +665,8 @@ export class ReportService {
     worksheet.getRow(2).font = { italic: true, size: 10, color: { argb: "FF64748B" } };
 
     // Two-Level Grouped Header Construction
-    // Row 4: Top headers (Leave Types merged across Booked & Balance)
-    // Row 5: Sub-headers ("Booked", "Balance", etc.)
+    // Row 4: Top headers (Leave Types merged across Balance & Used)
+    // Row 5: Sub-headers ("Balance", "Used", etc.)
     const topRowValues: string[] = ["Employee ID", "Employee Name", "Work Email", "Department", "Designation"];
     const subRowValues: string[] = ["", "", "", "", ""];
 
@@ -617,13 +674,13 @@ export class ReportService {
 
     for (const lt of report.leaveTypes) {
       topRowValues.push(lt.name, ""); // Spans 2 columns
-      subRowValues.push("Booked", "Balance");
+      subRowValues.push("Balance", "Used");
       colIndex += 2;
     }
 
-    // Special aggregate columns
-    topRowValues.push("Paid Leaves Total", "LWP Total", "Absent Days");
-    subRowValues.push("Total Days", "Total Days", "Days");
+    // Total Paid Leaves (Grouped Merged Header) + Special aggregate columns
+    topRowValues.push("Total Paid Leaves", "", "LWP Total", "Absent Days");
+    subRowValues.push("Balance", "Used", "Total Days", "Days");
 
     const headerRow1 = worksheet.addRow(topRowValues);
     const headerRow2 = worksheet.addRow(subRowValues);
@@ -656,6 +713,13 @@ export class ReportService {
       mergeStart += 2;
     }
 
+    // Merge "Total Paid Leaves" top header across its 2 columns
+    worksheet.mergeCells(4, mergeStart, 4, mergeStart + 1);
+
+    // Merge LWP Total and Absent Days base columns across Row 4 & Row 5
+    worksheet.mergeCells(4, mergeStart + 2, 5, mergeStart + 2);
+    worksheet.mergeCells(4, mergeStart + 3, 5, mergeStart + 3);
+
     // Add Data Rows
     for (const r of report.data) {
       const rowValues: any[] = [
@@ -667,11 +731,11 @@ export class ReportService {
       ];
 
       for (const lt of report.leaveTypes) {
-        const m = r.leaveTypeMetrics[lt.id] || { booked: 0, balance: 0 };
-        rowValues.push(m.booked, m.balance);
+        const m = r.leaveTypeMetrics[lt.id] || { used: 0, balance: 0 };
+        rowValues.push(m.balance, m.used ?? m.booked ?? 0);
       }
 
-      rowValues.push(r.paidLeavesTotal, r.lwpTotal, r.absentDays);
+      rowValues.push(r.paidLeavesBalance, r.paidLeavesUsed, r.lwpTotal, r.absentDays);
 
       const dRow = worksheet.addRow(rowValues);
       dRow.alignment = { vertical: "middle" };
@@ -771,11 +835,11 @@ export class ReportService {
     ];
 
     for (const lt of report.leaveTypes) {
-      headers.push(`${lt.name} - Booked`);
       headers.push(`${lt.name} - Balance`);
+      headers.push(`${lt.name} - Used`);
     }
 
-    headers.push("Paid Leaves Total", "LWP Total", "Absent Days");
+    headers.push("Total Paid Leaves - Balance", "Total Paid Leaves - Used", "LWP Total", "Absent Days");
 
     const lines: string[] = [];
     lines.push(headers.map(escapeCsv).join(","));
@@ -790,12 +854,13 @@ export class ReportService {
       ];
 
       for (const lt of report.leaveTypes) {
-        const m = r.leaveTypeMetrics[lt.id] || { booked: 0, balance: 0 };
-        row.push(m.booked);
+        const m = r.leaveTypeMetrics[lt.id] || { used: 0, balance: 0 };
         row.push(m.balance);
+        row.push(m.used ?? m.booked ?? 0);
       }
 
-      row.push(r.paidLeavesTotal);
+      row.push(r.paidLeavesBalance);
+      row.push(r.paidLeavesUsed);
       row.push(r.lwpTotal);
       row.push(r.absentDays);
 

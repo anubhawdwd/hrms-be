@@ -6,6 +6,7 @@ import {
   LeaveRequestStatus,
   LeaveEncashmentStatus,
   GenderRestriction,
+  HolidayType,
 } from "../../generated/prisma/enums.js";
 
 type TxClient = Omit<
@@ -486,7 +487,7 @@ export class LeaveRepository {
 
   // =================== HOLIDAYS ===================
 
-  createHoliday(params: { companyId: string; name: string; date: Date }) {
+  createHoliday(params: { companyId: string; name: string; date: Date; type?: HolidayType }) {
     return prisma.holiday.create({ data: params });
   }
 

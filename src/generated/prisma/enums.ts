@@ -99,3 +99,11 @@ export const UserRole = {
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const HolidayType = {
+  NORMAL: 'NORMAL',
+  RESTRICTED: 'RESTRICTED'
+} as const
+
+export type HolidayType = (typeof HolidayType)[keyof typeof HolidayType]

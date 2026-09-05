@@ -17,6 +17,7 @@ import { runSuperAdminCapabilitiesTests } from "./superadmin-capabilities.test.j
 import { runEmployeeOnboardingTests } from "./employee-onboarding.test.js";
 import { runUserEmailUpdateTests } from "./user-email-update.test.js";
 import { runLeaveFixesTests } from "./leave-fixes.test.js";
+import { runHolidayTypeTests } from "./holiday-type.test.js";
 
 interface DatabaseSnapshot {
   companiesCount: number;
@@ -141,6 +142,7 @@ async function main() {
     await runEmployeeOnboardingTests();
     await runUserEmailUpdateTests();
     await runLeaveFixesTests();
+    await runHolidayTypeTests();
 
     // 2. Post-Test Safety & Zero-Mutation Verification
     console.log("\n[SAFETY CHECK] Verifying zero-mutation on non-test organization data...");

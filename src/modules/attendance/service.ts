@@ -10,6 +10,7 @@ import type {
   AttendanceDashboardResponse,
   AttendanceDashboardEmployeeRow,
   AttendanceDashboardCell,
+  AttendanceDashboardSession,
   AttendanceDashboardDailySummary,
   DashboardAttendanceStatus,
 } from "./types.js";
@@ -27,9 +28,23 @@ const repo = new AttendanceRepository();
 
 export class AttendanceService {
   private resolveAttendanceDayRecord<
-    T extends { id: string; status: string; events?: Array<{ type: string }> } | null
-  >(day: T): T {
-    return day;
+    T extends { id: string; status: string; events?: Array<{ type: "CHECK_IN" | "CHECK_OUT"; timestamp: Date | string }>; date?: Date } | null
+  >(day: T): any {
+    if (!day) return null;
+    let sessions: AttendanceDashboardSession[] = [];
+    if (day.events && day.events.length > 0) {
+      const calc = computeDailyAttendanceSessions(day.events);
+      sessions = calc.sessions.map((s) => ({
+        checkIn: s.checkIn.toISOString(),
+        checkOut: s.checkOut ? s.checkOut.toISOString() : null,
+        durationMinutes: s.durationMinutes,
+        isOngoing: s.isOngoing,
+      }));
+    }
+    return {
+      ...day,
+      sessions,
+    };
   }
 
   private async resolveEmployee(userId: string, companyId: string) {
@@ -411,8 +426,10 @@ export class AttendanceService {
     // 2. Build in-memory indexes
     const holidaysMap = new Map<string, string>();
     for (const h of holidays) {
-      const dStr = h.date.toISOString().slice(0, 10);
-      holidaysMap.set(dStr, h.name);
+      if (h.type !== "RESTRICTED") {
+        const dStr = h.date.toISOString().slice(0, 10);
+        holidaysMap.set(dStr, h.name);
+      }
     }
 
     const attendanceMap = new Map<string, (typeof attendanceDays)[0]>();
@@ -501,9 +518,16 @@ export class AttendanceService {
         unrecorded: 0,
       };
 
+      const empJoiningDateStr = emp.joiningDate
+        ? emp.joiningDate.toISOString().slice(0, 10)
+        : null;
+
       for (const day of daysMeta) {
         const cellDate = new Date(Date.UTC(year, monthIndex, day.dayNumber));
         const isFuture = cellDate.getTime() > today.getTime();
+        const isPreJoining = Boolean(
+          empJoiningDateStr && day.date < empJoiningDateStr
+        );
 
         // Check override on this specific date
         const activeOverride = empOverrides.find(
@@ -540,6 +564,7 @@ export class AttendanceService {
         let checkOut: string | null = null;
         let totalMinutes = attDay?.totalMinutes ?? 0;
         let isCheckedIn = false;
+        let sessions: AttendanceDashboardSession[] = [];
 
         if (attDay?.events && attDay.events.length > 0) {
           const isPastDate = day.date < todayStr;
@@ -563,6 +588,12 @@ export class AttendanceService {
           checkIn = calc.firstCheckIn ? calc.firstCheckIn.toISOString() : null;
           checkOut = calc.lastCheckOut ? calc.lastCheckOut.toISOString() : null;
           isCheckedIn = calc.isCheckedIn;
+          sessions = calc.sessions.map((s) => ({
+            checkIn: s.checkIn.toISOString(),
+            checkOut: s.checkOut ? s.checkOut.toISOString() : null,
+            durationMinutes: s.durationMinutes,
+            isOngoing: s.isOngoing,
+          }));
 
           if (isToday && calc.isCheckedIn) {
             // Active shift today: totalMinutes represents cumulative completed + current live session
@@ -576,7 +607,7 @@ export class AttendanceService {
           approvedFullDay || approvedPartial || pendingLeave;
         const leaveType = relevantLeave?.leaveType?.name ?? null;
         const leaveDuration = relevantLeave?.durationType ?? null;
-        const holidayName = day.holidayName;
+        let holidayName = day.holidayName;
 
         // Deterministic status resolution
         let status: DashboardAttendanceStatus = "UNRECORDED";
@@ -586,7 +617,10 @@ export class AttendanceService {
         const isDbPresent = attDay?.status === "PRESENT";
         const isDbPartial = attDay?.status === "PARTIAL";
 
-        if (hasPunches || hasRecordedMinutes || isDbPresent || isDbPartial) {
+        if (isPreJoining && !hasPunches && !hasRecordedMinutes && !isDbPresent && !isDbPartial) {
+          status = "UNRECORDED";
+          holidayName = null;
+        } else if (hasPunches || hasRecordedMinutes || isDbPresent || isDbPartial) {
           // Physical punches, manual HR adjustments, or worked time exist
           let partialLeaveMinutes = 0;
           if (approvedPartial) {
@@ -655,6 +689,7 @@ export class AttendanceService {
           checkIn,
           checkOut,
           totalMinutes,
+          sessions,
           leaveType,
           leaveDuration,
           holidayName,

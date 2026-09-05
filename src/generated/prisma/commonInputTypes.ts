@@ -439,6 +439,23 @@ export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
 }
 
+export type EnumHolidayTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayType | Prisma.EnumHolidayTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHolidayTypeFilter<$PrismaModel> | $Enums.HolidayType
+}
+
+export type EnumHolidayTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayType | Prisma.EnumHolidayTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHolidayTypeWithAggregatesFilter<$PrismaModel> | $Enums.HolidayType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHolidayTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHolidayTypeFilter<$PrismaModel>
+}
+
 export type JsonNullableFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -904,6 +921,23 @@ export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>
   _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>
   _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumHolidayTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayType | Prisma.EnumHolidayTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHolidayTypeFilter<$PrismaModel> | $Enums.HolidayType
+}
+
+export type NestedEnumHolidayTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayType | Prisma.EnumHolidayTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HolidayType[] | Prisma.ListEnumHolidayTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHolidayTypeWithAggregatesFilter<$PrismaModel> | $Enums.HolidayType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHolidayTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHolidayTypeFilter<$PrismaModel>
 }
 
 export type NestedJsonNullableFilter<$PrismaModel = never> =

@@ -5,6 +5,7 @@ import {
   LeaveRequestStatus,
   LeaveEncashmentStatus,
   GenderRestriction,
+  HolidayType,
 } from "../../generated/prisma/enums.js";
 
 const repo = new LeaveRepository();
@@ -128,7 +129,8 @@ export class LeaveService {
       from,
       to,
     });
-    if (holidaysInRange.length > 0) {
+    const normalHolidaysInRange = holidaysInRange.filter((h) => h.type !== "RESTRICTED");
+    if (normalHolidaysInRange.length > 0) {
       throw new Error("Leave cannot be applied on a company holiday.");
     }
 
@@ -333,7 +335,8 @@ export class LeaveService {
       from,
       to,
     });
-    if (holidaysInRange.length > 0) {
+    const normalHolidaysInRange = holidaysInRange.filter((h) => h.type !== "RESTRICTED");
+    if (normalHolidaysInRange.length > 0) {
       throw new Error("Leave cannot be applied on a company holiday.");
     }
 
@@ -1190,6 +1193,7 @@ export class LeaveService {
             year: toYear,
           },
         },
+        // KNOWN BUG (LEV-13 audit): sets remaining: carryForwardDays directly instead of allocated + carryForwardDays - used, which wipes existing allocated on repeat rollover. Must be fixed as part of LEV-12 implementation, not patched in isolation.
         update: {
           carriedForward: carryForwardDays,
           remaining: carryForwardDays,
@@ -1541,6 +1545,7 @@ export class LeaveService {
     companyId: string;
     name: string;
     date: Date;
+    type?: HolidayType;
   }) {
     return repo.createHoliday(params);
   }
@@ -1746,7 +1751,11 @@ export class LeaveService {
       }),
     ]);
 
-    const holidaySet = new Set(holidays.map((h) => h.date.toISOString().slice(0, 10)));
+    const holidaySet = new Set(
+      holidays
+        .filter((h) => h.type !== "RESTRICTED")
+        .map((h) => h.date.toISOString().slice(0, 10))
+    );
     const isHolidayDay = (d: Date) => holidaySet.has(d.toISOString().slice(0, 10));
     const isNonWorkingDay = (d: Date) => isWeekendDay(d) || isHolidayDay(d);
 

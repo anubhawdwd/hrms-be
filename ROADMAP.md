@@ -69,18 +69,19 @@
 | LEV-01 | Leave | Leave types / policies (company-defined naming) | COMPLETE | | |
 | LEV-02 | Leave | Leave application / approval / rejection (single-approver) | COMPLETE | | Current default flow |
 | LEV-03 | Leave | **2-step approval workflow** (Manager → HR), company-level toggle | MISSING | **P0** | See PRD §6.5. Includes new status states `PENDING_MANAGER` / `PENDING_HR` |
-| LEV-04 | Leave | Balance allocation / correction | COMPLETE | | Underlying logic needs audit — see LEV-13 |
+| LEV-04 | Leave | Balance allocation / correction | COMPLETE | | Delta-safe / transaction-safe (verified in LEV-13) |
 | LEV-05 | Leave | Fractional / hourly leave | COMPLETE | | |
-| LEV-06 | Leave | LWP | PARTIAL | **P0** | Balance logic OK; **report display is broken** — see REP-02 |
+| LEV-06 | Leave | LWP | PARTIAL / VERIFY | **P0** | Balance logic OK; Report display logic passes synthetic tests, but stays UNVERIFIED / flagged for retest once real usage data exists on any tenant — do not mark done without real production data. |
 | LEV-07 | Leave | Sandwich policy (company-wide switch) | COMPLETE | | Single-request and cross-request bridging with retroactive balance adjustment |
 | LEV-08 | Leave | **Sandwich-day exception tool & Day Breakdown Deletion** (HR views day-wise breakdown, selects checkboxes / select-all, hard-deletes specific days via `leaveApi.deleteDays`, auto-recalculates duration and restores balance; per-day approve/reject delta handler) | COMPLETE | **P0** | Hard delete + balance restoration + parent status transition + duration recalculation |
 | LEV-09 | Leave | Holiday management | COMPLETE | | Full-day only |
 | LEV-10 | Leave | Restricted Holiday | COMPLETE | | Normal leave type; HR manually grants |
 | LEV-11 | Leave | Maternity / Paternity automation | NOT REQUIRED | | HR manages manually |
 | LEV-12 | Leave | **Year-end treatment engine**: carry-forward (with cap, 999 = unlimited) → lapse remainder | MISSING | **P0** | Confirmed: no annual encashment. Per-leave-type, per-company config. See PRD §6.2 |
-| LEV-13 | Leave | Leave balance mismatch investigation | BUG / VERIFY | **P0** | Root cause NOT confirmed — requires full logic audit of apply/approve/reject/cancel/delete/sandwich-delete/bulk-allocate/rollover paths. See PRD §11. Do not patch blindly |
+| LEV-13 | Leave | Leave balance mismatch investigation | COMPLETE | **P0** | Audit found all active paths delta-safe/transaction-safe; one dormant bug flagged for LEV-12, no live production bug. |
 | LEV-14 | Leave | Employee leave-policy override | PARTIAL | P2 | Backend-only, no UI. Add only if HR requests it |
 | LEV-15 | Leave | Old annual encashment concept | **SUPERSEDED** | | Replace with EMP-07 (exit-only). Do not build a yearly encashment payout flow |
+| LEV-16 | Leave | Holiday type distinction (Normal vs Restricted). Normal holidays block leave applications (unchanged). Restricted holidays do NOT block applications: RH-eligible employees (per existing LEV-10 grant) may apply RH specifically for that day; any other employee may apply their normal leave types same as a working day. Fully opt-in — if unused, employee works normally that day, no leave consumed, no forced holiday. Leave-type picker on a restricted-holiday date must label that holiday as "<Holiday Name> (Restricted)" so employees see it's optional. | COMPLETE | P0 | HolidayType enum (NORMAL \| RESTRICTED) on Holiday model; default NORMAL; NORMAL blocks leave applications; RESTRICTED allows RH and standard leave applications and does not auto-deduct or force holiday; AdminHolidays UI type selector & badge, ApplyLeaveModal & Dashboard calendar labels. |
 | NOTIF-01 | Notifications | In-app notification system (WebSocket, real-time) | MISSING | **P0** | See PRD §7 for exact trigger table |
 | NOTIF-02 | Notifications | Leave-applied → Manager + HR | MISSING | P0 | Sub-item of NOTIF-01 |
 | NOTIF-03 | Notifications | Manager-approved → HR + Employee | MISSING | P0 | Sub-item of NOTIF-01 |
@@ -98,11 +99,11 @@
 | DATA-01 | Data Retention | `LeaveRequest` soft-delete → hard-delete after 6 months (scheduled job) | MISSING | **P1** | See PRD §8 |
 | DATA-02 | Data Retention | Sandwich-day hard delete (immediate, on HR action) | COMPLETE | P0 | Same feature as LEV-08 |
 | REP-01 | Reports | Employee report | COMPLETE | | |
-| REP-02 | Reports | Leave report — **LWP and Absent Days columns show no data** | **BUG** | **P0 — live defect** | Leave balance renders correctly; LWP/Absent do not. Confirmed reproducible as of yesterday |
+| REP-02 | Reports | Leave report — Absent Days + pre-joining fix + terminology standardization | COMPLETE | | Absent Days dynamically computed & respects employee joiningDate; Terminology standardized to "Balance" / "Used"; Paid Leaves split into "Paid Leaves — Used" and "Paid Leaves — Balance". (LWP logic in report verified in synthetic tests, but LEV-06 remains flagged for real-tenant retest). |
 | REP-03 | Reports | Pending approval warning | COMPLETE | | |
-| UI-01 | UI | Remove "Total Allocated" from all leave balance displays (everywhere, including admin) | MISSING | **P0** | Show only Available Balance + Used, system-wide. See PRD §6.7 |
+| UI-01 | UI | Remove "Total Allocated" from all leave balance displays (everywhere, including admin) | COMPLETE | **P0** | Displays only Available Balance + Used rounded to 2 decimal places via `formatLeaveDays`. See PRD §6.7 |
 | TEST-01 | Testing | Isolated test-company infrastructure | COMPLETE | | Must be preserved — do not weaken |
-| TEST-02 | Testing | Confirm/rule out test runs as cause of LEV-13 | VERIFY | P0 | Part of the mismatch investigation |
+| TEST-02 | Testing | Confirm/rule out test runs as cause of LEV-13 | COMPLETE | P0 | Confirmed drift was test-artifact, not test-run contamination of the calculation logic itself. |
 | DEV-01 | Deployment | Local/LAN hosting | COMPLETE | | |
 | DEV-02 | Deployment | Production hardening (HTTPS, secrets, backups) | PARTIAL | P1 | Unchanged from prior audit |
 
@@ -142,9 +143,10 @@ Employee applies
 ```
 - If HR needs to nudge a slow manager, that happens **outside the system** — no in-app reminder feature required.
 
-### 4.5 LWP (unchanged)
+### 4.5 LWP (stays PARTIAL / VERIFY)
 - No allocation, no normal balance consumption, always available to apply.
-- Approved LWP should appear in reports as its own column — **currently broken, see REP-02**.
+- Approved LWP appears in reports as its own column (verified in synthetic test suite).
+- **Flagged for Retest**: Stays `PARTIAL / VERIFY` until real usage data exists on a tenant company (current DB has 0 real LWP records) — must NOT be silently marked done without real-world usage verification.
 
 ---
 
@@ -214,9 +216,11 @@ Do not delete code solely because it's currently unused — verify intended use 
 ## 10. Priority Roadmap
 
 ### P0 — Blocking / Immediate
-- [ ] **LEV-13** — Diagnose leave balance mismatch (full logic audit of every balance-mutating path; rule in/out test-run contamination and bad seed data)
-- [ ] **REP-02** — Fix LWP/Absent Days not appearing in Leave Report (live bug)
-- [ ] **UI-01** — Remove "Total Allocated" from every leave display, everywhere
+- [x] **LEV-13 / TEST-02** — Diagnose leave balance mismatch (audit confirmed active paths delta-safe/transaction-safe; demo account reset)
+- [x] **LEV-16** — Holiday type distinction (Normal vs Restricted) — HolidayType enum on Holiday model, non-blocking RESTRICTED handling, AdminHolidays & ApplyLeaveModal UI, comprehensive test suite.
+- [x] **REP-02** — Leave report: Absent Days fixed (respects joiningDate) + pre-joining attendance fix + terminology standardized to Used/Balance (Paid Leaves split).
+- [ ] **LEV-06 (LWP Retest)** — Retest LWP report column against real production usage data once configured on any tenant organization (currently 0 real LWP records in DB).
+- [x] **UI-01** — Remove "Total Allocated" from every leave display, everywhere
 - [ ] **AUTH-04 / TD-03** — Build multi-role model (`UserRole` join table + permission-check rewrite)
 - [ ] **LEV-03** — Build 2-step approval workflow (company-level toggle, new status states)
 - [x] **LEV-08 / DATA-02** — Build sandwich-day exception tool & day-level breakdown deletion (day-wise breakdown + hard delete via `leaveApi.deleteDays` + balance restoration + per-day status transitions)
@@ -281,8 +285,8 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] Holidays
 - [ ] Year-end carry-forward/lapse engine
 - [ ] Exit-based encashment logging
-- [ ] Leave balance mismatch root-caused and fixed
-- [ ] "Total Allocated" removed from all UI
+- [x] Leave balance mismatch root-caused and fixed
+- [x] "Total Allocated" removed from all UI
 
 ### Manager Self-Service
 - [ ] Reportee-scoped leave dashboard (primary + secondary)
@@ -315,7 +319,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] Isolated test data
 - [x] Real-company mutation protection
 - [x] Diagnostic leftover sweep tool (`npm run audit:leftovers`)
-- [ ] Confirm test runs are/aren't contributing to balance mismatch
+- [x] Confirm test runs are/aren't contributing to balance mismatch
 
 ### Deployment
 - [ ] Production HTTPS
@@ -335,6 +339,12 @@ Do not delete code solely because it's currently unused — verify intended use 
 | 2026-09-05 | Implemented SuperAdmin onboarding & account management (Module A: `/api/superadmins`, `/super-admin/admins`), Company User Directory & scoped reset (Module B: `/api/company/:companyId/users*`), and Centralized Error Logging System & telemetry dashboard with From/To date filtering, company resolution, and bulk deletions (Module C: `/api/error-logs*`, `/super-admin/error-logs`). |
 | 2026-09-05 | Implemented Atomic Employee Onboarding & Master Data Parity (`EMP-03`, `EMP-04`, `EMP-05`): added phone, gender, secondary manager, personal email, explicit employee code; updated Quick Edit modal and AdminCreateEmployee; built company email editing endpoint (`PATCH /api/users/:userId/email`) with SSO safeguards, refresh token invalidation, and audit logging; built standalone leftover sweep tool (`npm run audit:leftovers`) and documented testing naming conventions. |
 | 2026-09-05 | Resolved confirmed leave management root causes: configured backend dev server with `tsx --watch` for hot-reloading; upgraded `updateLeaveRequestDayStatus` to a full status-transition engine with per-day approve (deduct) / reject (restore) balance deltas, parent status transitions, and dynamic duration recalculation; enhanced `deleteLeaveRequestDays` to hard-delete days, restore balance on approved days, and adjust parent requests; updated frontend `AdminLeaveDayBreakdownDialog.tsx` with checkboxes, Select All, and "Delete Selected Days (X)" modal wired to `leaveApi.deleteDays`; connected balance refetching on action success; added comprehensive automated tests in `tests/leave-fixes.test.ts` (18 suites total). |
+| 2026-09-05 | Added LEV-16 (Holiday type distinction: Normal vs Restricted) to roadmap per business clarification — connects Holiday model with existing RH eligibility (LEV-10). |
+| 2026-09-05 | Closed out LEV-13, TEST-02, and UI-01: comprehensive audit confirmed all active balance-mutating paths are delta-based and transaction-safe; flagged dormant bug in runYearEndRollover for LEV-12; reset hr@phi.com demo balance; removed Total Allocated from all UI screens and added 2-decimal formatting (formatLeaveDays). |
+| 2026-09-05 | Implemented LEV-16 (Holiday Type Distinction): added `HolidayType` enum (`NORMAL` \| `RESTRICTED`, default `NORMAL`) to `Holiday` model with migration; updated leave application validation and sandwich detection to allow leave on restricted holidays; updated attendance & report services to treat restricted holidays as opt-in working days; added Holiday Type selector & badges to `AdminHolidays.tsx`; added holiday notices to `ApplyLeaveModal.tsx` and calendar labels to `EmployeeDashboard.tsx`; added automated test suite `tests/holiday-type.test.ts` (19 suites passing). |
+| 2026-09-05 | Resolved REP-02: fixed pre-joining attendance evaluation (past dates before joining date suppressed from ABSENT status to UNRECORDED across calendar, dashboard, and leave reports); standardized report column terminology to "Balance" / "Used" per PRD §8.7 and split "Paid Leaves Total" into "Paid Leaves — Used" and "Paid Leaves — Balance" (preview, Excel, CSV, and UI table); audited LWP in DB (0 real records exist) and flagged LEV-06 as PARTIAL / VERIFY for live tenant retest. |
+| 2026-09-06 | Modernized date/time pickers across entire frontend via `@mui/x-date-pickers` (26 inputs across 9 files); fixed duplicate date field in Admin Attendance; updated Leave Report table and Excel export to 2-row merged "Total Paid Leaves" header; added Month step navigator pill to Leave Report; exposed `sessions` array on all backend attendance endpoints; built reusable `<DaySessionDetail>` component; fixed matrix hover tooltip flickering using `<Popper>`; enabled multi-session visibility on Employee Dashboard weekly view & monthly modal with unified dark slate styling. |
+
 
 
 ---

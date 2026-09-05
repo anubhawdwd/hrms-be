@@ -63,12 +63,20 @@ export type DashboardAttendanceStatus =
   | "WEEKEND"
   | "UNRECORDED";
 
+export interface AttendanceDashboardSession {
+  checkIn: string; // ISO string
+  checkOut: string | null; // ISO string or null
+  durationMinutes: number;
+  isOngoing: boolean;
+}
+
 export interface AttendanceDashboardCell {
   date: string; // "YYYY-MM-DD"
   status: DashboardAttendanceStatus;
   checkIn: string | null;
   checkOut: string | null;
   totalMinutes: number;
+  sessions?: AttendanceDashboardSession[];
   leaveType: string | null;
   leaveDuration: "FULL_DAY" | "HALF_DAY" | "QUARTER_DAY" | "HOURLY" | null;
   holidayName: string | null;

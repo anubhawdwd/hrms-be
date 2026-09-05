@@ -455,17 +455,20 @@ export async function listRecentLeaveRequests(req: Request, res: Response) {
 
 export async function createHoliday(req: Request, res: Response) {
   try {
-    const { name, date } = req.body;
+    const { name, date, type } = req.body;
 
     if (!name || !date) {
       return res.status(400).json({ message: "Invalid input" });
     }
+
+    const holidayType = type === "RESTRICTED" ? "RESTRICTED" : "NORMAL";
 
     res.status(201).json(
       await service.createHoliday({
         companyId: req.companyId!,
         name,
         date: new Date(date),
+        type: holidayType,
       })
     );
   } catch (err: any) {

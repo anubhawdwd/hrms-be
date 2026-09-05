@@ -264,8 +264,8 @@ export async function runReportsTests() {
       data: {
         employeeId: emp1.id,
         leaveTypeId: lwpType.id,
-        fromDate: new Date("2026-05-10"),
-        toDate: new Date("2026-05-16"),
+        fromDate: new Date("2026-06-10"),
+        toDate: new Date("2026-06-14"),
         durationType: LeaveDurationType.FULL_DAY,
         durationValue: 5.5,
         status: LeaveRequestStatus.APPROVED,
@@ -297,11 +297,13 @@ export async function runReportsTests() {
     });
 
     // Charlie has NO leave balances created (must still appear with 0 in report)
-
     // ==========================================
     // 3. LEAVE REPORT GENERATION (NO PENDING)
     // ==========================================
-    const leaveRes1 = await reportService.getLeaveReport(companyIdA, { year: 2026 });
+    const leaveRes1 = await reportService.getLeaveReport(companyIdA, {
+      fromDate: "2026-06-10",
+      toDate: "2026-06-15",
+    });
     assert(!("warning" in leaveRes1), "No pending leaves -> report generated immediately without warning");
 
     const leaveReport1 = leaveRes1 as any;
@@ -310,19 +312,19 @@ export async function runReportsTests() {
 
     // Verify Alice row with fractional multi-paid types and LWP
     const aliceLeave = leaveReport1.data.find((r: any) => r.employeeCode === 101)!;
-    assert(aliceLeave.leaveTypeMetrics[plType.id].booked === 2, `Alice PL booked is 2 (found ${aliceLeave.leaveTypeMetrics[plType.id].booked})`);
-    assert(aliceLeave.leaveTypeMetrics[clpType.id].booked === 1.5, `Alice CLP booked is 1.5 (found ${aliceLeave.leaveTypeMetrics[clpType.id].booked})`);
-    assert(aliceLeave.leaveTypeMetrics[compOffType.id].booked === 0.5, `Alice COMP_OFF booked is 0.5 (found ${aliceLeave.leaveTypeMetrics[compOffType.id].booked})`);
-    assert(aliceLeave.leaveTypeMetrics[slType.id].booked === 2.25, `Alice SL booked is 2.25 (found ${aliceLeave.leaveTypeMetrics[slType.id].booked})`);
-    assert(aliceLeave.paidLeavesTotal === 6.25, `Alice Paid Leaves Total is exactly 2 + 1.5 + 0.5 + 2.25 = 6.25 (found ${aliceLeave.paidLeavesTotal})`);
+    assert(aliceLeave.leaveTypeMetrics[plType.id].used === 2, `Alice PL used is 2 (found ${aliceLeave.leaveTypeMetrics[plType.id].used})`);
+    assert(aliceLeave.leaveTypeMetrics[clpType.id].used === 1.5, `Alice CLP used is 1.5 (found ${aliceLeave.leaveTypeMetrics[clpType.id].used})`);
+    assert(aliceLeave.leaveTypeMetrics[compOffType.id].used === 0.5, `Alice COMP_OFF used is 0.5 (found ${aliceLeave.leaveTypeMetrics[compOffType.id].used})`);
+    assert(aliceLeave.leaveTypeMetrics[slType.id].used === 2.25, `Alice SL used is 2.25 (found ${aliceLeave.leaveTypeMetrics[slType.id].used})`);
+    assert(aliceLeave.paidLeavesUsed === 6.25, `Alice Paid Leaves — Used is exactly 2 + 1.5 + 0.5 + 2.25 = 6.25 (found ${aliceLeave.paidLeavesUsed})`);
     assert(aliceLeave.lwpTotal === 5.5, `Alice LWP total is 5.5 days (found ${aliceLeave.lwpTotal})`);
     assert(aliceLeave.absentDays === 1, `Alice absent days count is 1 (found ${aliceLeave.absentDays})`);
 
     // Verify Charlie row (No leave records -> 0 / N/A)
     const charlieLeave = leaveReport1.data.find((r: any) => r.employeeCode === 103)!;
-    assert(charlieLeave.leaveTypeMetrics[plType.id].booked === 0, "Charlie (no records) has PL booked = 0");
+    assert(charlieLeave.leaveTypeMetrics[plType.id].used === 0, "Charlie (no records) has PL used = 0");
     assert(charlieLeave.leaveTypeMetrics[plType.id].balance === 0, "Charlie (no records) has PL balance = 0");
-    assert(charlieLeave.paidLeavesTotal === 0, "Charlie paid leaves total = 0");
+    assert(charlieLeave.paidLeavesUsed === 0, "Charlie paid leaves used = 0");
 
     // ==========================================
     // 4. PENDING LEAVE APPROVAL & COMPREHENSIVE ABSENCE/LWP FLOW
@@ -403,39 +405,39 @@ export async function runReportsTests() {
       },
     });
 
-    // 6. 2 approved LWP days (Mon 2026-06-22 to Tue 2026-06-23)
+    // 6. 2 approved LWP days over weekend (Sat 2026-06-20, Sun 2026-06-21) -> must be counted in LWP Total
     await prisma.leaveRequest.create({
       data: {
         employeeId: emp2.id,
         leaveTypeId: lwpType.id,
-        fromDate: new Date("2026-06-22"),
-        toDate: new Date("2026-06-23"),
+        fromDate: new Date("2026-06-20"),
+        toDate: new Date("2026-06-21"),
         durationType: LeaveDurationType.FULL_DAY,
         durationValue: 2,
         status: LeaveRequestStatus.APPROVED,
       },
     });
 
-    // 7. 1 pending LWP day (2026-07-01) -> must be EXCLUDED from LWP Total
+    // 7. 1 pending LWP day (2026-06-20) -> must be EXCLUDED from LWP Total
     await prisma.leaveRequest.create({
       data: {
         employeeId: emp2.id,
         leaveTypeId: lwpType.id,
-        fromDate: new Date("2026-07-01"),
-        toDate: new Date("2026-07-01"),
+        fromDate: new Date("2026-06-20"),
+        toDate: new Date("2026-06-20"),
         durationType: LeaveDurationType.FULL_DAY,
         durationValue: 1,
         status: LeaveRequestStatus.PENDING,
       },
     });
 
-    // 8. 1 pending paid leave request (2026-08-10, 3.5 days) -> triggers warning
+    // 8. 1 pending paid leave request (2026-06-21, 3.5 days) -> triggers warning
     await prisma.leaveRequest.create({
       data: {
         employeeId: emp2.id,
         leaveTypeId: clpType.id,
-        fromDate: new Date("2026-08-10"),
-        toDate: new Date("2026-08-13"),
+        fromDate: new Date("2026-06-21"),
+        toDate: new Date("2026-06-21"),
         durationType: LeaveDurationType.FULL_DAY,
         durationValue: 3.5,
         status: LeaveRequestStatus.PENDING,
@@ -456,8 +458,8 @@ export async function runReportsTests() {
       data: {
         employeeId: empB.id,
         leaveTypeId: plTypeB.id,
-        fromDate: new Date("2026-07-01"),
-        toDate: new Date("2026-07-10"),
+        fromDate: new Date("2026-06-20"),
+        toDate: new Date("2026-06-21"),
         durationType: LeaveDurationType.FULL_DAY,
         durationValue: 10,
         status: LeaveRequestStatus.PENDING,
@@ -465,7 +467,11 @@ export async function runReportsTests() {
     });
 
     // Attempt generation without confirmation
-    const warnRes = await reportService.getLeaveReport(companyIdA, { year: 2026, confirmPending: false });
+    const warnRes = await reportService.getLeaveReport(companyIdA, {
+      fromDate: "2026-06-15",
+      toDate: "2026-06-21",
+      confirmPending: false,
+    });
     assert("warning" in warnRes && warnRes.warning === "PENDING_LEAVE_APPROVALS", "Pending leave requests return PENDING_LEAVE_APPROVALS warning");
 
     const warning = warnRes as any;
@@ -473,7 +479,11 @@ export async function runReportsTests() {
     assert(warning.pendingTotalDays === 4.5, `Pending total days is exactly fractional 4.5 (1 LWP + 3.5 CLP)`);
 
     // Confirm generation with confirmPending = true
-    const confirmedRes = await reportService.getLeaveReport(companyIdA, { year: 2026, confirmPending: true });
+    const confirmedRes = await reportService.getLeaveReport(companyIdA, {
+      fromDate: "2026-06-15",
+      toDate: "2026-06-21",
+      confirmPending: true,
+    });
     assert(!("warning" in confirmedRes), "confirmPending=true allows report generation");
 
     const leaveReportConfirmed = confirmedRes as any;
@@ -483,9 +493,41 @@ export async function runReportsTests() {
     const bobLeaveConfirmed = leaveReportConfirmed.data.find((r: any) => r.employeeCode === 102)!;
     assert(bobLeaveConfirmed.absentDays === 2, `Bob Absent Days is exactly 2 (found ${bobLeaveConfirmed.absentDays})`);
     assert(bobLeaveConfirmed.lwpTotal === 2, `Bob LWP Total is exactly 2 approved days (found ${bobLeaveConfirmed.lwpTotal})`);
-    assert(bobLeaveConfirmed.paidLeavesTotal === 1, `Bob Paid Leaves Total is exactly 1 approved PL day (found ${bobLeaveConfirmed.paidLeavesTotal})`);
-    assert(bobLeaveConfirmed.leaveTypeMetrics[plType.id].booked === 1, `Bob PL booked is 1 (found ${bobLeaveConfirmed.leaveTypeMetrics[plType.id].booked})`);
-    assert(bobLeaveConfirmed.leaveTypeMetrics[clpType.id].booked === 0, `Bob CLP booked is 0 because pending CLP is excluded`);
+    assert(bobLeaveConfirmed.paidLeavesUsed === 1, `Bob Paid Leaves — Used is exactly 1 approved PL day (found ${bobLeaveConfirmed.paidLeavesUsed})`);
+    assert(bobLeaveConfirmed.leaveTypeMetrics[plType.id].used === 1, `Bob PL used is 1 (found ${bobLeaveConfirmed.leaveTypeMetrics[plType.id].used})`);
+    assert(bobLeaveConfirmed.leaveTypeMetrics[clpType.id].used === 0, `Bob CLP used is 0 because pending CLP is excluded`);
+
+    // Pre-joining date verification: Create a newly joined employee (joined on 2026-06-18)
+    const userNew = await prisma.user.create({
+      data: {
+        email: `newemp.rep.${Date.now()}@isolatedtest.local`,
+        companyId: companyIdA,
+        role: UserRole.EMPLOYEE,
+        authProvider: "LOCAL",
+      },
+    });
+    const empNew = await prisma.employeeProfile.create({
+      data: {
+        userId: userNew.id,
+        companyId: companyIdA,
+        designationId: ctxA.designation.id,
+        employeeCode: 104,
+        firstName: "New",
+        lastName: "Joiner",
+        displayName: "New Joiner",
+        joiningDate: new Date("2026-06-18"),
+        isActive: true,
+      },
+    });
+
+    const newJoinerReportRes = await reportService.getLeaveReport(companyIdA, {
+      fromDate: "2026-06-15",
+      toDate: "2026-06-21",
+      confirmPending: true,
+    });
+    const newJoinerRow = (newJoinerReportRes as any).data.find((r: any) => r.employeeCode === 104)!;
+    // June 15, 16, 17 are before joiningDate (June 18) -> not counted as absent. June 18 is absent (no punch), June 19 is holiday, June 20, 21 are weekend -> absentDays = 1.
+    assert(newJoinerRow.absentDays === 1, `New Joiner skips pre-joining days and has exactly 1 absent day (found ${newJoinerRow.absentDays})`);
 
     // Period boundary check: Querying year 2025 where no pending leaves exist -> no warning
     const year2025Res = await reportService.getLeaveReport(companyIdA, { year: 2025, confirmPending: false });
@@ -505,8 +547,10 @@ export async function runReportsTests() {
     assert(empCsv.includes("101,Alice Manager"), "Employee CSV has Alice record");
 
     const leaveCsv = reportService.generateLeaveCsv(leaveReportConfirmed);
-    assert(leaveCsv.includes("Privilege Leave - Booked,Privilege Leave - Balance"), "Leave CSV has flattened dynamic leave type headers");
-    assert(leaveCsv.includes("6.25,5.5"), "Leave CSV preserves exact aggregate totals (6.25 paid leaves total, 5.5 LWP total)");
+    assert(leaveCsv.includes("Privilege Leave - Balance,Privilege Leave - Used"), "Leave CSV has flattened dynamic leave type headers with Balance, Used order");
+    assert(leaveCsv.includes("Total Paid Leaves - Balance,Total Paid Leaves - Used"), "Leave CSV has Total Paid Leaves Balance and Used headers");
+    assert(leaveCsv.includes("102,Bob Subordinate"), "Leave CSV contains Bob record");
+    assert(leaveCsv.includes("6,1,2,2"), "Leave CSV preserves exact aggregate totals for Bob (6 balance, 1 paid leaves used, 2 LWP total, 2 absent days)");
 
     console.log("    ✔ All Employee and Leave Report scenarios passed!");
   } finally {

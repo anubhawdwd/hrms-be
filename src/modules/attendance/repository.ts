@@ -356,6 +356,7 @@ export class AttendanceRepository {
           displayName: true,
           firstName: true,
           lastName: true,
+          joiningDate: true,
           department: {
             select: {
               name: true,

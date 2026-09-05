@@ -2450,6 +2450,7 @@ export const HolidayScalarFieldEnum = {
   companyId: 'companyId',
   name: 'name',
   date: 'date',
+  type: 'type',
   createdAt: 'createdAt'
 } as const
 
@@ -2762,6 +2763,20 @@ export type EnumLeaveEncashmentStatusFieldRefInput<$PrismaModel> = FieldRefInput
  * Reference to a field of type 'LeaveEncashmentStatus[]'
  */
 export type ListEnumLeaveEncashmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeaveEncashmentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'HolidayType'
+ */
+export type EnumHolidayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HolidayType'>
+    
+
+
+/**
+ * Reference to a field of type 'HolidayType[]'
+ */
+export type ListEnumHolidayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HolidayType[]'>
     
 
 

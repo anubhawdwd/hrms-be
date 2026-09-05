@@ -1,3 +1,4 @@
+import { getTodayDateStringIST } from "../src/utils/date.js";
 // tests/attendance.test.ts
 import { computeDailyAttendanceSessions } from "../src/modules/attendance/calculations.js";
 import { AttendanceService } from "../src/modules/attendance/service.js";
@@ -120,9 +121,8 @@ export async function runAttendanceTests() {
     });
 
     // Today is in-progress: getAttendanceDashboard should show PRESENT
-    const now = new Date();
-    const yearMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
-    const todayStr = now.toISOString().slice(0, 10);
+    const todayStr = getTodayDateStringIST();
+    const yearMonth = todayStr.slice(0, 7);
 
     const activeDashboard = await attendanceService.getAttendanceDashboard(companyId, yearMonth, emp.id);
     const activeCell = activeDashboard.employees[0]?.days[todayStr];

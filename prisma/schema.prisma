@@ -459,6 +459,7 @@ model Holiday {
 
   name String
   date DateTime
+  type HolidayType @default(NORMAL)
 
   createdAt DateTime @default(now())
 
@@ -542,6 +543,11 @@ enum UserRole {
   COMPANY_ADMIN
   HR
   EMPLOYEE
+}
+
+enum HolidayType {
+  NORMAL
+  RESTRICTED
 }
 
 model LeaveRequestDay {
