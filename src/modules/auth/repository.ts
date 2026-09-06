@@ -19,11 +19,17 @@ export class AuthRepository {
   }
 
   findUserByEmail(email: string) {
-    return prisma.user.findUnique({ where: { email } });
+    return prisma.user.findUnique({
+      where: { email },
+      include: { roles: { select: { role: true } } },
+    });
   }
 
   findUserById(userId: string) {
-    return prisma.user.findUnique({ where: { id: userId } });
+    return prisma.user.findUnique({
+      where: { id: userId },
+      include: { roles: { select: { role: true } } },
+    });
   }
 
   createRefreshToken(params: {
@@ -47,7 +53,11 @@ export class AuthRepository {
   findRefreshToken(token: string) {
     return prisma.refreshToken.findUnique({
       where: { token },
-      include: { user: true },
+      include: {
+        user: {
+          include: { roles: { select: { role: true } } },
+        },
+      },
     });
   }
 

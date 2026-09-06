@@ -55,6 +55,7 @@ export type CompanyMinAggregateOutputType = {
   graceMinutes: number | null
   workWeekDays: number | null
   sandwichRuleEnabled: boolean | null
+  leaveApprovalWorkflow: $Enums.LeaveApprovalWorkflow | null
 }
 
 export type CompanyMaxAggregateOutputType = {
@@ -70,6 +71,7 @@ export type CompanyMaxAggregateOutputType = {
   graceMinutes: number | null
   workWeekDays: number | null
   sandwichRuleEnabled: boolean | null
+  leaveApprovalWorkflow: $Enums.LeaveApprovalWorkflow | null
 }
 
 export type CompanyCountAggregateOutputType = {
@@ -85,6 +87,7 @@ export type CompanyCountAggregateOutputType = {
   graceMinutes: number
   workWeekDays: number
   sandwichRuleEnabled: number
+  leaveApprovalWorkflow: number
   _all: number
 }
 
@@ -118,6 +121,7 @@ export type CompanyMinAggregateInputType = {
   graceMinutes?: true
   workWeekDays?: true
   sandwichRuleEnabled?: true
+  leaveApprovalWorkflow?: true
 }
 
 export type CompanyMaxAggregateInputType = {
@@ -133,6 +137,7 @@ export type CompanyMaxAggregateInputType = {
   graceMinutes?: true
   workWeekDays?: true
   sandwichRuleEnabled?: true
+  leaveApprovalWorkflow?: true
 }
 
 export type CompanyCountAggregateInputType = {
@@ -148,6 +153,7 @@ export type CompanyCountAggregateInputType = {
   graceMinutes?: true
   workWeekDays?: true
   sandwichRuleEnabled?: true
+  leaveApprovalWorkflow?: true
   _all?: true
 }
 
@@ -250,6 +256,7 @@ export type CompanyGroupByOutputType = {
   graceMinutes: number
   workWeekDays: number
   sandwichRuleEnabled: boolean
+  leaveApprovalWorkflow: $Enums.LeaveApprovalWorkflow
   _count: CompanyCountAggregateOutputType | null
   _avg: CompanyAvgAggregateOutputType | null
   _sum: CompanySumAggregateOutputType | null
@@ -288,6 +295,7 @@ export type CompanyWhereInput = {
   graceMinutes?: Prisma.IntFilter<"Company"> | number
   workWeekDays?: Prisma.IntFilter<"Company"> | number
   sandwichRuleEnabled?: Prisma.BoolFilter<"Company"> | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFilter<"Company"> | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
@@ -314,6 +322,7 @@ export type CompanyOrderByWithRelationInput = {
   graceMinutes?: Prisma.SortOrder
   workWeekDays?: Prisma.SortOrder
   sandwichRuleEnabled?: Prisma.SortOrder
+  leaveApprovalWorkflow?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   departments?: Prisma.DepartmentOrderByRelationAggregateInput
   designations?: Prisma.DesignationOrderByRelationAggregateInput
@@ -343,6 +352,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   graceMinutes?: Prisma.IntFilter<"Company"> | number
   workWeekDays?: Prisma.IntFilter<"Company"> | number
   sandwichRuleEnabled?: Prisma.BoolFilter<"Company"> | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFilter<"Company"> | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserListRelationFilter
   departments?: Prisma.DepartmentListRelationFilter
   designations?: Prisma.DesignationListRelationFilter
@@ -369,6 +379,7 @@ export type CompanyOrderByWithAggregationInput = {
   graceMinutes?: Prisma.SortOrder
   workWeekDays?: Prisma.SortOrder
   sandwichRuleEnabled?: Prisma.SortOrder
+  leaveApprovalWorkflow?: Prisma.SortOrder
   _count?: Prisma.CompanyCountOrderByAggregateInput
   _avg?: Prisma.CompanyAvgOrderByAggregateInput
   _max?: Prisma.CompanyMaxOrderByAggregateInput
@@ -392,6 +403,7 @@ export type CompanyScalarWhereWithAggregatesInput = {
   graceMinutes?: Prisma.IntWithAggregatesFilter<"Company"> | number
   workWeekDays?: Prisma.IntWithAggregatesFilter<"Company"> | number
   sandwichRuleEnabled?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowWithAggregatesFilter<"Company"> | $Enums.LeaveApprovalWorkflow
 }
 
 export type CompanyCreateInput = {
@@ -407,6 +419,7 @@ export type CompanyCreateInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -433,6 +446,7 @@ export type CompanyUncheckedCreateInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -459,6 +473,7 @@ export type CompanyUpdateInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -485,6 +500,7 @@ export type CompanyUncheckedUpdateInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -511,6 +527,7 @@ export type CompanyCreateManyInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
 }
 
 export type CompanyUpdateManyMutationInput = {
@@ -526,6 +543,7 @@ export type CompanyUpdateManyMutationInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
 }
 
 export type CompanyUncheckedUpdateManyInput = {
@@ -541,6 +559,7 @@ export type CompanyUncheckedUpdateManyInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
 }
 
 export type CompanyCountOrderByAggregateInput = {
@@ -556,6 +575,7 @@ export type CompanyCountOrderByAggregateInput = {
   graceMinutes?: Prisma.SortOrder
   workWeekDays?: Prisma.SortOrder
   sandwichRuleEnabled?: Prisma.SortOrder
+  leaveApprovalWorkflow?: Prisma.SortOrder
 }
 
 export type CompanyAvgOrderByAggregateInput = {
@@ -579,6 +599,7 @@ export type CompanyMaxOrderByAggregateInput = {
   graceMinutes?: Prisma.SortOrder
   workWeekDays?: Prisma.SortOrder
   sandwichRuleEnabled?: Prisma.SortOrder
+  leaveApprovalWorkflow?: Prisma.SortOrder
 }
 
 export type CompanyMinOrderByAggregateInput = {
@@ -594,6 +615,7 @@ export type CompanyMinOrderByAggregateInput = {
   graceMinutes?: Prisma.SortOrder
   workWeekDays?: Prisma.SortOrder
   sandwichRuleEnabled?: Prisma.SortOrder
+  leaveApprovalWorkflow?: Prisma.SortOrder
 }
 
 export type CompanySumOrderByAggregateInput = {
@@ -632,6 +654,10 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type EnumLeaveApprovalWorkflowFieldUpdateOperationsInput = {
+  set?: $Enums.LeaveApprovalWorkflow
 }
 
 export type CompanyCreateNestedOneWithoutUsersInput = {
@@ -803,6 +829,7 @@ export type CompanyCreateWithoutUsersInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -828,6 +855,7 @@ export type CompanyUncheckedCreateWithoutUsersInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -869,6 +897,7 @@ export type CompanyUpdateWithoutUsersInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -894,6 +923,7 @@ export type CompanyUncheckedUpdateWithoutUsersInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -919,6 +949,7 @@ export type CompanyCreateWithoutDepartmentsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -944,6 +975,7 @@ export type CompanyUncheckedCreateWithoutDepartmentsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -985,6 +1017,7 @@ export type CompanyUpdateWithoutDepartmentsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -1010,6 +1043,7 @@ export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1035,6 +1069,7 @@ export type CompanyCreateWithoutDesignationsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
@@ -1060,6 +1095,7 @@ export type CompanyUncheckedCreateWithoutDesignationsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
@@ -1101,6 +1137,7 @@ export type CompanyUpdateWithoutDesignationsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
@@ -1126,6 +1163,7 @@ export type CompanyUncheckedUpdateWithoutDesignationsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1151,6 +1189,7 @@ export type CompanyCreateWithoutDesignationAttendancePoliciesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1176,6 +1215,7 @@ export type CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1217,6 +1257,7 @@ export type CompanyUpdateWithoutDesignationAttendancePoliciesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1242,6 +1283,7 @@ export type CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1267,6 +1309,7 @@ export type CompanyCreateWithoutEmployeesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1292,6 +1335,7 @@ export type CompanyUncheckedCreateWithoutEmployeesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1333,6 +1377,7 @@ export type CompanyUpdateWithoutEmployeesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1358,6 +1403,7 @@ export type CompanyUncheckedUpdateWithoutEmployeesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1383,6 +1429,7 @@ export type CompanyCreateWithoutAttendanceDaysInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1408,6 +1455,7 @@ export type CompanyUncheckedCreateWithoutAttendanceDaysInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1449,6 +1497,7 @@ export type CompanyUpdateWithoutAttendanceDaysInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1474,6 +1523,7 @@ export type CompanyUncheckedUpdateWithoutAttendanceDaysInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1499,6 +1549,7 @@ export type CompanyCreateWithoutAttendanceViolationsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1524,6 +1575,7 @@ export type CompanyUncheckedCreateWithoutAttendanceViolationsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1565,6 +1617,7 @@ export type CompanyUpdateWithoutAttendanceViolationsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1590,6 +1643,7 @@ export type CompanyUncheckedUpdateWithoutAttendanceViolationsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1615,6 +1669,7 @@ export type CompanyCreateWithoutOfficeLocationsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1640,6 +1695,7 @@ export type CompanyUncheckedCreateWithoutOfficeLocationsInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1681,6 +1737,7 @@ export type CompanyUpdateWithoutOfficeLocationsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1706,6 +1763,7 @@ export type CompanyUncheckedUpdateWithoutOfficeLocationsInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1731,6 +1789,7 @@ export type CompanyCreateWithoutLeaveTypesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1756,6 +1815,7 @@ export type CompanyUncheckedCreateWithoutLeaveTypesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1797,6 +1857,7 @@ export type CompanyUpdateWithoutLeaveTypesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1822,6 +1883,7 @@ export type CompanyUncheckedUpdateWithoutLeaveTypesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1847,6 +1909,7 @@ export type CompanyCreateWithoutLeavePoliciesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1872,6 +1935,7 @@ export type CompanyUncheckedCreateWithoutLeavePoliciesInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -1913,6 +1977,7 @@ export type CompanyUpdateWithoutLeavePoliciesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -1938,6 +2003,7 @@ export type CompanyUncheckedUpdateWithoutLeavePoliciesInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1963,6 +2029,7 @@ export type CompanyCreateWithoutHolidaysInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
@@ -1988,6 +2055,7 @@ export type CompanyUncheckedCreateWithoutHolidaysInput = {
   graceMinutes?: number
   workWeekDays?: number
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
   designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
@@ -2029,6 +2097,7 @@ export type CompanyUpdateWithoutHolidaysInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
@@ -2054,6 +2123,7 @@ export type CompanyUncheckedUpdateWithoutHolidaysInput = {
   graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
   sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
   designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
@@ -2200,6 +2270,7 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   graceMinutes?: boolean
   workWeekDays?: boolean
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: boolean
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
   designations?: boolean | Prisma.Company$designationsArgs<ExtArgs>
@@ -2227,6 +2298,7 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   graceMinutes?: boolean
   workWeekDays?: boolean
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2242,6 +2314,7 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   graceMinutes?: boolean
   workWeekDays?: boolean
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: boolean
 }, ExtArgs["result"]["company"]>
 
 export type CompanySelectScalar = {
@@ -2257,9 +2330,10 @@ export type CompanySelectScalar = {
   graceMinutes?: boolean
   workWeekDays?: boolean
   sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: boolean
 }
 
-export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt" | "logGeoFenceViolations" | "usesTeams" | "workingMinutes" | "lunchMinutes" | "breakMinutes" | "graceMinutes" | "workWeekDays" | "sandwichRuleEnabled", ExtArgs["result"]["company"]>
+export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "createdAt" | "logGeoFenceViolations" | "usesTeams" | "workingMinutes" | "lunchMinutes" | "breakMinutes" | "graceMinutes" | "workWeekDays" | "sandwichRuleEnabled" | "leaveApprovalWorkflow", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   departments?: boolean | Prisma.Company$departmentsArgs<ExtArgs>
@@ -2305,6 +2379,7 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     graceMinutes: number
     workWeekDays: number
     sandwichRuleEnabled: boolean
+    leaveApprovalWorkflow: $Enums.LeaveApprovalWorkflow
   }, ExtArgs["result"]["company"]>
   composites: {}
 }
@@ -2751,6 +2826,7 @@ export interface CompanyFieldRefs {
   readonly graceMinutes: Prisma.FieldRef<"Company", 'Int'>
   readonly workWeekDays: Prisma.FieldRef<"Company", 'Int'>
   readonly sandwichRuleEnabled: Prisma.FieldRef<"Company", 'Boolean'>
+  readonly leaveApprovalWorkflow: Prisma.FieldRef<"Company", 'LeaveApprovalWorkflow'>
 }
     
 

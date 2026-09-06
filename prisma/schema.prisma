@@ -36,7 +36,8 @@ model Company {
   graceMinutes   Int @default(10)
 
   workWeekDays        Int     @default(5)
-  sandwichRuleEnabled Boolean @default(false)
+  sandwichRuleEnabled    Boolean               @default(false)
+  leaveApprovalWorkflow LeaveApprovalWorkflow @default(DIRECT_TO_HR)
 
   designationAttendancePolicies DesignationAttendancePolicy[]
 }
@@ -44,14 +45,13 @@ model Company {
 model User {
   id            String       @id @default(uuid())
   email         String       @unique
-  personalEmail String?
+  personalEmail      String?
   passwordHash       String?
   mustChangePassword Boolean      @default(false)
   authProvider       AuthProvider
-  providerId    String?
-  isActive      Boolean      @default(true)
-
-  role UserRole @default(EMPLOYEE)
+  providerId         String?
+  isActive           Boolean      @default(true)
+  roles              UserRoleAssignment[]
 
   companyId String?
   company   Company? @relation(fields: [companyId], references: [id])
@@ -513,8 +513,15 @@ enum LeaveDurationType {
   HOURLY
 }
 
+enum LeaveApprovalWorkflow {
+  DIRECT_TO_HR
+  TWO_STEP
+}
+
 enum LeaveRequestStatus {
   PENDING
+  PENDING_MANAGER
+  PENDING_HR
   APPROVED
   REJECTED
   CANCELLED
@@ -543,6 +550,18 @@ enum UserRole {
   COMPANY_ADMIN
   HR
   EMPLOYEE
+}
+
+model UserRoleAssignment {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  @@unique([userId, role])
+  @@index([userId])
+  @@index([role])
 }
 
 enum HolidayType {

@@ -219,7 +219,7 @@ export async function approveLeave(req: Request, res: Response) {
       })
     );
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 
@@ -240,7 +240,7 @@ export async function rejectLeave(req: Request, res: Response) {
       })
     );
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 

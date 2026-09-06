@@ -69,7 +69,9 @@ export async function runLeaveRolloverTests() {
         companyId,
         email: `rollover.test.${Date.now()}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

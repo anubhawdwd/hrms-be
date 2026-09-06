@@ -32,7 +32,9 @@ export async function runLeaveTypeCatalogTests() {
         companyId,
         email: `zero.filter.${Date.now()}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

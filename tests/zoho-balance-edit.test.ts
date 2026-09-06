@@ -37,7 +37,9 @@ export async function runZohoBalanceEditTests() {
         companyId,
         email: `zoho.balance.${Date.now()}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

@@ -11,9 +11,19 @@ export class UserService {
   async createUser(dto: CreateUserDTO) {
     const email = dto.email?.trim().toLowerCase();
 
-    const role = dto.role && Object.values(UserRole).includes(dto.role)
-      ? dto.role
-      : UserRole.EMPLOYEE;
+    let roles: UserRole[];
+    if (dto.roles && Array.isArray(dto.roles) && dto.roles.length > 0) {
+      for (const r of dto.roles) {
+        if (!Object.values(UserRole).includes(r)) {
+          throw new Error(`Invalid role: ${r}`);
+        }
+      }
+      roles = Array.from(new Set(dto.roles));
+    } else if (dto.role && Object.values(UserRole).includes(dto.role)) {
+      roles = [dto.role];
+    } else {
+      roles = [UserRole.EMPLOYEE];
+    }
 
     if (!email) {
       throw new Error("Email is required");
@@ -27,11 +37,25 @@ export class UserService {
     if (existing) {
       throw new Error("User already exists in this company");
     }
-    return repo.createUser(email, dto.companyId, dto.authProvider, role);
+    const created = await repo.createUser(email, dto.companyId, dto.authProvider, roles);
+    const resolvedRoles = created.roles.map((r) => r.role);
+    return {
+      ...created,
+      roles: resolvedRoles,
+      role: resolvedRoles[0] ?? UserRole.EMPLOYEE, // TD-06 shim
+    };
   }
 
   async listUsers(dto: ListUsersDTO) {
-    return repo.listUsers(dto.companyId);
+    const users = await repo.listUsers(dto.companyId);
+    return users.map((u) => {
+      const roles = u.roles.map((r) => r.role);
+      return {
+        ...u,
+        roles,
+        role: roles[0] ?? UserRole.EMPLOYEE, // TD-06 shim
+      };
+    });
   }
 
   async updateUserEmail(dto: UpdateUserEmailDTO) {
@@ -99,7 +123,26 @@ export class UserService {
   }
 
   async updateUser(dto: UpdateUserDTO) {
-    if (!dto.email && !dto.authProvider && !dto.role) {
+    let targetRoles: UserRole[] | undefined;
+
+    if (dto.roles !== undefined) {
+      if (!Array.isArray(dto.roles) || dto.roles.length === 0) {
+        throw new Error("User must have at least one role");
+      }
+      for (const r of dto.roles) {
+        if (!Object.values(UserRole).includes(r)) {
+          throw new Error(`Invalid role: ${r}`);
+        }
+      }
+      targetRoles = Array.from(new Set(dto.roles));
+    } else if (dto.role !== undefined) {
+      if (!Object.values(UserRole).includes(dto.role)) {
+        throw new Error("Invalid role");
+      }
+      targetRoles = [dto.role];
+    }
+
+    if (!dto.email && !dto.authProvider && !targetRoles) {
       throw new Error("Nothing to update");
     }
 
@@ -108,13 +151,6 @@ export class UserService {
       !Object.values(AuthProvider).includes(dto.authProvider)
     ) {
       throw new Error("Invalid auth provider");
-    }
-
-    if (
-      dto.role &&
-      !Object.values(UserRole).includes(dto.role)
-    ) {
-      throw new Error("Invalid role");
     }
 
     if (dto.email) {
@@ -126,17 +162,21 @@ export class UserService {
       });
     }
 
-    if (dto.authProvider || dto.role) {
+    if (targetRoles) {
+      await repo.updateUserRoles(dto.userId, dto.companyId, targetRoles);
+      await repo.deleteAllRefreshTokensByUser(dto.userId);
+    }
+
+    if (dto.authProvider) {
       const result = await repo.updateUser(
         dto.userId,
         dto.companyId,
         {
-          ...(dto.authProvider && { authProvider: dto.authProvider }),
-          ...(dto.role && { role: dto.role }),
+          authProvider: dto.authProvider,
         }
       );
 
-      if (result.count === 0) {
+      if (result.count === 0 && !targetRoles) {
         throw new Error("User not found or inactive");
       }
     }

@@ -35,7 +35,9 @@ export async function runSuperAdminAndErrorLogTests() {
       data: {
         email: superAdminEmail,
         passwordHash,
-        role: UserRole.SUPER_ADMIN,
+        roles: {
+          create: [{ role: UserRole.SUPER_ADMIN }],
+        },
         authProvider: AuthProvider.LOCAL,
         companyId: null,
         isActive: true,

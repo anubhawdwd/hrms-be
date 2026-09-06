@@ -4,11 +4,13 @@ import { AuthProvider, UserRole } from "../../generated/prisma/enums.js";
 
 export class SuperAdminRepository {
   async create(email: string, passwordHash: string) {
-    return prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email: email.trim().toLowerCase(),
         passwordHash,
-        role: UserRole.SUPER_ADMIN,
+        roles: {
+          create: [{ role: UserRole.SUPER_ADMIN }],
+        },
         authProvider: AuthProvider.LOCAL,
         companyId: null,
         isActive: true,
@@ -17,7 +19,7 @@ export class SuperAdminRepository {
       select: {
         id: true,
         email: true,
-        role: true,
+        roles: { select: { role: true } },
         companyId: true,
         isActive: true,
         mustChangePassword: true,
@@ -25,17 +27,24 @@ export class SuperAdminRepository {
         updatedAt: true,
       },
     });
+
+    const roles = user.roles.map((r) => r.role);
+    return {
+      ...user,
+      roles,
+      role: roles[0] ?? UserRole.SUPER_ADMIN,
+    };
   }
 
   async list() {
-    return prisma.user.findMany({
+    const users = await prisma.user.findMany({
       where: {
-        role: UserRole.SUPER_ADMIN,
+        roles: { some: { role: UserRole.SUPER_ADMIN } },
       },
       select: {
         id: true,
         email: true,
-        role: true,
+        roles: { select: { role: true } },
         companyId: true,
         isActive: true,
         mustChangePassword: true,
@@ -43,6 +52,15 @@ export class SuperAdminRepository {
         updatedAt: true,
       },
       orderBy: { createdAt: "desc" },
+    });
+
+    return users.map((u) => {
+      const roles = u.roles.map((r) => r.role);
+      return {
+        ...u,
+        roles,
+        role: roles[0] ?? UserRole.SUPER_ADMIN,
+      };
     });
   }
 
@@ -52,6 +70,9 @@ export class SuperAdminRepository {
       where: {
         id: userId,
       },
+      include: {
+        roles: { select: { role: true } },
+      },
     });
   }
 
@@ -60,13 +81,16 @@ export class SuperAdminRepository {
       where: {
         email: email.trim().toLowerCase(),
       },
+      include: {
+        roles: { select: { role: true } },
+      },
     });
   }
 
   async countActive() {
     return prisma.user.count({
       where: {
-        role: UserRole.SUPER_ADMIN,
+        roles: { some: { role: UserRole.SUPER_ADMIN } },
         isActive: true,
         companyId: null,
       },

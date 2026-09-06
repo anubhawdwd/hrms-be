@@ -80,7 +80,9 @@ export async function createIsolatedTestCompany(options?: {
       companyId: company.id,
       email: `admin.${timestamp}@isolatedtest.local`,
       passwordHash,
-      role: UserRole.COMPANY_ADMIN,
+      roles: {
+        create: [{ role: UserRole.COMPANY_ADMIN }],
+      },
       authProvider: AuthProvider.LOCAL,
       isActive: true,
     },

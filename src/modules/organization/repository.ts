@@ -226,6 +226,7 @@ export class OrganizationRepository {
         graceMinutes: true,
         workWeekDays: true,
         sandwichRuleEnabled: true,
+        leaveApprovalWorkflow: true,
       },
     });
 
@@ -237,6 +238,7 @@ export class OrganizationRepository {
         graceMinutes: 10,
         workWeekDays: 5,
         sandwichRuleEnabled: false,
+        leaveApprovalWorkflow: "DIRECT_TO_HR" as any,
       }
     );
   }
@@ -250,6 +252,7 @@ export class OrganizationRepository {
       graceMinutes?: number;
       workWeekDays?: number;
       sandwichRuleEnabled?: boolean;
+      leaveApprovalWorkflow?: any;
     }
   ) {
     return prisma.company.update({
@@ -273,6 +276,9 @@ export class OrganizationRepository {
         ...(data.sandwichRuleEnabled !== undefined && {
           sandwichRuleEnabled: data.sandwichRuleEnabled,
         }),
+        ...(data.leaveApprovalWorkflow !== undefined && {
+          leaveApprovalWorkflow: data.leaveApprovalWorkflow,
+        }),
       },
       select: {
         workingMinutes: true,
@@ -281,6 +287,7 @@ export class OrganizationRepository {
         graceMinutes: true,
         workWeekDays: true,
         sandwichRuleEnabled: true,
+        leaveApprovalWorkflow: true,
       },
     });
   }

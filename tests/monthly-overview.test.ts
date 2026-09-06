@@ -26,7 +26,9 @@ export async function runMonthlyOverviewTests() {
         companyId,
         email: `emp.a.${Date.now()}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },
@@ -47,7 +49,9 @@ export async function runMonthlyOverviewTests() {
         companyId,
         email: `emp.b.${Date.now()}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

@@ -34,12 +34,16 @@ export class AuthService {
       throw new Error("User inactive");
     }
 
+    const roles = user.roles.map((r) => r.role);
+    const isSuperAdmin = roles.includes("SUPER_ADMIN");
+
     if (!user.companyId) {
-      if (user.role === "SUPER_ADMIN") {
+      if (isSuperAdmin) {
         return {
           id: user.id,
           email: user.email,
-          role: user.role,
+          roles,
+          role: roles[0],
           companyId: null,
           companyName: "SuperAdmin Workspace",
           geoFencingEnabled: false,
@@ -61,7 +65,8 @@ export class AuthService {
     return {
       id: user.id,
       email: user.email,
-      role: user.role,
+      roles,
+      role: roles[0],
       companyId: user.companyId,
       companyName: company.name,
       geoFencingEnabled: office?.geoFencingEnabled ?? false,
@@ -81,6 +86,9 @@ export class AuthService {
       throw new Error("Inactive Users not allowed");
     }
 
+    const roles = user.roles.map((r) => r.role);
+    const isSuperAdmin = roles.includes("SUPER_ADMIN");
+
     let company = null;
     let office = null;
 
@@ -90,7 +98,7 @@ export class AuthService {
         throw new Error("Company inactive");
       }
       office = await repo.findActiveOfficeLocation(user.companyId);
-    } else if (user.role !== "SUPER_ADMIN") {
+    } else if (!isSuperAdmin) {
       throw new Error("User has no company assigned");
     }
 
@@ -110,7 +118,7 @@ export class AuthService {
     const accessToken = this.generateAccessToken({
       id: user.id,
       companyId: user.companyId,
-      role: user.role,
+      roles,
     });
 
     const refreshToken = this.generateRefreshToken({
@@ -131,9 +139,10 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role,
+        roles,
+        role: roles[0],
         companyId: user.companyId ?? null,
-        companyName: company?.name || (user.role === "SUPER_ADMIN" ? "SuperAdmin Workspace" : "Company Workspace"),
+        companyName: company?.name || (isSuperAdmin ? "SuperAdmin Workspace" : "Company Workspace"),
         geoFencingEnabled: office?.geoFencingEnabled ?? false,
         mustChangePassword: user.mustChangePassword ?? false,
         usesTeams: company?.usesTeams ?? false,
@@ -197,10 +206,12 @@ export class AuthService {
       throw new Error("Refresh token expired");
     }
 
+    const roles = stored.user.roles.map((r) => r.role);
+
     const accessToken = this.generateAccessToken({
       id: stored.user.id,
       companyId: stored.user.companyId,
-      role: stored.user.role,
+      roles,
     });
 
     const newRefreshToken = this.generateRefreshToken({
@@ -247,18 +258,16 @@ export class AuthService {
       throw new Error("Inactive Users not allowed");
     }
 
-    if (!user.isActive) {
-      throw new Error("Inactive Users not allowed");
-    }
-
     if (user.authProvider !== AuthProvider.GOOGLE && user.authProvider !== AuthProvider.LOCAL) {
       throw new Error("Use your configured login method");
     }
 
+    const roles = user.roles.map((r) => r.role);
+
     const accessToken = this.generateAccessToken({
       id: user.id,
       companyId: user.companyId,
-      role: user.role,
+      roles,
     });
 
     const refreshToken = this.generateRefreshToken({
@@ -284,7 +293,8 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role,
+        roles,
+        role: roles[0],
         companyId: user.companyId,
         companyName: company?.name || "Company Workspace",
         geoFencingEnabled: office?.geoFencingEnabled ?? false,
@@ -325,10 +335,12 @@ export class AuthService {
       throw new Error("Use your configured login method");
     }
 
+    const roles = user.roles.map((r) => r.role);
+
     const accessToken = this.generateAccessToken({
       id: user.id,
       companyId: user.companyId,
-      role: user.role,
+      roles,
     });
 
     const refreshToken = this.generateRefreshToken({
@@ -354,7 +366,8 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role,
+        roles,
+        role: roles[0],
         companyId: user.companyId,
         companyName: company?.name || "Company Workspace",
         geoFencingEnabled: office?.geoFencingEnabled ?? false,
@@ -372,10 +385,15 @@ export class AuthService {
   private generateAccessToken(user: {
     id: string;
     companyId?: string | null;
-    role: UserRole;
+    roles: UserRole[];
   }) {
     return jwt.sign(
-      { sub: user.id, companyId: user.companyId ?? null, role: user.role },
+      {
+        sub: user.id,
+        companyId: user.companyId ?? null,
+        roles: user.roles,
+        role: user.roles[0], // TD-06: temporary shim
+      },
       JWT_ACCESS_SECRET,
       { expiresIn: ACCESS_TOKEN_TTL }
     );

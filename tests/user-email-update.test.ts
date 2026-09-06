@@ -28,7 +28,9 @@ export async function runUserEmailUpdateTests() {
         companyId: companyAId,
         email: `acting.admin.${Date.now()}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.COMPANY_ADMIN,
+        roles: {
+          create: [{ role: UserRole.COMPANY_ADMIN }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },
@@ -40,7 +42,9 @@ export async function runUserEmailUpdateTests() {
         companyId: companyAId,
         email: `local.emp.original.${Date.now()}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         mustChangePassword: true,
         isActive: true,
@@ -74,7 +78,9 @@ export async function runUserEmailUpdateTests() {
         companyId: companyBId,
         email: collisionEmail,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },
@@ -86,7 +92,9 @@ export async function runUserEmailUpdateTests() {
         companyId: companyAId,
         email: `google.sso.${Date.now()}@isolatedtest.local`,
         authProvider: AuthProvider.GOOGLE,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         isActive: true,
       },
     });
@@ -190,7 +198,7 @@ export async function runUserEmailUpdateTests() {
     let superAdminStatus: number | null = null;
     let superAdminMsg = "";
     const mockSuperAdminReq: any = {
-      user: { id: "super-admin-id", role: UserRole.SUPER_ADMIN, companyId: null },
+      user: { id: "super-admin-id", roles: [UserRole.SUPER_ADMIN], role: UserRole.SUPER_ADMIN, companyId: null },
     };
     const mockRes: any = {
       status(code: number) {
@@ -212,7 +220,7 @@ export async function runUserEmailUpdateTests() {
     // Test HR allowed
     nextCalled = false;
     const mockHrReq: any = {
-      user: { id: "hr-id", role: UserRole.HR, companyId: companyAId },
+      user: { id: "hr-id", roles: [UserRole.HR], role: UserRole.HR, companyId: companyAId },
     };
     emailUpdateGuard(mockHrReq, mockRes, mockNext);
     assert(nextCalled, "next() was called successfully for HR");
@@ -220,7 +228,7 @@ export async function runUserEmailUpdateTests() {
     // Test COMPANY_ADMIN allowed
     nextCalled = false;
     const mockAdminReq: any = {
-      user: { id: "admin-id", role: UserRole.COMPANY_ADMIN, companyId: companyAId },
+      user: { id: "admin-id", roles: [UserRole.COMPANY_ADMIN], role: UserRole.COMPANY_ADMIN, companyId: companyAId },
     };
     emailUpdateGuard(mockAdminReq, mockRes, mockNext);
     assert(nextCalled, "next() was called successfully for COMPANY_ADMIN");

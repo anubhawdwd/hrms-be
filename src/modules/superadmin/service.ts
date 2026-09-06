@@ -48,7 +48,7 @@ export class SuperAdminService {
       throw new Error("SuperAdmin not found");
     }
 
-    if (user.role !== UserRole.SUPER_ADMIN || user.companyId !== null) {
+    if (!user.roles.some((r) => r.role === UserRole.SUPER_ADMIN) || user.companyId !== null) {
       throw new Error("Target user is not a SuperAdmin");
     }
 
@@ -81,7 +81,7 @@ export class SuperAdminService {
       throw new Error("SuperAdmin not found");
     }
 
-    if (user.role !== UserRole.SUPER_ADMIN || user.companyId !== null) {
+    if (!user.roles.some((r) => r.role === UserRole.SUPER_ADMIN) || user.companyId !== null) {
       throw new Error("Target user is not a SuperAdmin");
     }
 

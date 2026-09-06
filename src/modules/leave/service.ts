@@ -6,6 +6,7 @@ import {
   LeaveEncashmentStatus,
   GenderRestriction,
   HolidayType,
+  UserRole,
 } from "../../generated/prisma/enums.js";
 
 const repo = new LeaveRepository();
@@ -155,7 +156,7 @@ export class LeaveService {
     const overlapping = await prisma.leaveRequest.findMany({
       where: {
         employeeId: employee.id,
-        status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.APPROVED] },
+        status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR, LeaveRequestStatus.APPROVED] },
         fromDate: { lte: to },
         toDate: { gte: from },
       },
@@ -163,6 +164,16 @@ export class LeaveService {
     if (overlapping.length > 0) {
       throw new Error("Employee already has a leave request overlapping these dates");
     }
+
+    const company = await prisma.company.findUnique({
+      where: { id: params.companyId },
+      select: { leaveApprovalWorkflow: true },
+    });
+    const hasManager = Boolean(employee.managerId || employee.secondaryManagerId);
+    const initialStatus =
+      company?.leaveApprovalWorkflow === "TWO_STEP" && hasManager
+        ? LeaveRequestStatus.PENDING_MANAGER
+        : LeaveRequestStatus.PENDING;
 
     const spanResult = await this.buildLeaveDaysAndEffectiveSpan({
       companyId: params.companyId,
@@ -172,7 +183,7 @@ export class LeaveService {
       toDate: to,
       durationType: params.durationType,
       durationValue,
-      initialStatus: LeaveRequestStatus.PENDING,
+      initialStatus,
     });
 
     const finalDurationValue = spanResult.effectiveDeductionDays;
@@ -267,7 +278,7 @@ export class LeaveService {
           startTime: params.startTime || null,
           endTime: params.endTime || null,
           reason: params.reason?.trim() || null,
-          status: LeaveRequestStatus.PENDING,
+          status: initialStatus,
         },
         include: {
           leaveType: true,
@@ -357,7 +368,7 @@ export class LeaveService {
     const overlapping = await prisma.leaveRequest.findMany({
       where: {
         employeeId: employee.id,
-        status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.APPROVED] },
+        status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR, LeaveRequestStatus.APPROVED] },
         fromDate: { lte: to },
         toDate: { gte: from },
       },
@@ -516,59 +527,159 @@ export class LeaveService {
     approverUserId?: string;
     companyId?: string;
   }) {
-    const approverParam = params.approverUserId || params.userId;
-    const approver = approverParam
-      ? await prisma.employeeProfile.findFirst({
-          where: { OR: [{ id: approverParam }, { userId: approverParam }] },
-        })
-      : null;
-    const approverProfileId = approver?.id || null;
+    const approverUserId = params.approverUserId || params.userId;
+    if (!approverUserId) {
+      const err: any = new Error("Approver userId is required");
+      err.statusCode = 400;
+      throw err;
+    }
+
     const leaveRequest = await prisma.leaveRequest.findUnique({
       where: { id: params.requestId },
       include: { leaveType: true, employee: true, days: true },
     });
     if (!leaveRequest) throw new Error("Leave request not found");
-    if (leaveRequest.status !== LeaveRequestStatus.PENDING) {
-      throw new Error(`Cannot approve leave in '${leaveRequest.status}' status`);
-    }
 
-    const year = leaveRequest.fromDate.getFullYear();
-    const isUnpaid = !leaveRequest.leaveType.isPaid || leaveRequest.leaveType.code === "LWP";
+    // Fetch acting user profile and role assignments
+    const actingUser = await prisma.user.findUnique({
+      where: { id: approverUserId },
+      include: { employee: true, roles: true },
+    });
+    const actorProfile =
+      actingUser?.employee ||
+      (await prisma.employeeProfile.findFirst({
+        where: { OR: [{ id: approverUserId }, { userId: approverUserId }] },
+      }));
+    const approverProfileId = actorProfile?.id || null;
 
-    const balance = isUnpaid
-      ? null
-      : await repo.getLeaveBalance(leaveRequest.employeeId, leaveRequest.leaveTypeId, year);
+    const userRoles = actingUser?.roles.map((r) => r.role) || [];
+    const isHrOrAdmin =
+      userRoles.includes(UserRole.HR) ||
+      userRoles.includes(UserRole.COMPANY_ADMIN) ||
+      userRoles.includes(UserRole.SUPER_ADMIN);
 
-    if (!isUnpaid && balance && balance.remaining < leaveRequest.durationValue) {
-      throw new Error("Insufficient leave balance to approve this request");
-    }
+    const isAssignedManager = Boolean(
+      approverProfileId &&
+        (leaveRequest.employee.managerId === approverProfileId ||
+          leaveRequest.employee.secondaryManagerId === approverProfileId)
+    );
 
-    return prisma.$transaction(async (tx) => {
-      const updatedRequest = await tx.leaveRequest.update({
-        where: { id: params.requestId },
-        data: {
-          status: LeaveRequestStatus.APPROVED,
-          ...(approverProfileId ? { approvedById: approverProfileId } : {}),
-        },
-      });
-
-      await tx.leaveRequestDay.updateMany({
-        where: { leaveRequestId: params.requestId, status: LeaveRequestStatus.PENDING },
-        data: { status: LeaveRequestStatus.APPROVED },
-      });
-
-      if (!isUnpaid && balance) {
-        await tx.leaveBalance.update({
-          where: { id: balance.id },
-          data: {
-            used: { increment: leaveRequest.durationValue },
-            remaining: { decrement: leaveRequest.durationValue },
-          },
-        });
+    // ── STAGE 1: PENDING_MANAGER ──
+    if (leaveRequest.status === LeaveRequestStatus.PENDING_MANAGER) {
+      // Explicit Authorization Check:
+      if (!isAssignedManager && !isHrOrAdmin) {
+        const err: any = new Error(
+          "Forbidden: You are not authorized to approve this leave request. Only the assigned reporting manager can approve at this stage."
+        );
+        err.statusCode = 403;
+        throw err;
       }
 
-      return updatedRequest;
-    });
+      // HR cannot approve before manager in 2-step workflow
+      if (isHrOrAdmin && !isAssignedManager) {
+        const err: any = new Error(
+          "Cannot approve request: Awaiting reporting manager approval (2-step workflow)"
+        );
+        err.statusCode = 400;
+        throw err;
+      }
+
+      // Manager approves -> transitions to PENDING_HR (ZERO balance deduction)
+      return prisma.$transaction(async (tx) => {
+        const updatedRequest = await tx.leaveRequest.update({
+          where: { id: params.requestId },
+          data: {
+            status: LeaveRequestStatus.PENDING_HR,
+            ...(approverProfileId ? { approvedById: approverProfileId } : {}),
+          },
+          include: { leaveType: true, employee: true, days: true },
+        });
+
+        await tx.leaveRequestDay.updateMany({
+          where: {
+            leaveRequestId: params.requestId,
+            status: LeaveRequestStatus.PENDING_MANAGER,
+          },
+          data: { status: LeaveRequestStatus.PENDING_HR },
+        });
+
+        return updatedRequest;
+      });
+    }
+
+    // ── STAGE 2: PENDING_HR or legacy PENDING ──
+    if (
+      leaveRequest.status === LeaveRequestStatus.PENDING_HR ||
+      leaveRequest.status === LeaveRequestStatus.PENDING
+    ) {
+      if (!isHrOrAdmin) {
+        if (isAssignedManager) {
+          const err: any = new Error(
+            "This leave request has already received manager approval and is awaiting final HR approval"
+          );
+          err.statusCode = 400;
+          throw err;
+        }
+        const err: any = new Error(
+          "Forbidden: Only HR or Company Admin can grant final leave approval"
+        );
+        err.statusCode = 403;
+        throw err;
+      }
+
+      const year = leaveRequest.fromDate.getFullYear();
+      const isUnpaid =
+        !leaveRequest.leaveType.isPaid || leaveRequest.leaveType.code === "LWP";
+
+      const balance = isUnpaid
+        ? null
+        : await repo.getLeaveBalance(
+            leaveRequest.employeeId,
+            leaveRequest.leaveTypeId,
+            year
+          );
+
+      if (
+        !isUnpaid &&
+        balance &&
+        balance.remaining < leaveRequest.durationValue
+      ) {
+        throw new Error("Insufficient leave balance to approve this request");
+      }
+
+      return prisma.$transaction(async (tx) => {
+        const updatedRequest = await tx.leaveRequest.update({
+          where: { id: params.requestId },
+          data: {
+            status: LeaveRequestStatus.APPROVED,
+            ...(approverProfileId ? { approvedById: approverProfileId } : {}),
+          },
+          include: { leaveType: true, employee: true, days: true },
+        });
+
+        await tx.leaveRequestDay.updateMany({
+          where: {
+            leaveRequestId: params.requestId,
+            status: { in: [LeaveRequestStatus.PENDING_HR, LeaveRequestStatus.PENDING] },
+          },
+          data: { status: LeaveRequestStatus.APPROVED },
+        });
+
+        if (!isUnpaid && balance) {
+          await tx.leaveBalance.update({
+            where: { id: balance.id },
+            data: {
+              used: { increment: leaveRequest.durationValue },
+              remaining: { decrement: leaveRequest.durationValue },
+            },
+          });
+        }
+
+        return updatedRequest;
+      });
+    }
+
+    throw new Error("Cannot approve leave in " + leaveRequest.status + " status");
   }
 
   async rejectLeave(params: {
@@ -578,23 +689,74 @@ export class LeaveService {
     companyId?: string;
     reason?: string;
   }) {
-    const approverParam = params.approverUserId || params.userId;
-    const approver = approverParam
-      ? await prisma.employeeProfile.findFirst({
-          where: { OR: [{ id: approverParam }, { userId: approverParam }] },
-        })
-      : null;
-    const approverProfileId = approver?.id || null;
+    const approverUserId = params.approverUserId || params.userId;
+    if (!approverUserId) {
+      const err: any = new Error("Approver userId is required");
+      err.statusCode = 400;
+      throw err;
+    }
 
     const leaveRequest = await prisma.leaveRequest.findUnique({
       where: { id: params.requestId },
+      include: { employee: true },
     });
     if (!leaveRequest) throw new Error("Leave request not found");
-    if (leaveRequest.status !== LeaveRequestStatus.PENDING) {
-      throw new Error(`Cannot reject leave in '${leaveRequest.status}' status`);
+
+    const actingUser = await prisma.user.findUnique({
+      where: { id: approverUserId },
+      include: { employee: true, roles: true },
+    });
+    const actorProfile =
+      actingUser?.employee ||
+      (await prisma.employeeProfile.findFirst({
+        where: { OR: [{ id: approverUserId }, { userId: approverUserId }] },
+      }));
+    const approverProfileId = actorProfile?.id || null;
+
+    const userRoles = actingUser?.roles.map((r) => r.role) || [];
+    const isHrOrAdmin =
+      userRoles.includes(UserRole.HR) ||
+      userRoles.includes(UserRole.COMPANY_ADMIN) ||
+      userRoles.includes(UserRole.SUPER_ADMIN);
+
+    const isAssignedManager = Boolean(
+      approverProfileId &&
+        (leaveRequest.employee.managerId === approverProfileId ||
+          leaveRequest.employee.secondaryManagerId === approverProfileId)
+    );
+
+    const isPendingManager =
+      leaveRequest.status === LeaveRequestStatus.PENDING_MANAGER;
+    const isPendingHR =
+      leaveRequest.status === LeaveRequestStatus.PENDING_HR ||
+      leaveRequest.status === LeaveRequestStatus.PENDING;
+
+    if (!isPendingManager && !isPendingHR) {
+      throw new Error("Cannot reject leave in " + leaveRequest.status + " status");
     }
 
-    const reasonPrefix = params.reason ? `[Rejected by HR] ${params.reason}` : "[Rejected by HR]";
+    if (isPendingManager) {
+      if (!isAssignedManager && !isHrOrAdmin) {
+        const err: any = new Error(
+          "Forbidden: You are not authorized to reject this leave request. Only the assigned reporting manager can act at this stage."
+        );
+        err.statusCode = 403;
+        throw err;
+      }
+    } else if (isPendingHR) {
+      if (!isHrOrAdmin) {
+        const err: any = new Error(
+          "Forbidden: Only HR or Company Admin can reject this request at the HR stage"
+        );
+        err.statusCode = 403;
+        throw err;
+      }
+    }
+
+    const roleTag = isAssignedManager ? "Manager" : "HR";
+    const reasonPrefix = params.reason
+      ? "[Rejected by " + roleTag + "] " + params.reason
+      : "[Rejected by " + roleTag + "]";
 
     return prisma.$transaction(async (tx) => {
       const updated = await tx.leaveRequest.update({
@@ -602,7 +764,9 @@ export class LeaveService {
         data: {
           status: LeaveRequestStatus.REJECTED,
           approvedById: approverProfileId,
-          reason: leaveRequest.reason ? `${leaveRequest.reason} | ${reasonPrefix}` : reasonPrefix,
+          reason: leaveRequest.reason
+            ? leaveRequest.reason + " | " + reasonPrefix
+            : reasonPrefix,
         },
       });
 
@@ -634,8 +798,12 @@ export class LeaveService {
     if (leaveRequest.employeeId !== employee.id) {
       throw new Error("Unauthorized: cannot cancel another employee's request");
     }
-    if (leaveRequest.status !== LeaveRequestStatus.PENDING) {
-      throw new Error("Only PENDING leave requests can be cancelled by employee");
+    if (
+      leaveRequest.status !== LeaveRequestStatus.PENDING &&
+      leaveRequest.status !== LeaveRequestStatus.PENDING_MANAGER &&
+      leaveRequest.status !== LeaveRequestStatus.PENDING_HR
+    ) {
+      throw new Error("Only pending leave requests can be cancelled by employee");
     }
 
     const cancelReason = reason ? `[Cancelled] ${reason}` : "[Cancelled by employee]";
@@ -1460,7 +1628,12 @@ export class LeaveService {
       });
 
       const approvedDays = allDays.filter((d) => d.status === LeaveRequestStatus.APPROVED);
-      const pendingDays = allDays.filter((d) => d.status === LeaveRequestStatus.PENDING);
+      const pendingDays = allDays.filter(
+        (d) =>
+          d.status === LeaveRequestStatus.PENDING ||
+          d.status === LeaveRequestStatus.PENDING_MANAGER ||
+          d.status === LeaveRequestStatus.PENDING_HR
+      );
 
       let parentStatus: LeaveRequestStatus = LeaveRequestStatus.PENDING;
       if (pendingDays.length === 0) {
@@ -1470,7 +1643,15 @@ export class LeaveService {
           parentStatus = LeaveRequestStatus.REJECTED;
         }
       } else {
-        parentStatus = LeaveRequestStatus.PENDING;
+        const hasManagerPending = allDays.some((d) => d.status === LeaveRequestStatus.PENDING_MANAGER);
+        const hasHrPending = allDays.some((d) => d.status === LeaveRequestStatus.PENDING_HR);
+        if (hasManagerPending) {
+          parentStatus = LeaveRequestStatus.PENDING_MANAGER;
+        } else if (hasHrPending) {
+          parentStatus = LeaveRequestStatus.PENDING_HR;
+        } else {
+          parentStatus = LeaveRequestStatus.PENDING;
+        }
       }
 
       const activeDays = allDays.filter(
@@ -1737,7 +1918,7 @@ export class LeaveService {
       prisma.leaveRequest.findMany({
         where: {
           employeeId,
-          status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.APPROVED] },
+          status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR, LeaveRequestStatus.APPROVED] },
           fromDate: { lte: scanWindowEnd },
           toDate: { gte: scanWindowStart },
         },

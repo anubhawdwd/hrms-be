@@ -8,7 +8,8 @@ import { UserRole } from "../generated/prisma/enums.js";
 export interface AuthPayload {
   userId: string;
   companyId?: string | null;
-  role: UserRole;
+  roles: UserRole[];
+  role?: UserRole; // TD-06: temporary compatibility shim for Phase 2/3
 }
 
 declare global {
@@ -44,19 +45,26 @@ export function authenticateJWT(
       decoded.companyId === undefined ||
       typeof decoded.companyId === "string";
 
+    const hasValidRoles =
+      Array.isArray(decoded.roles) &&
+      decoded.roles.length > 0 &&
+      decoded.roles.every((r: any) => Object.values(UserRole).includes(r));
+
     if (
       typeof decoded.sub !== "string" ||
       !hasValidCompanyId ||
-      typeof decoded.role !== "string" ||
-      !Object.values(UserRole).includes(decoded.role as UserRole)
+      !hasValidRoles
     ) {
       return res.status(401).json({ message: "Invalid token payload" });
     }
 
+    const roles = decoded.roles as UserRole[];
+
     req.user = {
       userId: decoded.sub,
       companyId: typeof decoded.companyId === "string" ? decoded.companyId : null,
-      role: decoded.role as UserRole,
+      roles,
+      role: roles[0] || UserRole.EMPLOYEE, // TD-06 shim
     };
 
     next();

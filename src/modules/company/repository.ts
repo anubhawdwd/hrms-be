@@ -44,7 +44,9 @@ export class CompanyRepository {
         data: {
           email: adminEmail.trim().toLowerCase(),
           passwordHash,
-          role: UserRole.COMPANY_ADMIN,
+          roles: {
+            create: [{ role: UserRole.COMPANY_ADMIN }],
+          },
           authProvider: AuthProvider.LOCAL,
           companyId: company.id,
           isActive: true,
@@ -53,16 +55,22 @@ export class CompanyRepository {
         select: {
           id: true,
           email: true,
-          role: true,
+          roles: { select: { role: true } },
           companyId: true,
           isActive: true,
           createdAt: true,
         },
       });
 
+      const mappedAdmin = {
+        ...adminUser,
+        roles: adminUser.roles.map((r) => r.role),
+        role: adminUser.roles[0]?.role ?? UserRole.COMPANY_ADMIN,
+      };
+
       return {
         ...company,
-        admins: [adminUser],
+        admins: [mappedAdmin],
         adminPassword: rawPassword,
         temporaryPassword: rawPassword,
       };
@@ -75,11 +83,11 @@ export class CompanyRepository {
       orderBy: { createdAt: "desc" },
       include: {
         users: {
-          where: { role: UserRole.COMPANY_ADMIN },
+          where: { roles: { some: { role: UserRole.COMPANY_ADMIN } } },
           select: {
             id: true,
             email: true,
-            role: true,
+            roles: { select: { role: true } },
             companyId: true,
             isActive: true,
             createdAt: true,
@@ -94,7 +102,14 @@ export class CompanyRepository {
       isActive: c.isActive,
       logGeoFenceViolations: c.logGeoFenceViolations,
       createdAt: c.createdAt,
-      admins: c.users,
+      admins: c.users.map((u) => {
+        const roles = u.roles.map((r) => r.role);
+        return {
+          ...u,
+          roles,
+          role: roles[0] ?? UserRole.COMPANY_ADMIN,
+        };
+      }),
     }));
   }
 
@@ -109,11 +124,11 @@ export class CompanyRepository {
       where: { id },
       include: {
         users: {
-          where: { role: UserRole.COMPANY_ADMIN },
+          where: { roles: { some: { role: UserRole.COMPANY_ADMIN } } },
           select: {
             id: true,
             email: true,
-            role: true,
+            roles: { select: { role: true } },
             companyId: true,
             isActive: true,
             createdAt: true,
@@ -130,7 +145,14 @@ export class CompanyRepository {
       isActive: company.isActive,
       logGeoFenceViolations: company.logGeoFenceViolations,
       createdAt: company.createdAt,
-      admins: company.users,
+      admins: company.users.map((u) => {
+        const roles = u.roles.map((r) => r.role);
+        return {
+          ...u,
+          roles,
+          role: roles[0] ?? UserRole.COMPANY_ADMIN,
+        };
+      }),
     };
   }
 
@@ -148,12 +170,12 @@ export class CompanyRepository {
   }
 
   async findCompanyUsers(companyId: string) {
-    return prisma.user.findMany({
+    const users = await prisma.user.findMany({
       where: { companyId },
       select: {
         id: true,
         email: true,
-        role: true,
+        roles: { select: { role: true } },
         companyId: true,
         isActive: true,
         mustChangePassword: true,
@@ -171,6 +193,15 @@ export class CompanyRepository {
         },
       },
       orderBy: { createdAt: "asc" },
+    });
+
+    return users.map((u) => {
+      const roles = u.roles.map((r) => r.role);
+      return {
+        ...u,
+        roles,
+        role: roles[0] ?? UserRole.EMPLOYEE,
+      };
     });
   }
 

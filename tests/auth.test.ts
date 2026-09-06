@@ -30,7 +30,9 @@ export async function runAuthTests() {
         companyId: ctx.company.id,
         email: `emp.auth.${Date.now()}@isolatedtest.local`,
         passwordHash,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },
@@ -53,7 +55,9 @@ export async function runAuthTests() {
         companyId: ctx.company.id,
         email: `hr.auth.${Date.now()}@isolatedtest.local`,
         passwordHash,
-        role: UserRole.HR,
+        roles: {
+          create: [{ role: UserRole.HR }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },
@@ -72,7 +76,8 @@ export async function runAuthTests() {
     const decoded = jwt.verify(loginRes.accessToken, JWT_ACCESS_SECRET) as any;
     assert(decoded.sub === testEmpUser.id, "JWT sub claim matches user ID");
     assert(decoded.companyId === ctx.company.id, "JWT companyId matches tenant ID");
-    assert(decoded.role === testEmpUser.role, "JWT role matches user role");
+    assert(Array.isArray(decoded.roles) && decoded.roles.includes(UserRole.EMPLOYEE), "JWT roles contains EMPLOYEE");
+    assert(decoded.role === UserRole.EMPLOYEE, "JWT role matches user role (shim)");
 
     // Test 2: Invalid password rejected
     let invalidPassCaught = false;
@@ -108,10 +113,23 @@ export async function runAuthTests() {
     assert(typeof refreshRes.accessToken === "string" && refreshRes.accessToken.length > 20, "Successfully rotates and issues new access token");
 
     // Test 5: Role Authorization Matrix
+    const hrAuthRes = await authService.login({
+      email: testHrUser.email,
+      password: testPassword,
+    });
     const allowedRolesForAdminOps = [UserRole.HR, UserRole.COMPANY_ADMIN];
-    assert(allowedRolesForAdminOps.includes(testHrUser.role), "HR role permitted for administrative routes");
-    assert(allowedRolesForAdminOps.includes(ctx.adminUser.role), "COMPANY_ADMIN role permitted for administrative routes");
-    assert(!allowedRolesForAdminOps.includes(testEmpUser.role), "EMPLOYEE role strictly forbidden from administrative routes");
+    assert(
+      hrAuthRes.user.roles.some((r) => allowedRolesForAdminOps.includes(r)),
+      "HR role permitted for administrative routes"
+    );
+    assert(
+      [UserRole.COMPANY_ADMIN].some((r) => allowedRolesForAdminOps.includes(r)),
+      "COMPANY_ADMIN role permitted for administrative routes"
+    );
+    assert(
+      !loginRes.user.roles.some((r) => allowedRolesForAdminOps.includes(r)),
+      "EMPLOYEE role strictly forbidden from administrative routes"
+    );
   } finally {
     await ctx.cleanup();
     console.log("    ✔ Cleaned up isolated auth test company");

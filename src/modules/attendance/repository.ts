@@ -324,7 +324,7 @@ export class AttendanceRepository {
 
     const leaveWhere: any = {
       companyId,
-      status: { in: [LeaveRequestStatus.APPROVED, LeaveRequestStatus.PENDING] },
+      status: { in: [LeaveRequestStatus.APPROVED, LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR] },
       OR: [
         { fromDate: { lte: endOfMonth }, toDate: { gte: startOfMonth } },
       ],
@@ -392,7 +392,7 @@ export class AttendanceRepository {
       prisma.leaveRequest.findMany({
         where: {
           employee: { companyId },
-          status: { in: ["APPROVED", "PENDING"] },
+          status: { in: ["APPROVED", "PENDING", "PENDING_MANAGER", "PENDING_HR"] },
           fromDate: { lte: endOfMonth },
           toDate: { gte: startOfMonth },
         },

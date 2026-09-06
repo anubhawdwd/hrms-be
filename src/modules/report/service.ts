@@ -58,7 +58,7 @@ export class ReportService {
           select: {
             email: true,
             personalEmail: true,
-            role: true,
+            roles: { select: { role: true } },
             authProvider: true,
             isActive: true,
           },
@@ -81,6 +81,8 @@ export class ReportService {
         ? `${emp.manager.displayName} (#${emp.manager.employeeCode})`
         : "N/A";
 
+      const roles = emp.user?.roles?.map((r: any) => r.role) || [];
+
       return {
         employeeCode: emp.employeeCode,
         displayName: emp.displayName || `${emp.firstName} ${emp.lastName}`.trim(),
@@ -102,7 +104,7 @@ export class ReportService {
           : "N/A",
         employmentStatus: emp.isActive ? "Active" : "Inactive",
         employeeType: emp.isProbation ? "Probation" : "Permanent",
-        role: emp.user?.role || "EMPLOYEE",
+        role: roles.join(", ") || "EMPLOYEE",
         authProvider: emp.user?.authProvider || "LOCAL",
       };
     });
@@ -196,7 +198,7 @@ export class ReportService {
     // 1. Check for Pending Leave Approvals within company and period
     const pendingLeaveWhere: any = {
       employee: { companyId },
-      status: LeaveRequestStatus.PENDING,
+      status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR] },
       fromDate: { lte: rangeEnd },
       toDate: { gte: rangeStart },
     };

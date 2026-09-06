@@ -1,3 +1,4 @@
+import { LeaveApprovalWorkflow } from "../../generated/prisma/enums.js";
 // src/modules/organization/types.ts
 export interface CreateDepartmentDTO {
   name: string;
@@ -44,6 +45,7 @@ export interface WorkingHoursConfigDTO {
   graceMinutes: number;
   workWeekDays: number;
   sandwichRuleEnabled: boolean;
+  leaveApprovalWorkflow: LeaveApprovalWorkflow;
 }
 
 export interface UpdateWorkingHoursConfigDTO {
@@ -53,6 +55,7 @@ export interface UpdateWorkingHoursConfigDTO {
   graceMinutes?: number;
   workWeekDays?: number;
   sandwichRuleEnabled?: boolean;
+  leaveApprovalWorkflow?: LeaveApprovalWorkflow;
 }
 
 

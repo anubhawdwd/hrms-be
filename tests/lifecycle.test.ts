@@ -39,7 +39,9 @@ export async function runLifecycleTests() {
         companyId,
         email: `lifecycle.emp.${Date.now()}@isolatedtest.local`,
         passwordHash,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

@@ -140,6 +140,11 @@ export type Holiday = Prisma.HolidayModel
  */
 export type RefreshToken = Prisma.RefreshTokenModel
 /**
+ * Model UserRoleAssignment
+ * 
+ */
+export type UserRoleAssignment = Prisma.UserRoleAssignmentModel
+/**
  * Model LeaveRequestDay
  * 
  */

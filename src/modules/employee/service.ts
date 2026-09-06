@@ -182,10 +182,21 @@ export class EmployeeService {
         ? dto.authProvider
         : AuthProvider.LOCAL;
 
-    const role =
-      dto.role && Object.values(UserRole).includes(dto.role)
-        ? dto.role
-        : UserRole.EMPLOYEE;
+    let roles: UserRole[];
+    if (dto.roles && Array.isArray(dto.roles) && dto.roles.length > 0) {
+      for (const r of dto.roles) {
+        if (!Object.values(UserRole).includes(r)) {
+          const err: any = new Error(`Invalid role: ${r}`);
+          err.statusCode = 400;
+          throw err;
+        }
+      }
+      roles = Array.from(new Set(dto.roles));
+    } else if (dto.role && Object.values(UserRole).includes(dto.role)) {
+      roles = [dto.role];
+    } else {
+      roles = [UserRole.EMPLOYEE];
+    }
 
     let passwordHash: string | null = null;
     let mustChangePassword = false;
@@ -218,7 +229,8 @@ export class EmployeeService {
         passwordHash,
         mustChangePassword,
         authProvider,
-        role,
+        roles,
+        role: roles[0] ?? UserRole.EMPLOYEE,
       },
       profile: {
         employeeCode,
@@ -546,7 +558,7 @@ export class EmployeeService {
       const pendingLeaves = await tx.leaveRequest.findMany({
         where: {
           employeeId,
-          status: LeaveRequestStatus.PENDING,
+          status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR] },
         },
       });
 

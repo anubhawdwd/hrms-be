@@ -557,7 +557,7 @@ export class AttendanceService {
         const approvedPartial = activeLeaves.find(
           (l) => l.status === "APPROVED" && l.durationType !== "FULL_DAY"
         );
-        const pendingLeave = activeLeaves.find((l) => l.status === "PENDING");
+        const pendingLeave = activeLeaves.find((l) => l.status === "PENDING" || l.status === "PENDING_MANAGER" || l.status === "PENDING_HR");
 
         // Timestamps & worked minutes via canonical multi-session calculation
         let checkIn: string | null = null;

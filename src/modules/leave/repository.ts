@@ -205,7 +205,7 @@ export class LeaveRepository {
     const existing = await prisma.leaveRequest.findMany({
       where: {
         employeeId: params.employeeId,
-        status: { in: ["PENDING", "APPROVED"] },
+        status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR, LeaveRequestStatus.APPROVED] },
         fromDate: { lte: params.to },
         toDate: { gte: params.from },
       },
@@ -436,7 +436,7 @@ export class LeaveRepository {
   listPendingLeaveRequests(companyId: string) {
     return prisma.leaveRequest.findMany({
       where: {
-        status: "PENDING",
+        status: { in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.PENDING_MANAGER, LeaveRequestStatus.PENDING_HR] },
         employee: { companyId },
       },
       include: {

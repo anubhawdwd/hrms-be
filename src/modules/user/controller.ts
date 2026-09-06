@@ -6,13 +6,14 @@ const service = new UserService();
 
 export async function createUser(req: Request, res: Response) {
   try {
-    const { email, authProvider, role } = req.body;
+    const { email, authProvider, role, roles } = req.body;
 
     const user = await service.createUser({
       companyId: req.companyId!,
       email,
       authProvider,
       role,
+      roles,
     });
 
     res.status(201).json(user);
@@ -56,7 +57,7 @@ export async function updateUserEmail(req: Request, res: Response) {
 export async function updateUser(req: Request, res: Response) {
   try {
     const { userId } = req.params;
-    const { email, authProvider, role } = req.body;
+    const { email, authProvider, role, roles } = req.body;
 
     if (!userId || Array.isArray(userId)) {
       return res.status(400).json({ message: "Invalid request" });
@@ -69,6 +70,7 @@ export async function updateUser(req: Request, res: Response) {
       email,
       authProvider,
       role,
+      roles,
     });
     res.json(result);
   } catch (err: any) {

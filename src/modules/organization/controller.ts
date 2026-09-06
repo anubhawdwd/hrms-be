@@ -359,6 +359,7 @@ export async function updateWorkingHours(req: Request, res: Response) {
       graceMinutes,
       workWeekDays,
       sandwichRuleEnabled,
+      leaveApprovalWorkflow,
     } = req.body;
 
     if (
@@ -384,7 +385,8 @@ export async function updateWorkingHours(req: Request, res: Response) {
       breakMinutes === undefined &&
       graceMinutes === undefined &&
       workWeekDays === undefined &&
-      sandwichRuleEnabled === undefined
+      sandwichRuleEnabled === undefined &&
+      leaveApprovalWorkflow === undefined
     ) {
       return res.status(400).json({ message: "Nothing to update" });
     }
@@ -396,6 +398,7 @@ export async function updateWorkingHours(req: Request, res: Response) {
       ...(graceMinutes !== undefined && { graceMinutes }),
       ...(workWeekDays !== undefined && { workWeekDays }),
       ...(sandwichRuleEnabled !== undefined && { sandwichRuleEnabled }),
+      ...(leaveApprovalWorkflow !== undefined && { leaveApprovalWorkflow }),
     });
 
     res.json(result);

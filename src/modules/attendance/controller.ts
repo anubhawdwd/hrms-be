@@ -77,7 +77,7 @@ export async function getAttendanceDay(req: Request, res: Response) {
         UserRole.COMPANY_ADMIN,
         UserRole.SUPER_ADMIN,
       ];
-      if (!req.user || !allowedRoles.includes(req.user.role)) {
+      if (!req.user || !req.user.roles.some((r) => allowedRoles.includes(r))) {
         return res.status(403).json({
           message: "Unauthorized to view other employee attendance records",
         });

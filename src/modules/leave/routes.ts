@@ -86,15 +86,15 @@ router.delete(
   deleteLeaveRequestDays
 );
 
-// LEAVE APPROVAL (HR)
+// LEAVE APPROVAL (Manager or HR)
 router.patch(
   "/requests/:requestId/approve",
-  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN, UserRole.EMPLOYEE),
   approveLeave
 );
 router.patch(
   "/requests/:requestId/reject",
-  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN, UserRole.EMPLOYEE),
   rejectLeave
 );
 router.patch(

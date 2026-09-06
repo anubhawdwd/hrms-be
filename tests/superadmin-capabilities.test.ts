@@ -133,7 +133,9 @@ export async function runSuperAdminCapabilitiesTests() {
         companyId: comp.id,
         email: empUserEmail,
         passwordHash: "$2b$12$DummyHashForTestUserExecution0000000000000000000000000",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

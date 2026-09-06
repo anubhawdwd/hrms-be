@@ -6,6 +6,7 @@ export interface OnboardEmployeeDTO {
   email: string;
   authProvider?: AuthProvider;
   role?: UserRole;
+  roles?: UserRole[];
   password?: string;
 
   // Profile

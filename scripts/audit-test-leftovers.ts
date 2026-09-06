@@ -59,6 +59,9 @@ async function runAudit() {
       email: { endsWith: "@zztest.internal" },
     },
     include: {
+      roles: {
+        select: { role: true },
+      },
       company: {
         select: { name: true },
       },
@@ -73,7 +76,7 @@ async function runAudit() {
       zzTestUsers.map((u) => ({
         "User ID": u.id,
         "Email": u.email,
-        "Role": u.role,
+        "Roles": u.roles.map((r) => r.role).join(", "),
         "Company": u.company?.name ?? "N/A (System)",
         "Created At": u.createdAt.toISOString(),
       }))
@@ -115,13 +118,18 @@ async function runAudit() {
     console.log(`    ✔ All ${allCompanies.length} companies belong to the configured allowlist.\n`);
   }
 
-  // 4. Audit Orphaned Users (User with no EmployeeProfile and role != SUPER_ADMIN)
+  // 4. Audit Orphaned Users (User with no EmployeeProfile and not having SUPER_ADMIN role)
   const orphanedUsers = await prisma.user.findMany({
     where: {
-      role: { not: "SUPER_ADMIN" },
+      roles: {
+        none: { role: "SUPER_ADMIN" },
+      },
       employee: null,
     },
     include: {
+      roles: {
+        select: { role: true },
+      },
       company: {
         select: {
           name: true,
@@ -138,7 +146,7 @@ async function runAudit() {
       orphanedUsers.map((u) => ({
         "User ID": u.id,
         "Email": u.email,
-        "Role": u.role,
+        "Roles": u.roles.map((r) => r.role).join(", "),
         "Company": u.company?.name ?? "N/A (Unassigned)",
         "Created At": u.createdAt.toISOString(),
       }))

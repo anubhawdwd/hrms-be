@@ -404,6 +404,7 @@ export const ModelName = {
   EmployeeLeaveOverride: 'EmployeeLeaveOverride',
   Holiday: 'Holiday',
   RefreshToken: 'RefreshToken',
+  UserRoleAssignment: 'UserRoleAssignment',
   LeaveRequestDay: 'LeaveRequestDay',
   ErrorLog: 'ErrorLog',
   AuditLog: 'AuditLog'
@@ -422,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "department" | "team" | "designation" | "designationAttendancePolicy" | "employeeProfile" | "attendanceDay" | "attendanceEvent" | "attendanceViolation" | "employeeAttendanceOverride" | "officeLocation" | "leaveType" | "leavePolicy" | "leaveBalance" | "leaveRequest" | "leaveEncashment" | "employeeLeaveOverride" | "holiday" | "refreshToken" | "leaveRequestDay" | "errorLog" | "auditLog"
+    modelProps: "company" | "user" | "department" | "team" | "designation" | "designationAttendancePolicy" | "employeeProfile" | "attendanceDay" | "attendanceEvent" | "attendanceViolation" | "employeeAttendanceOverride" | "officeLocation" | "leaveType" | "leavePolicy" | "leaveBalance" | "leaveRequest" | "leaveEncashment" | "employeeLeaveOverride" | "holiday" | "refreshToken" | "userRoleAssignment" | "leaveRequestDay" | "errorLog" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1906,6 +1907,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserRoleAssignment: {
+      payload: Prisma.$UserRoleAssignmentPayload<ExtArgs>
+      fields: Prisma.UserRoleAssignmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserRoleAssignmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserRoleAssignmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>
+        }
+        findFirst: {
+          args: Prisma.UserRoleAssignmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserRoleAssignmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>
+        }
+        findMany: {
+          args: Prisma.UserRoleAssignmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>[]
+        }
+        create: {
+          args: Prisma.UserRoleAssignmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>
+        }
+        createMany: {
+          args: Prisma.UserRoleAssignmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserRoleAssignmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>[]
+        }
+        delete: {
+          args: Prisma.UserRoleAssignmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>
+        }
+        update: {
+          args: Prisma.UserRoleAssignmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserRoleAssignmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserRoleAssignmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserRoleAssignmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserRoleAssignmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRoleAssignmentPayload>
+        }
+        aggregate: {
+          args: Prisma.UserRoleAssignmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserRoleAssignment>
+        }
+        groupBy: {
+          args: Prisma.UserRoleAssignmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserRoleAssignmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserRoleAssignmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserRoleAssignmentCountAggregateOutputType> | number
+        }
+      }
+    }
     LeaveRequestDay: {
       payload: Prisma.$LeaveRequestDayPayload<ExtArgs>
       fields: Prisma.LeaveRequestDayFieldRefs
@@ -2179,7 +2254,8 @@ export const CompanyScalarFieldEnum = {
   breakMinutes: 'breakMinutes',
   graceMinutes: 'graceMinutes',
   workWeekDays: 'workWeekDays',
-  sandwichRuleEnabled: 'sandwichRuleEnabled'
+  sandwichRuleEnabled: 'sandwichRuleEnabled',
+  leaveApprovalWorkflow: 'leaveApprovalWorkflow'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -2194,7 +2270,6 @@ export const UserScalarFieldEnum = {
   authProvider: 'authProvider',
   providerId: 'providerId',
   isActive: 'isActive',
-  role: 'role',
   companyId: 'companyId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2470,6 +2545,16 @@ export const RefreshTokenScalarFieldEnum = {
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
+export const UserRoleAssignmentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type UserRoleAssignmentScalarFieldEnum = (typeof UserRoleAssignmentScalarFieldEnum)[keyof typeof UserRoleAssignmentScalarFieldEnum]
+
+
 export const LeaveRequestDayScalarFieldEnum = {
   id: 'id',
   leaveRequestId: 'leaveRequestId',
@@ -2613,6 +2698,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'LeaveApprovalWorkflow'
+ */
+export type EnumLeaveApprovalWorkflowFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeaveApprovalWorkflow'>
+    
+
+
+/**
+ * Reference to a field of type 'LeaveApprovalWorkflow[]'
+ */
+export type ListEnumLeaveApprovalWorkflowFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeaveApprovalWorkflow[]'>
+    
+
+
+/**
  * Reference to a field of type 'AuthProvider'
  */
 export type EnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider'>
@@ -2623,20 +2722,6 @@ export type EnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'AuthProvider[]'
  */
 export type ListEnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider[]'>
-    
-
-
-/**
- * Reference to a field of type 'UserRole'
- */
-export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
-    
-
-
-/**
- * Reference to a field of type 'UserRole[]'
- */
-export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
     
 
 
@@ -2781,6 +2866,20 @@ export type ListEnumHolidayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$
 
 
 /**
+ * Reference to a field of type 'UserRole'
+ */
+export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
+    
+
+
+/**
+ * Reference to a field of type 'UserRole[]'
+ */
+export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
+    
+
+
+/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -2908,6 +3007,7 @@ export type GlobalOmitConfig = {
   employeeLeaveOverride?: Prisma.EmployeeLeaveOverrideOmit
   holiday?: Prisma.HolidayOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  userRoleAssignment?: Prisma.UserRoleAssignmentOmit
   leaveRequestDay?: Prisma.LeaveRequestDayOmit
   errorLog?: Prisma.ErrorLogOmit
   auditLog?: Prisma.AuditLogOmit

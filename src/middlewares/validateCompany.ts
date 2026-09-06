@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import { UserRole } from "../generated/prisma/enums.js";
 
 export function validateCompanyHeader(
   req: Request,
@@ -8,7 +9,7 @@ export function validateCompanyHeader(
   const headerCompanyId = req.header("x-company-id");
 
   // SUPER_ADMIN can access any company or operate without tenant scope
-  if (req.user && req.user.role === "SUPER_ADMIN") {
+  if (req.user && req.user.roles.includes(UserRole.SUPER_ADMIN)) {
     (req as any).companyId = headerCompanyId || null;
     return next();
   }

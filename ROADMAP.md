@@ -47,7 +47,7 @@
 | AUTH-01 | Auth | Login / logout / refresh | COMPLETE | | |
 | AUTH-02 | Auth | Google / Microsoft SSO | COMPLETE | | |
 | AUTH-03 | Auth | RBAC & company isolation | COMPLETE | | Single-role enum currently; email updates scoped to COMPANY_ADMIN + HR with audit logging |
-| AUTH-04 | Auth | **Multi-role support** (`EMPLOYEE+HR`, `EMPLOYEE+COMPANY_ADMIN`, etc.) | MISSING | **P0** | Requires schema change: `User.role` enum → `UserRole` join table. All permission checks must be rewritten to check role membership, not equality. See PRD §2.1 |
+| AUTH-04 | Auth | **Multi-role support** (`EMPLOYEE+HR`, `EMPLOYEE+COMPANY_ADMIN`, etc.) | COMPLETE | **P0** | Multi-role schema (`UserRoleAssignment` join table) + JWT payload `roles: UserRole[]` + permission checks + multi-role onboarding/quick edit UI + profile dropdown view switcher (Admin/Employee). See PRD §2.1 |
 | EMP-01 | Employee | Onboarding / creation | COMPLETE | | Atomic single-transaction onboarding (`POST /api/employees/onboard`) with initial leave allocation & mustChangePassword |
 | EMP-02 | Employee | Activate / deactivate / reactivate | COMPLETE | | |
 | EMP-03 | Employee | Employee master data (phone, gender, personal email, employment status) | COMPLETE | | Schema + atomic onboarding API + Quick Edit modal parity |
@@ -64,11 +64,11 @@
 | ATT-03 | Attendance | Attendance dashboard / corrections | COMPLETE | | |
 | ATT-04 | Attendance | Violations / manual attendance / overrides | COMPLETE | | |
 | ATT-05 | Attendance | Occasional UI lag on check-in/out | BUG | P2 | Non-reproducible so far; needs monitoring/repro steps before fix |
-| MGR-01 | Manager Dashboard | Reportee-scoped leave dashboard (primary + secondary) | MISSING | **P1** | New feature — see PRD §6.6 |
-| MGR-02 | Manager Dashboard | Reportee-scoped attendance dashboard (primary + secondary) | MISSING | **P1** | New feature — see PRD §6.6 |
+| MGR-01 | Manager Dashboard | Reportee-scoped leave dashboard (primary + secondary) | COMPLETE | **P1** | Reportee-scoped leaves with PENDING_MANAGER quick actions & full history table (`/api/manager/leaves`) |
+| MGR-02 | Manager Dashboard | Reportee-scoped attendance dashboard (primary + secondary) | COMPLETE | **P1** | Reportee-scoped monthly attendance grid + session inspection (`/api/manager/attendance`, `/api/manager/reportees`) |
 | LEV-01 | Leave | Leave types / policies (company-defined naming) | COMPLETE | | |
 | LEV-02 | Leave | Leave application / approval / rejection (single-approver) | COMPLETE | | Current default flow |
-| LEV-03 | Leave | **2-step approval workflow** (Manager → HR), company-level toggle | MISSING | **P0** | See PRD §6.5. Includes new status states `PENDING_MANAGER` / `PENDING_HR` |
+| LEV-03 | Leave | **2-step approval workflow** (Manager → HR), company-level toggle | COMPLETE | | See PRD §6.5/§8.8. Includes status states `PENDING_MANAGER` / `PENDING_HR` |
 | LEV-04 | Leave | Balance allocation / correction | COMPLETE | | Delta-safe / transaction-safe (verified in LEV-13) |
 | LEV-05 | Leave | Fractional / hourly leave | COMPLETE | | |
 | LEV-06 | Leave | LWP | PARTIAL / VERIFY | **P0** | Balance logic OK; Report display logic passes synthetic tests, but stays UNVERIFIED / flagged for retest once real usage data exists on any tenant — do not mark done without real production data. |
@@ -208,6 +208,8 @@ Employee applies
 | TD-03 | `User.role` single-enum → replace with role-membership model (blocks AUTH-04) | **P0** |
 | TD-04 | Clean and document seed/import strategy (employee code, org hierarchy, SuperAdmin) | P0 |
 | TD-05 | Old "annual encashment" concept in prior docs is superseded — remove/correct any lingering references in code comments or docs | P2 |
+| TD-06 | Temporary compatibility shim `role: user.roles[0]` in backend auth & user responses — remove once Phase 2/3 frontend multi-role UI fully consumes `roles: UserRole[]` directly | P2 |
+
 
 Do not delete code solely because it's currently unused — verify intended use first (per TD-01).
 
@@ -221,8 +223,8 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] **REP-02** — Leave report: Absent Days fixed (respects joiningDate) + pre-joining attendance fix + terminology standardized to Used/Balance (Paid Leaves split).
 - [ ] **LEV-06 (LWP Retest)** — Retest LWP report column against real production usage data once configured on any tenant organization (currently 0 real LWP records in DB).
 - [x] **UI-01** — Remove "Total Allocated" from every leave display, everywhere
-- [ ] **AUTH-04 / TD-03** — Build multi-role model (`UserRole` join table + permission-check rewrite)
-- [ ] **LEV-03** — Build 2-step approval workflow (company-level toggle, new status states)
+- [x] **AUTH-04 / TD-03** — Build multi-role model (`UserRole` join table + permission-check rewrite + UI switcher)
+- [x] **LEV-03** — Build 2-step approval workflow (company-level toggle, new status states)
 - [x] **LEV-08 / DATA-02** — Build sandwich-day exception tool & day-level breakdown deletion (day-wise breakdown + hard delete via `leaveApi.deleteDays` + balance restoration + per-day status transitions)
 - [ ] **LEV-12** — Build year-end treatment engine (carry-forward with cap → lapse)
 - [ ] **NOTIF-01 through 05** — Build real-time in-app notification system for the leave workflow
@@ -232,7 +234,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 
 ### P1 — Important, Follows P0
 - [x] **EMP-04** — Secondary Reporting Manager (schema + API + UI)
-- [ ] **MGR-01 / MGR-02** — Manager dashboards (reportee-scoped leave + attendance views, primary + secondary)
+- [x] **MGR-01 / MGR-02** — Manager dashboards (reportee-scoped leave + attendance views, primary + secondary)
 - [ ] **EMP-07** — Exit-based encashment logging, tied into offboarding flow
 - [ ] **DATA-01** — Scheduled 6-month hard-delete job for terminal-status leave requests
 - [x] **ERR-04 / SA-04** — SuperAdmin error log viewer
@@ -272,11 +274,11 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] Secondary manager field exists end-to-end (optional)
 - [x] Personal email exposed in create/update APIs and forms
 - [x] Employee code explicit-import path works for seeding / creation
-- [ ] Multi-role assignment works (`EMPLOYEE+HR`, `EMPLOYEE+COMPANY_ADMIN`)
+- [x] Multi-role assignment works (`EMPLOYEE+HR`, `EMPLOYEE+COMPANY_ADMIN`)
 
 ### Leave
 - [x] Application and single-approver approval
-- [ ] 2-step approval workflow (company toggle) working end-to-end with correct status states
+- [x] 2-step approval workflow (company toggle) working end-to-end with correct status states
 - [x] Balance management (correction-based)
 - [x] Fractional/hourly values
 - [ ] LWP correctly represented in reports
@@ -289,8 +291,8 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] "Total Allocated" removed from all UI
 
 ### Manager Self-Service
-- [ ] Reportee-scoped leave dashboard (primary + secondary)
-- [ ] Reportee-scoped attendance dashboard (primary + secondary)
+- [x] Reportee-scoped leave dashboard (primary + secondary)
+- [x] Reportee-scoped attendance dashboard (primary + secondary)
 
 ### Notifications
 - [ ] Real-time WebSocket delivery working
@@ -344,6 +346,10 @@ Do not delete code solely because it's currently unused — verify intended use 
 | 2026-09-05 | Implemented LEV-16 (Holiday Type Distinction): added `HolidayType` enum (`NORMAL` \| `RESTRICTED`, default `NORMAL`) to `Holiday` model with migration; updated leave application validation and sandwich detection to allow leave on restricted holidays; updated attendance & report services to treat restricted holidays as opt-in working days; added Holiday Type selector & badges to `AdminHolidays.tsx`; added holiday notices to `ApplyLeaveModal.tsx` and calendar labels to `EmployeeDashboard.tsx`; added automated test suite `tests/holiday-type.test.ts` (19 suites passing). |
 | 2026-09-05 | Resolved REP-02: fixed pre-joining attendance evaluation (past dates before joining date suppressed from ABSENT status to UNRECORDED across calendar, dashboard, and leave reports); standardized report column terminology to "Balance" / "Used" per PRD §8.7 and split "Paid Leaves Total" into "Paid Leaves — Used" and "Paid Leaves — Balance" (preview, Excel, CSV, and UI table); audited LWP in DB (0 real records exist) and flagged LEV-06 as PARTIAL / VERIFY for live tenant retest. |
 | 2026-09-06 | Modernized date/time pickers across entire frontend via `@mui/x-date-pickers` (26 inputs across 9 files); fixed duplicate date field in Admin Attendance; updated Leave Report table and Excel export to 2-row merged "Total Paid Leaves" header; added Month step navigator pill to Leave Report; exposed `sessions` array on all backend attendance endpoints; built reusable `<DaySessionDetail>` component; fixed matrix hover tooltip flickering using `<Popper>`; enabled multi-session visibility on Employee Dashboard weekly view & monthly modal with unified dark slate styling. |
+| 2026-09-06 | Implemented Multi-Role Support (`AUTH-04` / `TD-03`): added `UserRoleAssignment` join table with unique compound constraint and migration; updated JWT claims to `roles: UserRole[]`; updated auth and user services/controllers/guards; built multi-role onboarding and edit dialogs; added profile dropdown view switcher between Admin and Employee views with route guards and dynamic navigation items. |
+| 2026-09-06 | Implemented 2-Step Leave Approval Workflow (`LEV-03`): added company-level `LeaveApprovalWorkflow` toggle (`TWO_STEP` vs `DIRECT_TO_HR`); added `PENDING_MANAGER` and `PENDING_HR` approval states; enforced server-side manager authorization with coworker 403 blocking; audited and updated all pending status checks across attendance, reports, and dashboards; built manager/HR approval action UI in `LeaveRequestList.tsx` and `AdminLeaveDashboard.tsx`. |
+| 2026-09-06 | Implemented Manager Self-Service Views (`MGR-01` / `MGR-02`): built `/api/manager/reportees`, `/api/manager/leaves`, and `/api/manager/attendance` endpoints; built `ManagerTeamLeaveSection.tsx` with quick approve/reject and filterable history; built `ManagerTeamAttendanceSection.tsx` with monthly presence grid and session popovers; integrated conditional "My Team" tab with live pending badge on `EmployeeDashboard.tsx`. |
+| 2026-09-06 | Renamed Workplace Settings tab to "Leave & Attendance Policies"; resolved MUI floating label clipping bug across all stacked outlined dialogs (`ApplyLeaveModal`, `HrCancelDialog`, `AdminMarkLeaveDialog`, `AdminBulkLeaveAllocationDialog`, `AdminEditLeaveAllocationDialog`, `AdminYearEndRolloverDialog`, `ChangePasswordModal`, `ManagerTeamLeaveSection`); added live pending leave count notification badge to Leave Dashboard card on Admin main dashboard (`/admin`). |
 
 
 

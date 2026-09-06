@@ -28,7 +28,8 @@ export interface OnboardEmployeeData {
     passwordHash?: string | null | undefined;
     mustChangePassword: boolean;
     authProvider: AuthProvider;
-    role: UserRole;
+    role?: UserRole;
+    roles?: UserRole[];
   };
   profile: {
     employeeCode: number;
@@ -54,6 +55,19 @@ export interface OnboardEmployeeData {
   } | null | undefined;
 }
 
+export function mapEmployeeWithUserRoles<T extends { user?: { roles?: { role: UserRole }[] } | null }>(emp: T) {
+  if (!emp || !emp.user) return emp;
+  const roles = emp.user.roles ? emp.user.roles.map((r) => r.role) : [];
+  return {
+    ...emp,
+    user: {
+      ...emp.user,
+      roles,
+      role: roles[0] ?? UserRole.EMPLOYEE,
+    },
+  };
+}
+
 export class EmployeeRepository {
   getLastEmployeeCode(companyId: string) {
     return prisma.employeeProfile.findFirst({
@@ -63,7 +77,7 @@ export class EmployeeRepository {
     });
   }
 
-  createEmployee(data: {
+  async createEmployee(data: {
     userId: string;
     companyId: string;
     departmentId?: string;
@@ -82,7 +96,7 @@ export class EmployeeRepository {
     joiningDate: Date;
     isProbation?: boolean;
   }) {
-    return prisma.employeeProfile.create({
+    const created = await prisma.employeeProfile.create({
       data: {
         user: { connect: { id: data.userId } },
         company: { connect: { id: data.companyId } },
@@ -113,7 +127,7 @@ export class EmployeeRepository {
         }),
       },
       include: {
-        user: { select: { id: true, email: true, personalEmail: true, role: true, isActive: true } },
+        user: { select: { id: true, email: true, personalEmail: true, roles: { select: { role: true } }, isActive: true } },
         department: { select: { id: true, name: true } },
         team: { select: { id: true, name: true } },
         designation: { select: { id: true, name: true } },
@@ -121,10 +135,18 @@ export class EmployeeRepository {
         secondaryManager: { select: { id: true, displayName: true, employeeCode: true } },
       },
     });
+    return mapEmployeeWithUserRoles(created);
   }
 
   async onboardEmployee(companyId: string, data: OnboardEmployeeData) {
     return prisma.$transaction(async (tx) => {
+      let roles: UserRole[] = [UserRole.EMPLOYEE];
+      if (data.user.roles && data.user.roles.length > 0) {
+        roles = data.user.roles;
+      } else if (data.user.role) {
+        roles = [data.user.role];
+      }
+
       // 1. Create User
       const user = await tx.user.create({
         data: {
@@ -133,8 +155,13 @@ export class EmployeeRepository {
           passwordHash: data.user.passwordHash ?? null,
           mustChangePassword: data.user.mustChangePassword,
           authProvider: data.user.authProvider,
-          role: data.user.role,
+          roles: {
+            create: roles.map((role) => ({ role })),
+          },
           companyId,
+        },
+        include: {
+          roles: { select: { role: true } },
         },
       });
 
@@ -160,7 +187,7 @@ export class EmployeeRepository {
           secondaryManagerId: data.profile.secondaryManagerId ?? null,
         },
         include: {
-          user: { select: { id: true, email: true, personalEmail: true, role: true, isActive: true } },
+          user: { select: { id: true, email: true, personalEmail: true, roles: { select: { role: true } }, isActive: true } },
           department: { select: { id: true, name: true } },
           team: { select: { id: true, name: true } },
           designation: { select: { id: true, name: true } },
@@ -202,13 +229,15 @@ export class EmployeeRepository {
         });
       }
 
+      const userRoles = user.roles.map((r) => r.role);
       return {
         ...employee,
         user: {
           id: user.id,
           email: user.email,
           personalEmail: user.personalEmail,
-          role: user.role,
+          roles: userRoles,
+          role: userRoles[0] ?? UserRole.EMPLOYEE,
           isActive: user.isActive,
           mustChangePassword: user.mustChangePassword,
           authProvider: user.authProvider,
@@ -217,11 +246,11 @@ export class EmployeeRepository {
     });
   }
 
-  findById(employeeId: string, companyId: string) {
-    return prisma.employeeProfile.findFirst({
+  async findById(employeeId: string, companyId: string) {
+    const emp = await prisma.employeeProfile.findFirst({
       where: { id: employeeId, companyId },
       include: {
-        user: { select: { id: true, email: true, personalEmail: true, role: true, isActive: true } },
+        user: { select: { id: true, email: true, personalEmail: true, roles: { select: { role: true } }, isActive: true } },
         department: { select: { id: true, name: true } },
         team: { select: { id: true, name: true } },
         designation: { select: { id: true, name: true } },
@@ -245,10 +274,11 @@ export class EmployeeRepository {
         secondarySubordinates: { select: { id: true, displayName: true, employeeCode: true } },
       },
     });
+    return emp ? mapEmployeeWithUserRoles(emp) : null;
   }
 
-  listEmployees(companyId: string, status?: string) {
-    return prisma.employeeProfile.findMany({
+  async listEmployees(companyId: string, status?: string) {
+    const employees = await prisma.employeeProfile.findMany({
       where: {
         companyId,
         ...(status === "ACTIVE" ? { isActive: true } : {}),
@@ -256,7 +286,7 @@ export class EmployeeRepository {
       },
       orderBy: { employeeCode: "asc" },
       include: {
-        user: { select: { id: true, email: true, personalEmail: true, role: true, isActive: true } },
+        user: { select: { id: true, email: true, personalEmail: true, roles: { select: { role: true } }, isActive: true } },
         department: { select: { id: true, name: true } },
         team: { select: { id: true, name: true } },
         designation: { select: { id: true, name: true } },
@@ -278,6 +308,7 @@ export class EmployeeRepository {
         },
       },
     });
+    return employees.map((emp) => mapEmployeeWithUserRoles(emp));
   }
 
   async updateEmployee(
@@ -318,11 +349,11 @@ export class EmployeeRepository {
     if (profileData.managerId !== undefined) updatePayload.managerId = profileData.managerId;
     if (profileData.secondaryManagerId !== undefined) updatePayload.secondaryManagerId = profileData.secondaryManagerId;
 
-    return prisma.employeeProfile.update({
+    const updated = await prisma.employeeProfile.update({
       where: { id: employeeId },
       data: updatePayload,
       include: {
-        user: { select: { id: true, email: true, personalEmail: true, role: true, isActive: true } },
+        user: { select: { id: true, email: true, personalEmail: true, roles: { select: { role: true } }, isActive: true } },
         department: { select: { id: true, name: true } },
         designation: { select: { id: true, name: true } },
         team: { select: { id: true, name: true } },
@@ -344,18 +375,19 @@ export class EmployeeRepository {
         },
       },
     });
+    return mapEmployeeWithUserRoles(updated);
   }
 
-  changeManager(
+  async changeManager(
     employeeId: string,
     companyId: string,
     managerId?: string | null
   ) {
-    return prisma.employeeProfile.update({
+    const updated = await prisma.employeeProfile.update({
       where: { id: employeeId },
       data: { managerId: managerId ?? null },
       include: {
-        user: { select: { id: true, email: true, personalEmail: true, role: true, isActive: true } },
+        user: { select: { id: true, email: true, personalEmail: true, roles: { select: { role: true } }, isActive: true } },
         department: { select: { id: true, name: true } },
         designation: { select: { id: true, name: true } },
         team: { select: { id: true, name: true } },
@@ -377,6 +409,7 @@ export class EmployeeRepository {
         },
       },
     });
+    return mapEmployeeWithUserRoles(updated);
   }
 
   getLeavePoliciesForCompany(companyId: string, year: number) {
@@ -429,7 +462,7 @@ export class EmployeeRepository {
     const employee = await prisma.employeeProfile.findFirst({
       where: { userId, companyId },
       include: {
-        user: { select: { id: true, email: true, personalEmail: true, role: true, isActive: true } },
+        user: { select: { id: true, email: true, personalEmail: true, roles: { select: { role: true } }, isActive: true } },
         department: { select: { id: true, name: true } },
         team: { select: { id: true, name: true } },
         designation: { select: { id: true, name: true } },
@@ -491,7 +524,7 @@ export class EmployeeRepository {
     }
 
     return {
-      ...employee,
+      ...mapEmployeeWithUserRoles(employee),
       peers,
     };
   }

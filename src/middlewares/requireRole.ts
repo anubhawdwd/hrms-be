@@ -12,7 +12,7 @@ export function requireRole(...allowedRoles: UserRole[]) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    if (!req.user.roles || !req.user.roles.some((r) => allowedRoles.includes(r))) {
       return res.status(403).json({
         message: "Forbidden: insufficient permissions",
       });

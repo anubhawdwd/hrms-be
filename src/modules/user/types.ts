@@ -6,6 +6,7 @@ export interface CreateUserDTO {
   email: string;
   authProvider: AuthProvider;
   role?: UserRole;
+  roles?: UserRole[];
 }
 
 export interface ListUsersDTO {
@@ -25,6 +26,7 @@ export interface UpdateUserDTO {
   email?: string | undefined;
   authProvider?: AuthProvider | undefined;
   role?: UserRole | undefined;
+  roles?: UserRole[] | undefined;
   actorUserId?: string | undefined;
 }
 

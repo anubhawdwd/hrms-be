@@ -10,6 +10,7 @@ import leaveRoutes from "../modules/leave/routes.js";
 import reportRoutes from "../modules/report/routes.js";
 import errorLogRoutes from "../modules/error-log/routes.js";
 import superadminRoutes from "../modules/superadmin/routes.js";
+import managerRoutes from "../modules/manager/routes.js";
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -22,5 +23,6 @@ router.use("/employees", employeeRoutes);
 router.use("/reports", reportRoutes);
 router.use("/error-logs", errorLogRoutes);
 router.use("/superadmins", superadminRoutes);
+router.use("/manager", managerRoutes);
 
 export default router;

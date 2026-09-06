@@ -35,7 +35,9 @@ export async function runReportsTests() {
       data: {
         email: `emp1.rep.${Date.now()}_${Math.random().toString().slice(-4)}@isolatedtest.local`,
         companyId: companyIdA,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: "LOCAL",
       },
     });
@@ -61,7 +63,9 @@ export async function runReportsTests() {
       data: {
         email: `emp2.rep.${Date.now()}_${Math.random().toString().slice(-4)}@isolatedtest.local`,
         companyId: companyIdA,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: "LOCAL",
       },
     });
@@ -88,7 +92,9 @@ export async function runReportsTests() {
       data: {
         email: `emp3.rep.${Date.now()}_${Math.random().toString().slice(-4)}@isolatedtest.local`,
         companyId: companyIdA,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: "LOCAL",
       },
     });
@@ -116,7 +122,9 @@ export async function runReportsTests() {
       data: {
         email: `emp.compB.${Date.now()}_${Math.random().toString().slice(-4)}@isolatedtest.local`,
         companyId: companyIdB,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: "LOCAL",
       },
     });
@@ -502,7 +510,9 @@ export async function runReportsTests() {
       data: {
         email: `newemp.rep.${Date.now()}@isolatedtest.local`,
         companyId: companyIdA,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: "LOCAL",
       },
     });

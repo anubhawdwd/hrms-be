@@ -71,6 +71,7 @@ export const ModelName = {
   EmployeeLeaveOverride: 'EmployeeLeaveOverride',
   Holiday: 'Holiday',
   RefreshToken: 'RefreshToken',
+  UserRoleAssignment: 'UserRoleAssignment',
   LeaveRequestDay: 'LeaveRequestDay',
   ErrorLog: 'ErrorLog',
   AuditLog: 'AuditLog'
@@ -104,7 +105,8 @@ export const CompanyScalarFieldEnum = {
   breakMinutes: 'breakMinutes',
   graceMinutes: 'graceMinutes',
   workWeekDays: 'workWeekDays',
-  sandwichRuleEnabled: 'sandwichRuleEnabled'
+  sandwichRuleEnabled: 'sandwichRuleEnabled',
+  leaveApprovalWorkflow: 'leaveApprovalWorkflow'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -119,7 +121,6 @@ export const UserScalarFieldEnum = {
   authProvider: 'authProvider',
   providerId: 'providerId',
   isActive: 'isActive',
-  role: 'role',
   companyId: 'companyId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -393,6 +394,16 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const UserRoleAssignmentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type UserRoleAssignmentScalarFieldEnum = (typeof UserRoleAssignmentScalarFieldEnum)[keyof typeof UserRoleAssignmentScalarFieldEnum]
 
 
 export const LeaveRequestDayScalarFieldEnum = {

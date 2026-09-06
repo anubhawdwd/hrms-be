@@ -52,7 +52,9 @@ export async function runHolidayTypeTests() {
         companyId,
         email: `emp1.rh.${timestamp}@zztest.internal`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },
@@ -74,7 +76,9 @@ export async function runHolidayTypeTests() {
         companyId,
         email: `emp2.standard.${timestamp}@zztest.internal`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

@@ -40,7 +40,9 @@ export async function runLeaveFixesTests() {
         companyId,
         email: `emp.leavefixes.${timestamp}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },
@@ -76,7 +78,9 @@ export async function runLeaveFixesTests() {
         companyId,
         email: `hr.leavefixes.${timestamp}@isolatedtest.local`,
         passwordHash: "$2b$10$abcdef",
-        role: UserRole.HR,
+        roles: {
+          create: [{ role: UserRole.HR }],
+        },
         authProvider: AuthProvider.LOCAL,
         isActive: true,
       },

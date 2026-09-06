@@ -54,8 +54,18 @@ export const LeaveDurationType = {
 export type LeaveDurationType = (typeof LeaveDurationType)[keyof typeof LeaveDurationType]
 
 
+export const LeaveApprovalWorkflow = {
+  DIRECT_TO_HR: 'DIRECT_TO_HR',
+  TWO_STEP: 'TWO_STEP'
+} as const
+
+export type LeaveApprovalWorkflow = (typeof LeaveApprovalWorkflow)[keyof typeof LeaveApprovalWorkflow]
+
+
 export const LeaveRequestStatus = {
   PENDING: 'PENDING',
+  PENDING_MANAGER: 'PENDING_MANAGER',
+  PENDING_HR: 'PENDING_HR',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED',
   CANCELLED: 'CANCELLED'

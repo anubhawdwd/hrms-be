@@ -279,7 +279,9 @@ export async function runEmployeeOnboardingTests() {
       data: {
         email: `legacy.${timestamp}@isolatedtest.local`,
         companyId: ctxA.company.id,
-        role: UserRole.EMPLOYEE,
+        roles: {
+          create: [{ role: UserRole.EMPLOYEE }],
+        },
         authProvider: AuthProvider.LOCAL,
       },
     });

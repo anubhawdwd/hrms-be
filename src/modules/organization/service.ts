@@ -1,3 +1,4 @@
+import { LeaveApprovalWorkflow } from "../../generated/prisma/enums.js";
 // src/modules/organization/service.ts
 import { OrganizationRepository } from "./repository.js";
 import { prisma } from "../../config/prisma.js";
@@ -183,6 +184,7 @@ export class OrganizationService {
       graceMinutes?: number;
       workWeekDays?: number;
       sandwichRuleEnabled?: boolean;
+      leaveApprovalWorkflow?: LeaveApprovalWorkflow;
     }
   ) {
     if (dto.workingMinutes !== undefined) {
@@ -245,6 +247,12 @@ export class OrganizationService {
       }
     }
 
+        if (dto.leaveApprovalWorkflow !== undefined) {
+      if (!Object.values(LeaveApprovalWorkflow).includes(dto.leaveApprovalWorkflow)) {
+        throw new Error("leaveApprovalWorkflow must be DIRECT_TO_HR or TWO_STEP");
+      }
+    }
+
     return repo.updateWorkingHoursConfig(companyId, {
       ...(dto.workingMinutes !== undefined && {
         workingMinutes: Math.round(dto.workingMinutes),
@@ -263,6 +271,9 @@ export class OrganizationService {
       }),
       ...(dto.sandwichRuleEnabled !== undefined && {
         sandwichRuleEnabled: dto.sandwichRuleEnabled,
+      }),
+      ...(dto.leaveApprovalWorkflow !== undefined && {
+        leaveApprovalWorkflow: dto.leaveApprovalWorkflow,
       }),
     });
   }

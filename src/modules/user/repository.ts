@@ -17,16 +17,21 @@ export class UserRepository {
     email: string,
     companyId: string,
     authProvider: AuthProvider,
-    role: UserRole
+    roles: UserRole[]
   ) {
     return prisma.user.create({
       data: {
         email,
         authProvider,
-        role,
         company: {
           connect: { id: companyId },
         },
+        roles: {
+          create: roles.map((role) => ({ role })),
+        },
+      },
+      include: {
+        roles: { select: { role: true } },
       },
     });
   }
@@ -39,7 +44,9 @@ export class UserRepository {
         email: true,
         companyId: true,
         authProvider: true,
-        role: true,
+        roles: {
+          select: { role: true },
+        },
         isActive: true,
         mustChangePassword: true,
         createdAt: true,
@@ -66,7 +73,6 @@ export class UserRepository {
     data: {
       email?: string;
       authProvider?: AuthProvider;
-      role?: UserRole;
     }
   ) {
     return prisma.user.updateMany({
@@ -79,11 +85,54 @@ export class UserRepository {
     });
   }
 
+  async updateUserRoles(
+    userId: string,
+    companyId: string,
+    targetRoles: UserRole[]
+  ) {
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.findFirst({
+        where: { id: userId, companyId, isActive: true },
+        include: { roles: true },
+      });
+      if (!user) {
+        throw new Error("User not found or inactive");
+      }
+
+      const currentRoles = user.roles.map((r) => r.role);
+      const rolesToDelete = currentRoles.filter((r) => !targetRoles.includes(r));
+      const rolesToAdd = targetRoles.filter((r) => !currentRoles.includes(r));
+
+      if (rolesToDelete.length > 0) {
+        await tx.userRoleAssignment.deleteMany({
+          where: {
+            userId,
+            role: { in: rolesToDelete },
+          },
+        });
+      }
+
+      if (rolesToAdd.length > 0) {
+        await tx.userRoleAssignment.createMany({
+          data: rolesToAdd.map((role) => ({
+            userId,
+            role,
+          })),
+        });
+      }
+
+      return true;
+    });
+  }
+
   async findById(userId: string, companyId?: string | null) {
     return prisma.user.findFirst({
       where: {
         id: userId,
         ...(companyId ? { companyId } : {}),
+      },
+      include: {
+        roles: { select: { role: true } },
       },
     });
   }

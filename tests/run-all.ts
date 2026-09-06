@@ -18,10 +18,14 @@ import { runEmployeeOnboardingTests } from "./employee-onboarding.test.js";
 import { runUserEmailUpdateTests } from "./user-email-update.test.js";
 import { runLeaveFixesTests } from "./leave-fixes.test.js";
 import { runHolidayTypeTests } from "./holiday-type.test.js";
+import { runMultiRoleTests } from "./multi-role.test.js";
+import { runLeaveTwoStepApprovalTests } from "./leave-two-step-approval.test.js";
+import { runManagerSelfServiceTests } from "./manager-self-service.test.js";
 
 interface DatabaseSnapshot {
   companiesCount: number;
   usersCount: number;
+  userRoleAssignmentsCount: number;
   employeeProfilesCount: number;
   leaveBalancesCount: number;
   leavePoliciesCount: number;
@@ -41,6 +45,7 @@ async function captureDatabaseSnapshot(): Promise<DatabaseSnapshot> {
   const [
     companiesCount,
     usersCount,
+    userRoleAssignmentsCount,
     employeeProfilesCount,
     leaveBalancesCount,
     leavePoliciesCount,
@@ -57,6 +62,7 @@ async function captureDatabaseSnapshot(): Promise<DatabaseSnapshot> {
   ] = await Promise.all([
     prisma.company.count(),
     prisma.user.count(),
+    prisma.userRoleAssignment.count(),
     prisma.employeeProfile.count(),
     prisma.leaveBalance.count(),
     prisma.leavePolicy.count(),
@@ -143,6 +149,9 @@ async function main() {
     await runUserEmailUpdateTests();
     await runLeaveFixesTests();
     await runHolidayTypeTests();
+    await runMultiRoleTests();
+    await runLeaveTwoStepApprovalTests();
+    await runManagerSelfServiceTests();
 
     // 2. Post-Test Safety & Zero-Mutation Verification
     console.log("\n[SAFETY CHECK] Verifying zero-mutation on non-test organization data...");
@@ -154,6 +163,9 @@ async function main() {
     }
     if (postSnapshot.usersCount !== preSnapshot.usersCount) {
       diffs.push(`Users count changed: ${preSnapshot.usersCount} -> ${postSnapshot.usersCount}`);
+    }
+    if (postSnapshot.userRoleAssignmentsCount !== preSnapshot.userRoleAssignmentsCount) {
+      diffs.push(`User role assignments count changed: ${preSnapshot.userRoleAssignmentsCount} -> ${postSnapshot.userRoleAssignmentsCount}`);
     }
     if (postSnapshot.employeeProfilesCount !== preSnapshot.employeeProfilesCount) {
       diffs.push(`Employee profiles count changed: ${preSnapshot.employeeProfilesCount} -> ${postSnapshot.employeeProfilesCount}`);
