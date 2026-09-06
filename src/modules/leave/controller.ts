@@ -4,6 +4,7 @@ import { LeaveService } from "./service.js";
 import {
   LeaveDurationType,
   GenderRestriction,
+  UserRole,
 } from "../../generated/prisma/enums.js";
 
 const service = new LeaveService();
@@ -71,7 +72,6 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
   try {
     const {
       leaveTypeId,
-      year,
       yearlyAllocation,
       allowCarryForward,
       maxCarryForward,
@@ -83,7 +83,6 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
 
     if (
       !leaveTypeId ||
-      typeof year !== "number" ||
       typeof yearlyAllocation !== "number" ||
       typeof allowCarryForward !== "boolean" ||
       typeof allowEncashment !== "boolean" ||
@@ -96,7 +95,6 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
     const result = await service.upsertLeavePolicy({
       companyId: req.companyId!,
       leaveTypeId,
-      year,
       yearlyAllocation,
       allowCarryForward,
       maxCarryForward:
@@ -118,13 +116,7 @@ export async function upsertLeavePolicy(req: Request, res: Response) {
 
 export async function listLeavePolicies(req: Request, res: Response) {
   try {
-    const { year } = req.query;
-
-    if (typeof year !== "string") {
-      return res.status(400).json({ message: "year query param required" });
-    }
-
-    res.json(await service.listLeavePolicies(req.companyId!, Number(year)));
+    res.json(await service.listLeavePolicies(req.companyId!));
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -495,11 +487,52 @@ export async function deleteHoliday(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
-export async function runYearEndRollover(req: Request, res: Response) {
+export async function previewYearEndRollover(req: Request, res: Response) {
   try {
     const { fromYear, toYear } = req.body;
     if (!fromYear || !toYear) {
       return res.status(400).json({ message: "fromYear and toYear are required" });
+    }
+
+    const result = await service.previewYearEndRollover({
+      companyId: req.companyId!,
+      fromYear: Number(fromYear),
+      toYear: Number(toYear),
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    const statusCode = err.statusCode || 400;
+    res.status(statusCode).json({ message: err.message });
+  }
+}
+
+export async function runYearEndRollover(req: Request, res: Response) {
+  try {
+    const { fromYear, toYear, forceOverwrite, reason } = req.body;
+    if (!fromYear || !toYear) {
+      return res.status(400).json({ message: "fromYear and toYear are required" });
+    }
+
+    const isForceOverwrite = Boolean(forceOverwrite);
+
+    if (isForceOverwrite) {
+      const userRoles = req.user?.roles || [];
+      const isCompanyAdmin =
+        userRoles.includes(UserRole.COMPANY_ADMIN) ||
+        userRoles.includes(UserRole.SUPER_ADMIN);
+
+      if (!isCompanyAdmin) {
+        return res.status(403).json({
+          message: "Only Company Admin can force overwrite year-end rollover balances",
+        });
+      }
+
+      if (!reason || !String(reason).trim()) {
+        return res.status(400).json({
+          message: "Reason is mandatory when force-overwriting year-end rollover balances",
+        });
+      }
     }
 
     const result = await service.runYearEndRollover({
@@ -507,13 +540,18 @@ export async function runYearEndRollover(req: Request, res: Response) {
       adminUserId: req.user!.userId,
       fromYear: Number(fromYear),
       toYear: Number(toYear),
+      forceOverwrite: isForceOverwrite,
+      reason: reason ? String(reason).trim() : undefined,
     });
 
     res.json(result);
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    const statusCode = err.statusCode || 400;
+    res.status(statusCode).json({ message: err.message });
   }
 }
+
+
 
 export async function bulkAllocateLeaveBalances(req: Request, res: Response) {
   try {

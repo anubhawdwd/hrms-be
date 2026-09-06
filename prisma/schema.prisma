@@ -328,8 +328,6 @@ model LeavePolicy {
   leaveTypeId String
   leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
 
-  year Int
-
   yearlyAllocation Float
 
   allowCarryForward Boolean @default(false)
@@ -345,8 +343,8 @@ model LeavePolicy {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([leaveTypeId, year])
-  @@index([companyId, year])
+  @@unique([companyId, leaveTypeId])
+  @@index([companyId])
 }
 
 // --------Leave Balance -------------

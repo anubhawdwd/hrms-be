@@ -292,7 +292,6 @@ export const LeavePolicyScalarFieldEnum = {
   id: 'id',
   companyId: 'companyId',
   leaveTypeId: 'leaveTypeId',
-  year: 'year',
   yearlyAllocation: 'yearlyAllocation',
   allowCarryForward: 'allowCarryForward',
   maxCarryForward: 'maxCarryForward',

@@ -78,7 +78,7 @@
 | LEV-09 | Leave | Holiday management | COMPLETE | | Full-day only |
 | LEV-10 | Leave | Restricted Holiday | COMPLETE | | Normal leave type; HR manually grants |
 | LEV-11 | Leave | Maternity / Paternity automation | NOT REQUIRED | | HR manages manually |
-| LEV-12 | Leave | **Year-end treatment engine**: carry-forward (with cap, 999 = unlimited) → lapse remainder | MISSING | **P0** | Confirmed: no annual encashment. Per-leave-type, per-company config. See PRD §6.2 |
+| LEV-12 | Leave | **Year-end treatment engine**: carry-forward (with cap, 999 = unlimited) → lapse remainder | COMPLETE | **P0** | Fixed formula: toYear remaining = allocated + carriedForward - used; dry-run preview with metrics & skipped type reporting; atomic $transaction; AuditLog trail; idempotency check with COMPANY_ADMIN typed "OVERWRITE" confirmation & mandatory reason. |
 | LEV-13 | Leave | Leave balance mismatch investigation | COMPLETE | **P0** | Audit found all active paths delta-safe/transaction-safe; one dormant bug flagged for LEV-12, no live production bug. |
 | LEV-14 | Leave | Employee leave-policy override | PARTIAL | P2 | Backend-only, no UI. Add only if HR requests it |
 | LEV-15 | Leave | Old annual encashment concept | **SUPERSEDED** | | Replace with EMP-07 (exit-only). Do not build a yearly encashment payout flow |
@@ -230,7 +230,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] **AUTH-04 / TD-03** — Build multi-role model (`UserRole` join table + permission-check rewrite + UI switcher)
 - [x] **LEV-03** — Build 2-step approval workflow (company-level toggle, new status states)
 - [x] **LEV-08 / DATA-02** — Build sandwich-day exception tool & day-level breakdown deletion (day-wise breakdown + hard delete via `leaveApi.deleteDays` + balance restoration + per-day status transitions)
-- [ ] **LEV-12** — Build year-end treatment engine (carry-forward with cap → lapse)
+- [x] **LEV-12** — Build year-end treatment engine (carry-forward with cap → lapse)
 - [ ] **NOTIF-01 through 05** — Build real-time in-app notification system for the leave workflow
 - [x] **ERR-01/02/03** — Build error logging capture (frontend + backend) + 20-day auto-purge
 - [x] **SA-01, SA-02 (UI)** — SuperAdmin seed script + company create/list dashboard
@@ -356,6 +356,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 | 2026-09-06 | Implemented Manager Self-Service Views (`MGR-01` / `MGR-02`): built `/api/manager/reportees`, `/api/manager/leaves`, and `/api/manager/attendance` endpoints; built `ManagerTeamLeaveSection.tsx` with quick approve/reject and filterable history; built `ManagerTeamAttendanceSection.tsx` with monthly presence grid and session popovers; integrated conditional "My Team" tab with live pending badge on `EmployeeDashboard.tsx`. |
 | 2026-09-06 | Renamed Workplace Settings tab to "Leave & Attendance Policies"; resolved MUI floating label clipping bug across all stacked outlined dialogs (`ApplyLeaveModal`, `HrCancelDialog`, `AdminMarkLeaveDialog`, `AdminBulkLeaveAllocationDialog`, `AdminEditLeaveAllocationDialog`, `AdminYearEndRolloverDialog`, `ChangePasswordModal`, `ManagerTeamLeaveSection`); added live pending leave count notification badge to Leave Dashboard card on Admin main dashboard (`/admin`). |
 | 2026-09-06 | Implemented Attendance Report (`REP-04`): backend endpoints `/api/reports/attendance` and `/api/reports/attendance/export`; lightweight cell payload contract (summary properties only) with on-demand session inspection via `<DaySessionDetail>`; added 3rd "Attendance Report" tab in `AdminReports.tsx` with Month Stepper `< [Month Name] >`, custom date range pickers, department/team/search filters, company summary banner, and Excel/CSV export; updated Employee Dashboard `LeaveRequestList.tsx` and Admin leave modals to display stage-aware labels (`Pending Manager Approval`, `Pending HR Approval`). |
+| 2026-09-06 | Implemented Year-End Leave Rollover Engine (`LEV-12`): redesigned rollover logic with dry-run preview (`POST /api/leave/rollover/preview`) and atomic batch commit (`POST /api/leave/rollover`); fixed formula (`remaining = allocated + carriedForward - used`) using target year policy allocations and carry-forward caps; excludes unallocated types (LWP) and surfaces unconfigured leave types; protected by idempotency with `COMPANY_ADMIN`-only `forceOverwrite` guard, typed "OVERWRITE" confirmation in UI, and mandatory reason; persists full audit trail to `AuditLog`; simplified Leave Policies UI in `AdminOrganization.tsx` by removing LWP, removing unused Encashment/Probation columns, and fixing placeholder defaults; fixed unbounded card height in `AdminLeaveDashboard.tsx`. |
 
 
 

@@ -101,7 +101,6 @@ export async function runLeaveTypeCatalogTests() {
     await leaveService.upsertLeavePolicy({
       companyId,
       leaveTypeId: createdType.id,
-      year: 2026,
       yearlyAllocation: 5,
       allowCarryForward: false,
       maxCarryForward: null,
@@ -109,7 +108,7 @@ export async function runLeaveTypeCatalogTests() {
       probationAllowed: true,
       monthlyAccrual: false,
     });
-    assert(true, "Configured 5 days policy for new leave type in 2026");
+    assert(true, "Configured 5 days policy for new leave type");
 
     // Allocate to employee
     const newAllocResult = await leaveService.adjustLeaveAllocation({

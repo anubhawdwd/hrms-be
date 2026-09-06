@@ -26,13 +26,12 @@ export interface UpdateLeaveTypeDTO {
 }
 
 /* ======================================================
-   LEAVE POLICY (Year based)
+   LEAVE POLICY (Current company policy)
    ====================================================== */
 
 export interface UpsertLeavePolicyDTO {
   companyId: string;
   leaveTypeId: string;
-  year: number;
 
   yearlyAllocation: number;
 
@@ -49,7 +48,6 @@ export interface UpsertLeavePolicyDTO {
 
 export interface ListLeavePoliciesDTO {
   companyId: string;
-  year: number;
 }
 
 /* ======================================================
@@ -131,3 +129,53 @@ export interface GetTodayLeavesDTO {
   scope: LeaveTodayScope;
   date: Date;
 }
+
+/* ======================================================
+   YEAR-END ROLLOVER DTOs (LEV-12)
+   ====================================================== */
+
+export interface RolloverPreviewItem {
+  employeeId: string;
+  employeeCode: number;
+  employeeName: string;
+  leaveTypeId: string;
+  leaveTypeCode: string;
+  leaveTypeName: string;
+  fromYearRemaining: number;
+  policyAllocated: number;
+  carryForwardDays: number;
+  toYearUsed: number;
+  toYearProjectedRemaining: number;
+  status: "READY" | "ALREADY_ROLLED_OVER";
+}
+
+export interface RolloverPreviewResult {
+  fromYear: number;
+  toYear: number;
+  totalEmployees: number;
+  eligibleBalancesCount: number;
+  totalCarriedForwardDays: number;
+  alreadyRolledOver: boolean;
+  alreadyRolledOverCount: number;
+  items: RolloverPreviewItem[];
+}
+
+export interface RunRolloverParams {
+  companyId: string;
+  adminUserId: string;
+  fromYear: number;
+  toYear: number;
+  forceOverwrite?: boolean | undefined;
+  reason?: string | undefined;
+}
+
+export interface RunRolloverResult {
+  success: boolean;
+  fromYear: number;
+  toYear: number;
+  totalEmployees: number;
+  processedCount: number;
+  totalCarriedForwardDays: number;
+  auditLogId?: string;
+}
+

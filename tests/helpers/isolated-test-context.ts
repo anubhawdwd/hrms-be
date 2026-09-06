@@ -129,7 +129,6 @@ export async function createIsolatedTestCompany(options?: {
         data: {
           companyId: company.id,
           leaveTypeId: createdType.id,
-          year: 2026,
           yearlyAllocation: dt.yearly,
           allowCarryForward: dt.allowCarry,
           maxCarryForward: dt.maxCarry,

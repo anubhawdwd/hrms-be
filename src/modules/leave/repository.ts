@@ -64,7 +64,6 @@ export class LeaveRepository {
   upsertLeavePolicy(params: {
     companyId: string;
     leaveTypeId: string;
-    year: number;
     yearlyAllocation: number;
     allowCarryForward: boolean;
     maxCarryForward?: number | null;
@@ -73,10 +72,10 @@ export class LeaveRepository {
     genderRestriction?: GenderRestriction | null;
     monthlyAccrual: boolean;
   }) {
-    const { companyId, leaveTypeId, year, ...rest } = params;
+    const { companyId, leaveTypeId, ...rest } = params;
 
     return prisma.leavePolicy.upsert({
-      where: { leaveTypeId_year: { leaveTypeId, year } },
+      where: { companyId_leaveTypeId: { companyId, leaveTypeId } },
       update: {
         ...rest,
         maxCarryForward: rest.maxCarryForward ?? null,
@@ -85,7 +84,6 @@ export class LeaveRepository {
       create: {
         companyId,
         leaveTypeId,
-        year,
         ...rest,
         maxCarryForward: rest.maxCarryForward ?? null,
         genderRestriction: rest.genderRestriction ?? null,
@@ -93,9 +91,9 @@ export class LeaveRepository {
     });
   }
 
-  listLeavePolicies(companyId: string, year: number) {
+  listLeavePolicies(companyId: string) {
     return prisma.leavePolicy.findMany({
-      where: { companyId, year },
+      where: { companyId },
       include: {
         leaveType: { select: { id: true, name: true, code: true, isPaid: true } },
       },
@@ -106,25 +104,14 @@ export class LeaveRepository {
   async getLeavePolicy(params: {
     companyId: string;
     leaveTypeId: string;
-    year: number;
   }) {
-    const exact = await prisma.leavePolicy.findUnique({
+    return prisma.leavePolicy.findUnique({
       where: {
-        leaveTypeId_year: {
+        companyId_leaveTypeId: {
+          companyId: params.companyId,
           leaveTypeId: params.leaveTypeId,
-          year: params.year,
         },
       },
-    });
-    if (exact) return exact;
-
-    return prisma.leavePolicy.findFirst({
-      where: {
-        companyId: params.companyId,
-        leaveTypeId: params.leaveTypeId,
-        year: { lte: params.year },
-      },
-      orderBy: { year: "desc" },
     });
   }
 

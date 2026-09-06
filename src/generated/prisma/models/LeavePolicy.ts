@@ -27,13 +27,11 @@ export type AggregateLeavePolicy = {
 }
 
 export type LeavePolicyAvgAggregateOutputType = {
-  year: number | null
   yearlyAllocation: number | null
   maxCarryForward: number | null
 }
 
 export type LeavePolicySumAggregateOutputType = {
-  year: number | null
   yearlyAllocation: number | null
   maxCarryForward: number | null
 }
@@ -42,7 +40,6 @@ export type LeavePolicyMinAggregateOutputType = {
   id: string | null
   companyId: string | null
   leaveTypeId: string | null
-  year: number | null
   yearlyAllocation: number | null
   allowCarryForward: boolean | null
   maxCarryForward: number | null
@@ -58,7 +55,6 @@ export type LeavePolicyMaxAggregateOutputType = {
   id: string | null
   companyId: string | null
   leaveTypeId: string | null
-  year: number | null
   yearlyAllocation: number | null
   allowCarryForward: boolean | null
   maxCarryForward: number | null
@@ -74,7 +70,6 @@ export type LeavePolicyCountAggregateOutputType = {
   id: number
   companyId: number
   leaveTypeId: number
-  year: number
   yearlyAllocation: number
   allowCarryForward: number
   maxCarryForward: number
@@ -89,13 +84,11 @@ export type LeavePolicyCountAggregateOutputType = {
 
 
 export type LeavePolicyAvgAggregateInputType = {
-  year?: true
   yearlyAllocation?: true
   maxCarryForward?: true
 }
 
 export type LeavePolicySumAggregateInputType = {
-  year?: true
   yearlyAllocation?: true
   maxCarryForward?: true
 }
@@ -104,7 +97,6 @@ export type LeavePolicyMinAggregateInputType = {
   id?: true
   companyId?: true
   leaveTypeId?: true
-  year?: true
   yearlyAllocation?: true
   allowCarryForward?: true
   maxCarryForward?: true
@@ -120,7 +112,6 @@ export type LeavePolicyMaxAggregateInputType = {
   id?: true
   companyId?: true
   leaveTypeId?: true
-  year?: true
   yearlyAllocation?: true
   allowCarryForward?: true
   maxCarryForward?: true
@@ -136,7 +127,6 @@ export type LeavePolicyCountAggregateInputType = {
   id?: true
   companyId?: true
   leaveTypeId?: true
-  year?: true
   yearlyAllocation?: true
   allowCarryForward?: true
   maxCarryForward?: true
@@ -239,7 +229,6 @@ export type LeavePolicyGroupByOutputType = {
   id: string
   companyId: string
   leaveTypeId: string
-  year: number
   yearlyAllocation: number
   allowCarryForward: boolean
   maxCarryForward: number | null
@@ -278,7 +267,6 @@ export type LeavePolicyWhereInput = {
   id?: Prisma.StringFilter<"LeavePolicy"> | string
   companyId?: Prisma.StringFilter<"LeavePolicy"> | string
   leaveTypeId?: Prisma.StringFilter<"LeavePolicy"> | string
-  year?: Prisma.IntFilter<"LeavePolicy"> | number
   yearlyAllocation?: Prisma.FloatFilter<"LeavePolicy"> | number
   allowCarryForward?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   maxCarryForward?: Prisma.IntNullableFilter<"LeavePolicy"> | number | null
@@ -296,7 +284,6 @@ export type LeavePolicyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  year?: Prisma.SortOrder
   yearlyAllocation?: Prisma.SortOrder
   allowCarryForward?: Prisma.SortOrder
   maxCarryForward?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -312,13 +299,12 @@ export type LeavePolicyOrderByWithRelationInput = {
 
 export type LeavePolicyWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  leaveTypeId_year?: Prisma.LeavePolicyLeaveTypeIdYearCompoundUniqueInput
+  companyId_leaveTypeId?: Prisma.LeavePolicyCompanyIdLeaveTypeIdCompoundUniqueInput
   AND?: Prisma.LeavePolicyWhereInput | Prisma.LeavePolicyWhereInput[]
   OR?: Prisma.LeavePolicyWhereInput[]
   NOT?: Prisma.LeavePolicyWhereInput | Prisma.LeavePolicyWhereInput[]
   companyId?: Prisma.StringFilter<"LeavePolicy"> | string
   leaveTypeId?: Prisma.StringFilter<"LeavePolicy"> | string
-  year?: Prisma.IntFilter<"LeavePolicy"> | number
   yearlyAllocation?: Prisma.FloatFilter<"LeavePolicy"> | number
   allowCarryForward?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   maxCarryForward?: Prisma.IntNullableFilter<"LeavePolicy"> | number | null
@@ -330,13 +316,12 @@ export type LeavePolicyWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"LeavePolicy"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   leaveType?: Prisma.XOR<Prisma.LeaveTypeScalarRelationFilter, Prisma.LeaveTypeWhereInput>
-}, "id" | "leaveTypeId_year">
+}, "id" | "companyId_leaveTypeId">
 
 export type LeavePolicyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  year?: Prisma.SortOrder
   yearlyAllocation?: Prisma.SortOrder
   allowCarryForward?: Prisma.SortOrder
   maxCarryForward?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -360,7 +345,6 @@ export type LeavePolicyScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"LeavePolicy"> | string
   companyId?: Prisma.StringWithAggregatesFilter<"LeavePolicy"> | string
   leaveTypeId?: Prisma.StringWithAggregatesFilter<"LeavePolicy"> | string
-  year?: Prisma.IntWithAggregatesFilter<"LeavePolicy"> | number
   yearlyAllocation?: Prisma.FloatWithAggregatesFilter<"LeavePolicy"> | number
   allowCarryForward?: Prisma.BoolWithAggregatesFilter<"LeavePolicy"> | boolean
   maxCarryForward?: Prisma.IntNullableWithAggregatesFilter<"LeavePolicy"> | number | null
@@ -374,7 +358,6 @@ export type LeavePolicyScalarWhereWithAggregatesInput = {
 
 export type LeavePolicyCreateInput = {
   id?: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -392,7 +375,6 @@ export type LeavePolicyUncheckedCreateInput = {
   id?: string
   companyId: string
   leaveTypeId: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -406,7 +388,6 @@ export type LeavePolicyUncheckedCreateInput = {
 
 export type LeavePolicyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -424,7 +405,6 @@ export type LeavePolicyUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -440,7 +420,6 @@ export type LeavePolicyCreateManyInput = {
   id?: string
   companyId: string
   leaveTypeId: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -454,7 +433,6 @@ export type LeavePolicyCreateManyInput = {
 
 export type LeavePolicyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -470,7 +448,6 @@ export type LeavePolicyUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -492,16 +469,15 @@ export type LeavePolicyOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type LeavePolicyLeaveTypeIdYearCompoundUniqueInput = {
+export type LeavePolicyCompanyIdLeaveTypeIdCompoundUniqueInput = {
+  companyId: string
   leaveTypeId: string
-  year: number
 }
 
 export type LeavePolicyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  year?: Prisma.SortOrder
   yearlyAllocation?: Prisma.SortOrder
   allowCarryForward?: Prisma.SortOrder
   maxCarryForward?: Prisma.SortOrder
@@ -514,7 +490,6 @@ export type LeavePolicyCountOrderByAggregateInput = {
 }
 
 export type LeavePolicyAvgOrderByAggregateInput = {
-  year?: Prisma.SortOrder
   yearlyAllocation?: Prisma.SortOrder
   maxCarryForward?: Prisma.SortOrder
 }
@@ -523,7 +498,6 @@ export type LeavePolicyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  year?: Prisma.SortOrder
   yearlyAllocation?: Prisma.SortOrder
   allowCarryForward?: Prisma.SortOrder
   maxCarryForward?: Prisma.SortOrder
@@ -539,7 +513,6 @@ export type LeavePolicyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  year?: Prisma.SortOrder
   yearlyAllocation?: Prisma.SortOrder
   allowCarryForward?: Prisma.SortOrder
   maxCarryForward?: Prisma.SortOrder
@@ -552,7 +525,6 @@ export type LeavePolicyMinOrderByAggregateInput = {
 }
 
 export type LeavePolicySumOrderByAggregateInput = {
-  year?: Prisma.SortOrder
   yearlyAllocation?: Prisma.SortOrder
   maxCarryForward?: Prisma.SortOrder
 }
@@ -655,7 +627,6 @@ export type NullableEnumGenderRestrictionFieldUpdateOperationsInput = {
 
 export type LeavePolicyCreateWithoutCompanyInput = {
   id?: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -671,7 +642,6 @@ export type LeavePolicyCreateWithoutCompanyInput = {
 export type LeavePolicyUncheckedCreateWithoutCompanyInput = {
   id?: string
   leaveTypeId: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -716,7 +686,6 @@ export type LeavePolicyScalarWhereInput = {
   id?: Prisma.StringFilter<"LeavePolicy"> | string
   companyId?: Prisma.StringFilter<"LeavePolicy"> | string
   leaveTypeId?: Prisma.StringFilter<"LeavePolicy"> | string
-  year?: Prisma.IntFilter<"LeavePolicy"> | number
   yearlyAllocation?: Prisma.FloatFilter<"LeavePolicy"> | number
   allowCarryForward?: Prisma.BoolFilter<"LeavePolicy"> | boolean
   maxCarryForward?: Prisma.IntNullableFilter<"LeavePolicy"> | number | null
@@ -730,7 +699,6 @@ export type LeavePolicyScalarWhereInput = {
 
 export type LeavePolicyCreateWithoutLeaveTypeInput = {
   id?: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -746,7 +714,6 @@ export type LeavePolicyCreateWithoutLeaveTypeInput = {
 export type LeavePolicyUncheckedCreateWithoutLeaveTypeInput = {
   id?: string
   companyId: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -787,7 +754,6 @@ export type LeavePolicyUpdateManyWithWhereWithoutLeaveTypeInput = {
 export type LeavePolicyCreateManyCompanyInput = {
   id?: string
   leaveTypeId: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -801,7 +767,6 @@ export type LeavePolicyCreateManyCompanyInput = {
 
 export type LeavePolicyUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -817,7 +782,6 @@ export type LeavePolicyUpdateWithoutCompanyInput = {
 export type LeavePolicyUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -832,7 +796,6 @@ export type LeavePolicyUncheckedUpdateWithoutCompanyInput = {
 export type LeavePolicyUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -847,7 +810,6 @@ export type LeavePolicyUncheckedUpdateManyWithoutCompanyInput = {
 export type LeavePolicyCreateManyLeaveTypeInput = {
   id?: string
   companyId: string
-  year: number
   yearlyAllocation: number
   allowCarryForward?: boolean
   maxCarryForward?: number | null
@@ -861,7 +823,6 @@ export type LeavePolicyCreateManyLeaveTypeInput = {
 
 export type LeavePolicyUpdateWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -877,7 +838,6 @@ export type LeavePolicyUpdateWithoutLeaveTypeInput = {
 export type LeavePolicyUncheckedUpdateWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -892,7 +852,6 @@ export type LeavePolicyUncheckedUpdateWithoutLeaveTypeInput = {
 export type LeavePolicyUncheckedUpdateManyWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   yearlyAllocation?: Prisma.FloatFieldUpdateOperationsInput | number
   allowCarryForward?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxCarryForward?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -910,7 +869,6 @@ export type LeavePolicySelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   companyId?: boolean
   leaveTypeId?: boolean
-  year?: boolean
   yearlyAllocation?: boolean
   allowCarryForward?: boolean
   maxCarryForward?: boolean
@@ -928,7 +886,6 @@ export type LeavePolicySelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   companyId?: boolean
   leaveTypeId?: boolean
-  year?: boolean
   yearlyAllocation?: boolean
   allowCarryForward?: boolean
   maxCarryForward?: boolean
@@ -946,7 +903,6 @@ export type LeavePolicySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   companyId?: boolean
   leaveTypeId?: boolean
-  year?: boolean
   yearlyAllocation?: boolean
   allowCarryForward?: boolean
   maxCarryForward?: boolean
@@ -964,7 +920,6 @@ export type LeavePolicySelectScalar = {
   id?: boolean
   companyId?: boolean
   leaveTypeId?: boolean
-  year?: boolean
   yearlyAllocation?: boolean
   allowCarryForward?: boolean
   maxCarryForward?: boolean
@@ -976,7 +931,7 @@ export type LeavePolicySelectScalar = {
   updatedAt?: boolean
 }
 
-export type LeavePolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "leaveTypeId" | "year" | "yearlyAllocation" | "allowCarryForward" | "maxCarryForward" | "allowEncashment" | "probationAllowed" | "genderRestriction" | "monthlyAccrual" | "createdAt" | "updatedAt", ExtArgs["result"]["leavePolicy"]>
+export type LeavePolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "leaveTypeId" | "yearlyAllocation" | "allowCarryForward" | "maxCarryForward" | "allowEncashment" | "probationAllowed" | "genderRestriction" | "monthlyAccrual" | "createdAt" | "updatedAt", ExtArgs["result"]["leavePolicy"]>
 export type LeavePolicyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
@@ -1000,7 +955,6 @@ export type $LeavePolicyPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     companyId: string
     leaveTypeId: string
-    year: number
     yearlyAllocation: number
     allowCarryForward: boolean
     maxCarryForward: number | null
@@ -1438,7 +1392,6 @@ export interface LeavePolicyFieldRefs {
   readonly id: Prisma.FieldRef<"LeavePolicy", 'String'>
   readonly companyId: Prisma.FieldRef<"LeavePolicy", 'String'>
   readonly leaveTypeId: Prisma.FieldRef<"LeavePolicy", 'String'>
-  readonly year: Prisma.FieldRef<"LeavePolicy", 'Int'>
   readonly yearlyAllocation: Prisma.FieldRef<"LeavePolicy", 'Float'>
   readonly allowCarryForward: Prisma.FieldRef<"LeavePolicy", 'Boolean'>
   readonly maxCarryForward: Prisma.FieldRef<"LeavePolicy", 'Int'>

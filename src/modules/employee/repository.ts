@@ -412,11 +412,10 @@ export class EmployeeRepository {
     return mapEmployeeWithUserRoles(updated);
   }
 
-  getLeavePoliciesForCompany(companyId: string, year: number) {
+  getLeavePoliciesForCompany(companyId: string) {
     return prisma.leavePolicy.findMany({
       where: {
         companyId,
-        year,
         leaveType: {
           autoGrantOnOnboarding: true,
           isActive: true,

@@ -29,7 +29,9 @@ import {
   getEmployeeLeaveBalancesAdmin,
   updateEmployeeLeaveAllocation,
   bulkAllocateLeaveBalances,
+  previewYearEndRollover,
   runYearEndRollover,
+
   markLeaveByAdmin,
   deleteLeaveRequest,
   deleteLeaveRequestDays,
@@ -117,12 +119,18 @@ router.patch(
   toggleSandwichBridgeDayExemption
 );
 
-// YEAR-END ROLLOVER
+// YEAR-END ROLLOVER (LEV-12)
+router.post(
+  "/rollover/preview",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  previewYearEndRollover
+);
 router.post(
   "/rollover",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   runYearEndRollover
 );
+
 
 // LEAVE BALANCE
 router.get("/balances/my", getMyLeaveBalances);

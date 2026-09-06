@@ -8,6 +8,12 @@ import {
   HolidayType,
   UserRole,
 } from "../../generated/prisma/enums.js";
+import type {
+  RolloverPreviewItem,
+  RolloverPreviewResult,
+  RunRolloverParams,
+  RunRolloverResult,
+} from "./types.js";
 
 const repo = new LeaveRepository();
 
@@ -110,7 +116,6 @@ export class LeaveService {
   async upsertLeavePolicy(params: {
     companyId: string;
     leaveTypeId: string;
-    year: number;
     yearlyAllocation: number;
     allowCarryForward: boolean;
     maxCarryForward?: number | null;
@@ -129,8 +134,8 @@ export class LeaveService {
     });
   }
 
-  async listLeavePolicies(companyId: string, year: number) {
-    return repo.listLeavePolicies(companyId, year);
+  async listLeavePolicies(companyId: string) {
+    return repo.listLeavePolicies(companyId);
   }
 
   // =================== APPLY LEAVE ===================
@@ -1343,98 +1348,273 @@ export class LeaveService {
     return { successCount, skippedCount, totalMatched: matchedEmployees.length, errors };
   }
 
-  // =================== YEAR-END ROLLOVER ===================
+  // =================== YEAR-END ROLLOVER (LEV-12) ===================
 
-  async runYearEndRollover(params: {
+  async computeYearEndRolloverPlan(params: {
     companyId: string;
-    adminUserId: string;
     fromYear: number;
     toYear: number;
-    reason?: string;
   }) {
-    const { companyId, fromYear, toYear, reason } = params;
-    if (toYear <= fromYear) throw new Error("toYear must be greater than fromYear");
-
-    const admin = await prisma.user.findFirst({
-      where: { id: params.adminUserId, companyId },
-      include: { employee: true },
-    });
-    const adminName = admin?.employee?.displayName || admin?.email || "HR";
-
-    const policies = await prisma.leavePolicy.findMany({
-      where: { companyId, year: fromYear },
-    });
-    const policyMap = new Map<string, (typeof policies)[0]>();
-    for (const p of policies) policyMap.set(p.leaveTypeId, p);
-
-    const fromBalances = await prisma.leaveBalance.findMany({
-      where: { employee: { companyId, isActive: true }, year: fromYear },
-    });
-
-    const auditReason = reason?.trim()
-      ? `[Rollover by HR: ${adminName}] ${reason.trim()}`
-      : `[Rollover by HR: ${adminName}] Year-End Rollover ${fromYear} -> ${toYear}`;
-
-    let processedCount = 0;
-
-    for (const b of fromBalances) {
-      const policy = policyMap.get(b.leaveTypeId);
-      let carryForwardDays = 0;
-
-      if (policy && policy.allowCarryForward && b.remaining > 0) {
-        carryForwardDays = b.remaining;
-        if (policy.maxCarryForward != null && policy.maxCarryForward >= 0) {
-          carryForwardDays = Math.min(carryForwardDays, policy.maxCarryForward);
-        }
-      }
-
-      await prisma.leaveBalance.upsert({
-        where: {
-          employeeId_leaveTypeId_year: {
-            employeeId: b.employeeId,
-            leaveTypeId: b.leaveTypeId,
-            year: toYear,
-          },
-        },
-        // KNOWN BUG (LEV-13 audit): sets remaining: carryForwardDays directly instead of allocated + carryForwardDays - used, which wipes existing allocated on repeat rollover. Must be fixed as part of LEV-12 implementation, not patched in isolation.
-        update: {
-          carriedForward: carryForwardDays,
-          remaining: carryForwardDays,
-        },
-        create: {
-          employeeId: b.employeeId,
-          leaveTypeId: b.leaveTypeId,
-          year: toYear,
-          allocated: 0,
-          used: 0,
-          carriedForward: carryForwardDays,
-          remaining: carryForwardDays,
-        },
-      });
-
-      await prisma.employeeLeaveOverride.upsert({
-        where: {
-          employeeId_leaveTypeId_year: {
-            employeeId: b.employeeId,
-            leaveTypeId: b.leaveTypeId,
-            year: toYear,
-          },
-        },
-        update: { reason: auditReason },
-        create: {
-          employeeId: b.employeeId,
-          leaveTypeId: b.leaveTypeId,
-          year: toYear,
-          extraAllocation: 0,
-          reason: auditReason,
-        },
-      });
-
-      processedCount++;
+    const { companyId, fromYear, toYear } = params;
+    if (toYear <= fromYear) {
+      throw new Error("toYear must be greater than fromYear");
     }
 
-    return { success: true, successCount: processedCount, processedCount, fromYear, toYear };
+    // 1. Fetch active employees in company
+    const employees = await prisma.employeeProfile.findMany({
+      where: { companyId, isActive: true },
+      select: {
+        id: true,
+        employeeCode: true,
+        displayName: true,
+        firstName: true,
+        lastName: true,
+      },
+      orderBy: { employeeCode: "asc" },
+    });
+
+    // 2. Fetch active leave types, excluding LWP and unpaid types
+    const allLeaveTypes = await prisma.leaveType.findMany({
+      where: { companyId, isActive: true },
+      select: { id: true, code: true, name: true, isPaid: true },
+    });
+    const eligibleLeaveTypes = allLeaveTypes.filter(
+      (lt) => lt.isPaid && lt.code !== "LWP"
+    );
+
+    // 3. Fetch current company leave policies
+    const policies = await prisma.leavePolicy.findMany({
+      where: { companyId },
+    });
+    const policyMap = new Map<string, (typeof policies)[0]>();
+    for (const p of policies) {
+      policyMap.set(p.leaveTypeId, p);
+    }
+
+    // 4. Fetch fromYear and toYear LeaveBalance records for active employees
+    const [fromBalances, toBalances] = await Promise.all([
+      prisma.leaveBalance.findMany({
+        where: {
+          employee: { companyId, isActive: true },
+          year: fromYear,
+          leaveTypeId: { in: eligibleLeaveTypes.map((lt) => lt.id) },
+        },
+      }),
+      prisma.leaveBalance.findMany({
+        where: {
+          employee: { companyId, isActive: true },
+          year: toYear,
+          leaveTypeId: { in: eligibleLeaveTypes.map((lt) => lt.id) },
+        },
+      }),
+    ]);
+
+    const fromBalanceMap = new Map<string, (typeof fromBalances)[0]>();
+    for (const b of fromBalances) {
+      fromBalanceMap.set(`${b.employeeId}_${b.leaveTypeId}`, b);
+    }
+
+    const toBalanceMap = new Map<string, (typeof toBalances)[0]>();
+    for (const b of toBalances) {
+      toBalanceMap.set(`${b.employeeId}_${b.leaveTypeId}`, b);
+    }
+
+    // 5. Compute per-employee, per-leave-type preview items
+    const items: RolloverPreviewItem[] = [];
+    let totalCarriedForwardDays = 0;
+    let alreadyRolledOverCount = 0;
+
+    for (const emp of employees) {
+      const empName = emp.displayName || `${emp.firstName} ${emp.lastName}`.trim();
+
+      for (const lt of eligibleLeaveTypes) {
+        const policy = policyMap.get(lt.id);
+        const fromBal = fromBalanceMap.get(`${emp.id}_${lt.id}`);
+        const toBal = toBalanceMap.get(`${emp.id}_${lt.id}`);
+
+        const fromYearRemaining = fromBal ? Number(fromBal.remaining.toFixed(2)) : 0;
+        const toYearUsed = toBal ? Number(toBal.used.toFixed(2)) : 0;
+
+        let carryForwardDays = 0;
+        if (policy?.allowCarryForward && fromYearRemaining > 0) {
+          carryForwardDays = fromYearRemaining;
+          if (policy.maxCarryForward != null && policy.maxCarryForward >= 0) {
+            carryForwardDays = Math.min(carryForwardDays, policy.maxCarryForward);
+          }
+        }
+        carryForwardDays = Number(carryForwardDays.toFixed(2));
+        totalCarriedForwardDays += carryForwardDays;
+
+        const policyAllocated = policy ? Number(policy.yearlyAllocation.toFixed(2)) : 0;
+        // Formula: toYear remaining = policy allocated + carriedForward - toYear used
+        const toYearProjectedRemaining = Number(
+          (policyAllocated + carryForwardDays - toYearUsed).toFixed(2)
+        );
+
+        const isAlreadyRolledOver = Boolean(toBal && toBal.carriedForward > 0);
+        if (isAlreadyRolledOver) {
+          alreadyRolledOverCount++;
+        }
+
+        items.push({
+          employeeId: emp.id,
+          employeeCode: emp.employeeCode,
+          employeeName: empName,
+          leaveTypeId: lt.id,
+          leaveTypeCode: lt.code,
+          leaveTypeName: lt.name,
+          fromYearRemaining,
+          policyAllocated,
+          carryForwardDays,
+          toYearUsed,
+          toYearProjectedRemaining,
+          status: isAlreadyRolledOver ? "ALREADY_ROLLED_OVER" : "READY",
+        });
+      }
+    }
+
+    const result: RolloverPreviewResult = {
+      fromYear,
+      toYear,
+      totalEmployees: employees.length,
+      eligibleBalancesCount: items.length,
+      totalCarriedForwardDays: Number(totalCarriedForwardDays.toFixed(2)),
+      alreadyRolledOver: alreadyRolledOverCount > 0,
+      alreadyRolledOverCount,
+      items,
+    };
+
+    return result;
   }
+
+  async previewYearEndRollover(params: {
+    companyId: string;
+    fromYear: number;
+    toYear: number;
+  }): Promise<RolloverPreviewResult> {
+    return this.computeYearEndRolloverPlan(params);
+  }
+
+  async runYearEndRollover(params: RunRolloverParams): Promise<RunRolloverResult> {
+    const { companyId, adminUserId, fromYear, toYear, forceOverwrite, reason } = params;
+
+    // 1. Compute plan and check rules
+    const plan = await this.computeYearEndRolloverPlan({ companyId, fromYear, toYear });
+
+    // 2. Idempotency guard: block repeat runs without explicit overwrite
+    if (plan.alreadyRolledOver && !forceOverwrite) {
+      const err = new Error(
+        `Rollover has already been run for ${toYear} (${plan.alreadyRolledOverCount} balance(s) have carried-forward days). Confirm overwrite to proceed.`
+      );
+      (err as any).statusCode = 409;
+      throw err;
+    }
+
+    if (forceOverwrite) {
+      if (!reason || !reason.trim()) {
+        const err = new Error(
+          "Reason is mandatory when force-overwriting year-end rollover balances"
+        );
+        (err as any).statusCode = 400;
+        throw err;
+      }
+
+      const adminUser = await prisma.user.findFirst({
+        where: { id: adminUserId },
+        include: { roles: true },
+      });
+      const roles = (adminUser?.roles || []).map((r) => r.role);
+      const isCompanyAdmin =
+        roles.includes(UserRole.COMPANY_ADMIN) ||
+        roles.includes(UserRole.SUPER_ADMIN);
+
+      if (!isCompanyAdmin) {
+        const err = new Error(
+          "Only Company Admin can force overwrite year-end rollover balances"
+        );
+        (err as any).statusCode = 403;
+        throw err;
+      }
+    }
+
+
+    // 3. Resolve Admin user name for audit log
+    const admin = await prisma.user.findFirst({
+      where: { id: adminUserId, companyId },
+      include: { employee: true },
+    });
+    const adminName = admin?.employee?.displayName || admin?.email || "HR / Admin";
+
+    const actionableItems = plan.items;
+
+    // 4. Atomic Execution across all employees and leave types
+    return prisma.$transaction(async (tx) => {
+      for (const item of actionableItems) {
+        await tx.leaveBalance.upsert({
+          where: {
+            employeeId_leaveTypeId_year: {
+              employeeId: item.employeeId,
+              leaveTypeId: item.leaveTypeId,
+              year: toYear,
+            },
+          },
+          update: {
+            allocated: item.policyAllocated,
+            carriedForward: item.carryForwardDays,
+            remaining: item.toYearProjectedRemaining,
+          },
+          create: {
+            employeeId: item.employeeId,
+            leaveTypeId: item.leaveTypeId,
+            year: toYear,
+            allocated: item.policyAllocated,
+            used: 0,
+            carriedForward: item.carryForwardDays,
+            remaining: item.toYearProjectedRemaining,
+          },
+        });
+      }
+
+      // 5. Write audit log entry
+      const auditLog = await tx.auditLog.create({
+        data: {
+          action: "YEAR_END_ROLLOVER",
+          actorId: adminUserId,
+          companyId,
+          details: {
+            fromYear,
+            toYear,
+            adminName,
+            reason: reason?.trim() || null,
+            forceOverwrite: Boolean(forceOverwrite),
+            totalEmployees: plan.totalEmployees,
+            processedCount: actionableItems.length,
+            totalCarriedForwardDays: plan.totalCarriedForwardDays,
+            items: actionableItems.map((i) => ({
+              employeeId: i.employeeId,
+              employeeCode: i.employeeCode,
+              leaveTypeCode: i.leaveTypeCode,
+              fromYearRemaining: i.fromYearRemaining,
+              policyAllocated: i.policyAllocated,
+              carriedForward: i.carryForwardDays,
+              toYearRemaining: i.toYearProjectedRemaining,
+            })),
+          },
+        },
+      });
+
+      return {
+        success: true,
+        fromYear,
+        toYear,
+        totalEmployees: plan.totalEmployees,
+        processedCount: actionableItems.length,
+        totalCarriedForwardDays: plan.totalCarriedForwardDays,
+        auditLogId: auditLog.id,
+      };
+    });
+  }
+
 
   // =================== LWP REPORT ===================
 
