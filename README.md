@@ -86,6 +86,8 @@ hrms_main/
 * **HR Leave Dashboard & Approvals**: Card-based operational overview showing employees on leave today, actionable pending approvals (inline approve/reject with live badge counts), recently approved requests (`GET /api/leave/requests/recent`), and transactional HR cancellation with quota restoration.
 * **SuperAdmin Multi-Tenant Management**: Multi-tenant workspace provisioning (`/super-admin`), atomic company and company administrator creation, company directory, and cross-company administrator password reset.
 * **Centralized Error Logging & Telemetry**: Full-stack error capture (Express 4xx/5xx responses with sensitive field sanitization + React `ErrorBoundary` and Axios client error ingestion) with 20-day auto-purge retention and interactive SuperAdmin viewer (`/super-admin/error-logs`).
+* **Real-Time Notifications & Live Sync**: Persistent notifications engine with 6 business trigger points (holiday broadcast, leave submission, 2-stage approval, rejection with reason, manager nudge), unread counters, 90-day auto-purge retention, and Socket.IO real-time toast alerts with zero-DB live dashboard synchronisation across Admin and Employee portals.
+* **Production Hardening & LAN Pilot**: Plain HTTP cookie safety (`COOKIE_SECURE=false` for LAN pilots), dynamic `LAN_SERVER_IP` CORS origin matching, burst-tolerant auth rate limiting for 100 concurrent employees, automated daily `pg_dump` backup script with 30-day rotation, and production rollout documentation (`DEPLOYMENT.md`).
 * **HR / Admin Operations**: Dedicated admin dashboards, attendance violation logs, manual attendance adjustments (by employee and date without UUID exposure), punch event additions, and holiday management with normal vs restricted distinction.
 
 
@@ -151,7 +153,9 @@ DB_PASSWORD=<password>
 DB_PORT=5432
 API_PORT=4000
 API_HOST=0.0.0.0
-FRONTEND_URL="http://localhost:5173,http://127.0.0.1:5173,http://192.168.1.185:5173,http://localhost:5174,http://127.0.0.1:5174,http://192.168.1.185:5174"
+COOKIE_SECURE=false
+LAN_SERVER_IP=192.168.1.185
+FRONTEND_URL="http://localhost:5173,http://127.0.0.1:5173,http://192.168.1.185:5173"
 JWT_ACCESS_SECRET="<access-token-secret>"
 JWT_REFRESH_SECRET="<refresh-token-secret>"
 ```

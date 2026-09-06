@@ -14,17 +14,33 @@ const configuredOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(",").map((o) => o.trim())
   : [];
 
-const defaultOrigins = [
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://192.168.1.185:5173",
-  "http://localhost:5174",
-  "http://127.0.0.1:5174",
-  "http://192.168.1.185:5174",
-];
+const lanServerIp = process.env.LAN_SERVER_IP?.trim();
+const lanOrigins = lanServerIp
+  ? [
+      `http://${lanServerIp}`,
+      `http://${lanServerIp}:80`,
+      `http://${lanServerIp}:5173`,
+      `http://${lanServerIp}:5174`,
+      `http://${lanServerIp}:3000`,
+      `http://${lanServerIp}:8080`,
+      `https://${lanServerIp}`,
+    ]
+  : [];
+
+const devOrigins =
+  process.env.NODE_ENV !== "production"
+    ? [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+      ]
+    : [];
 
 export const allowedOrigins = Array.from(
-  new Set([...defaultOrigins, ...configuredOrigins].filter(Boolean))
+  new Set([...configuredOrigins, ...lanOrigins, ...devOrigins].filter(Boolean))
 );
 
 app.use(
@@ -34,6 +50,17 @@ app.use(
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
+      }
+      // If LAN_SERVER_IP is configured, match any port requested from that host
+      if (lanServerIp) {
+        try {
+          const parsed = new URL(origin);
+          if (parsed.hostname === lanServerIp) {
+            return callback(null, true);
+          }
+        } catch {
+          // Invalid origin URL
+        }
       }
       return callback(null, false);
     },

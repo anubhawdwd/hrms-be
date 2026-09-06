@@ -110,7 +110,7 @@
 | TEST-01 | Testing | Isolated test-company infrastructure | COMPLETE | | Must be preserved — do not weaken |
 | TEST-02 | Testing | Confirm/rule out test runs as cause of LEV-13 | COMPLETE | P0 | Confirmed drift was test-artifact, not test-run contamination of the calculation logic itself. |
 | DEV-01 | Deployment | Local/LAN hosting | COMPLETE | | |
-| DEV-02 | Deployment | Production hardening (HTTPS, secrets, backups) | PARTIAL | P1 | Unchanged from prior audit |
+| DEV-02 | Deployment | Production hardening (HTTP-only LAN pilot, cookie safety, secrets, DB backup script, deployment guide) | COMPLETE | P1 | Hardened for 100-user LAN rollout. HTTPS deferred. |
 
 ---
 
@@ -258,7 +258,8 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [ ] **DATA-01** — Scheduled 6-month hard-delete job for terminal-status leave requests
 - [x] **ERR-04 / SA-04** — SuperAdmin error log viewer
 - [x] **SA-03 (UI)** — Company Admin password reset UI
-- [ ] **DEV-02** — Production hardening (HTTPS, secrets, backups, migration/restart validation)
+- [x] **DEV-02** — HTTP-only LAN production hardening (cookie safety, CORS LAN IP, auth rate limiting, DB backup script, deployment guide)
+- [ ] **DEV-02-TLS** — HTTPS/TLS via Nginx — deferred, self-signed or real cert setup needed before any external/non-LAN exposure
 
 ### P2 — Future
 - [ ] **ATT-05** — Investigate intermittent check-in/out UI lag

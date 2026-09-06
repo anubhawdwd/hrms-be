@@ -11,6 +11,7 @@ import {
   changePassword,
 } from "./controller.js";
 import { authenticateJWT } from "../../middlewares/auth.middleware.js";
+import { loginRateLimiter, authRateLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 const router = Router();
 
@@ -18,12 +19,11 @@ const router = Router();
 router.get("/me", authenticateJWT, me);
 
 //    AUTH ROUTES
-router.post("/login", login);
-router.post("/google", googleLogin);
-router.post("/microsoft", microsoftLogin);
-router.post("/refresh", refreshToken);
+router.post("/login", loginRateLimiter, login);
+router.post("/google", loginRateLimiter, googleLogin);
+router.post("/microsoft", loginRateLimiter, microsoftLogin);
+router.post("/refresh", authRateLimiter, refreshToken);
 router.post("/logout", logout);
-router.post("/change-password", authenticateJWT, changePassword);
-
+router.post("/change-password", authenticateJWT, authRateLimiter, changePassword);
 
 export default router;

@@ -7,16 +7,17 @@ import { REFRESH_TOKEN_COOKIE } from "../../config/auth.js";
 const service = new AuthService();
 
 
-// Cookie options — environment-aware for LAN HTTP development & production HTTPS
-const isProduction = process.env.NODE_ENV === "production";
-
-const getCookieOptions = () => ({
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
-  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-  path: "/",
-});
+// Cookie options — environment-aware for LAN HTTP (COOKIE_SECURE=false) & production HTTPS (COOKIE_SECURE=true)
+const getCookieOptions = () => {
+  const isSecure = process.env.COOKIE_SECURE === "true";
+  return {
+    httpOnly: true,
+    secure: isSecure,
+    sameSite: (isSecure ? "none" : "lax") as "none" | "lax",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    path: "/",
+  };
+};
 
 // GET /auth/me
 export async function me(req: Request, res: Response) {
