@@ -3,7 +3,7 @@
 > **Product**: Multi-tenant HRMS for small companies (Zoho-People-style), excluding Payroll (future phase).
 > **Audience**: Developers, HR/business stakeholders, LLM coding agents.
 > **Companion document**: `MASTER_ROADMAP.md` (implementation status, tracked by feature ID).
-> **Last updated**: 2026-09-04
+> **Last updated**: 2026-09-06
 
 ---
 
@@ -62,13 +62,15 @@ Employees start using HRMS
 
 ## 3. Roles & Permission Model
 
-### 3.1 Multi-Role Support
+### 3.1 Multi-Role Support *(implemented — AUTH-04)*
 A single **User** can hold **multiple roles simultaneously**. Confirmed real-world combinations:
 - `EMPLOYEE + HR` — an HR person who also logs their own attendance and applies for their own leave.
 - `EMPLOYEE + COMPANY_ADMIN` — e.g. a director who wants both administrative access and a personal employee profile.
 - `COMPANY_ADMIN` may or may not also hold `EMPLOYEE` — not every admin needs a personal profile.
 
-**Implication for schema**: `User.role` (single enum) must become a **many-to-many role assignment** (e.g. `UserRole` join table: `userId`, `role`), replacing the single-enum column. Every permission check must evaluate "does this user hold role X" rather than "is this user's role X."
+**Implementation**: `User.role` (single enum) was replaced with a many-to-many `UserRoleAssignment` join table (`userId`, `role`, unique per pair). Every permission check evaluates "does this user hold role X" (array membership) rather than equality. A user must always hold at least one role — the last role cannot be removed.
+
+**Dashboard access for multi-role users**: users with roles spanning more than one dashboard context (e.g. `EMPLOYEE + COMPANY_ADMIN`) land on a default dashboard by role priority (`SUPER_ADMIN` > `COMPANY_ADMIN`/`HR` > `EMPLOYEE`) and can switch context via a "Switch to Employee/Admin View" option in the profile dropdown menu — same interaction pattern already used elsewhere in the app, not a new UI paradigm. Each dashboard's nav/content remains unchanged from its single-role appearance; switching only changes which one is active.
 
 ### 3.2 Role Definitions & Responsibilities
 
@@ -84,10 +86,11 @@ A single **User** can hold **multiple roles simultaneously**. Confirmed real-wor
 - Manage employees, attendance, and leave; approve/reject leave per the company's configured workflow; manage employee leave balance corrections; manage restricted-holiday eligibility/allocation; perform offboarding/reactivation.
 - **Future**: Company Admin may restrict a given HR user's permission scope (e.g. "leave-only HR"). Not built yet — design permission checks so this can be layered in later without a rewrite.
 
-**Manager** *(derived, not a stored role)* — any employee referenced as `managerId` or `secondaryManagerId` on another `EmployeeProfile`.
+**Manager** *(derived, not a stored role — implemented, MGR-01/02)* — any employee referenced as `managerId` or `secondaryManagerId` on another `EmployeeProfile`.
 - Views only their direct + secondary reportees.
 - Can approve/reject leave for reportees only.
-- **Must not** approve or manage leave/attendance for employees outside their reportee scope, unless that same person also separately holds an HR/Company Admin role.
+- **Must not** approve or manage leave/attendance for employees outside their reportee scope, unless that same person also separately holds an HR/Company Admin role — enforced defensively at the backend (403), not only via frontend filtering.
+- Surfaced as a "My Team" tab inside the Employee Dashboard (not a separate dashboard identity) — shown only when the user actually has 1+ reportees, hidden otherwise. Includes reportee-scoped leave approval/rejection and reportee-scoped attendance view.
 
 **Employee** — self-service only.
 - Login, maintain own profile where allowed, check in/out, view own attendance, apply for leave, cancel eligible own pending leave requests, view own balances and request history.
@@ -172,6 +175,7 @@ Company-level configuration: enabled/disabled, office latitude/longitude, radius
 
 ### 8.1 Leave Types & Naming
 - Every company defines **its own leave type names** — no global/shared catalog. Fully company-scoped.
+- **LWP (Leave Without Pay) is unlimited and available to every employee by default, in every company** — it does not require a `LeavePolicy` row, is never subject to balance checks, and is excluded from the Leave Policies configuration UI, year-end rollover, and any allocation concept. Applying for LWP never fails due to "insufficient balance."
 
 ### 8.2 Balance Accounting Model
 The authoritative internal formula (used for computation; **not** what's shown in the UI — see §8.7):
@@ -186,26 +190,25 @@ Remaining = Allocated + Carried Forward − Actual Deducted
 - The HR/Manager day-breakdown UI supports **local draft changes before saving** (edit multiple days, then commit in one save).
 - **Bulk approve/reject** operates only on currently-**pending** days within a request — already-approved or already-rejected days are left untouched by a subsequent bulk action on the "remaining" days.
 
-### 8.4 Year-End Treatment (per Leave Type, per Company)
-Applied in this order:
-1. **Carry Forward** — up to a configurable cap (`999` = effectively unlimited).
-2. **Lapse** — any balance remaining above the cap is forfeited. Default outcome if no other rule is configured.
+### 8.4 Leave Policy Model — Year-less ("current policy")
 
-There is **no annual/yearly encashment payout** — encashment is exit-only (§8.5).
+**Implementation decision (supersedes any earlier year-scoped design)**: `LeavePolicy` is a single, always-current row per `(companyId, leaveTypeId)` — there is no year field and no year selector in the UI. HR edits a leave type's policy (yearly allocation, carry-forward allowed, carry-forward cap) at any time; the change takes effect immediately for future leave applications and the next year-end rollover. This intentionally trades away the ability to look up "what was the policy in a past year" in exchange for removing configuration friction, since policy rarely changes year to year for a small company. `LeaveBalance`, by contrast, **remains year-scoped** (one row per employee/leave-type/year) — only the policy lost its year dimension.
 
-**Current known leave-type carry-forward configuration** (example/reference — each company sets its own via the admin dashboard):
+Two toggles that previously existed on this UI were removed as confirmed dead (written but never read anywhere in the codebase): **Encashment** (a company genuinely wanting encashment support relies on §8.5's exit-only flow, not a per-leave-type annual toggle) and **Probation Allowed** (probation employees are hard-restricted to CL-Probation + LWP by business rule, not by this field).
 
-| Leave Type | Carry Forward |
-|---|---|
-| PL (Privilege/Paid Leave) | Yes |
-| SL (Sick Leave) | No |
-| CLP (Casual Leave) | No |
-| Marriage Leave (ML) | No |
-| Maternity (MATL) | No |
-| Paternity (PATL) | No |
-| LWP | No (not applicable — no allocation exists to carry) |
-| RH (Restricted Holiday) | No |
-| COMP_OFF | **VERIFY — not yet finalized** |
+### 8.4.1 Year-End Rollover *(implemented — LEV-12)*
+Applied in this order, using the **current policy** in effect at the time rollover is run:
+1. **Carry Forward** — up to the policy's configured cap (`null`/unset = effectively unlimited).
+2. **Lapse** — any balance remaining above the cap is forfeited. Default outcome if carry-forward isn't enabled for that leave type.
+3. `toYear` allocated = the current policy's yearly allocation. If no policy is configured at all for a leave type, that type is skipped from rollover with a warning (cannot occur for any leave type HR has already configured, since policy is now always-current).
+
+There is **no annual/yearly encashment payout** — encashment is exit-only (§8.5). LWP is excluded from rollover entirely (§8.1).
+
+**Safety mechanics** (required given the blast radius of a company-wide balance operation):
+- **Dry-run preview** required before commit — shows every employee/leave-type projected change with zero database writes, including an idempotency warning if the target year already has carried-forward balances.
+- **Idempotency**: re-running for a year already rolled over is blocked by default.
+- **Force-overwrite** escape hatch: restricted to `COMPANY_ADMIN` (not `HR`), requires typed confirmation (not a checkbox) and a mandatory reason, logged to `AuditLog` (action `YEAR_END_ROLLOVER`) with full per-employee before/after detail.
+- Entire batch runs in a single atomic transaction — full rollback on any failure, not a partial per-employee loop.
 
 ### 8.5 Leave Encashment (Exit-Only)
 - Encashment applies **only when an employee resigns/exits** (tied to offboarding), and only if the company has enabled encashment for that leave type.
@@ -228,7 +231,7 @@ There is **no annual/yearly encashment payout** — encashment is exit-only (§8
 - To adjust an employee's balance, HR enters a **new balance value** directly (this single mechanic covers both increases and decreases — there is no separate "grant" vs. "revoke" action).
 - **Zero-entitlement leave types must not clutter the employee's leave-selection/balance UI.** A leave type is hidden from that employee's view when `allocated = 0 AND used = 0 AND carriedForward = 0 AND remaining = 0`. HR can still grant/add entitlement for that type when company policy permits, which then makes it visible again.
 
-### 8.8 Leave Approval Workflow
+### 8.8 Leave Approval Workflow *(implemented — LEV-03)*
 - **Company-level toggle** between:
   - **Two-step approval**: Employee applies → Manager approval **and** HR approval both required.
   - **Direct-to-HR** (current default): HR approval only.
@@ -242,23 +245,33 @@ There is **no annual/yearly encashment payout** — encashment is exit-only (§8
 - **Rejection**: Manager rejects → immediately `REJECTED`, Employee notified, HR does not need to act.
 - Status values must clearly distinguish stage: `PENDING_MANAGER`, `PENDING_HR`, `APPROVED`, `REJECTED`.
 
-### 8.9 Manager & Secondary-Manager Dashboard *(new feature — not yet built)*
-- Primary or secondary manager gets a reportee-scoped **Leave dashboard** (pending/approved/rejected for their reportees only) and **Attendance dashboard** (reportee attendance only). Pure data-scoping on existing dashboards — no new stored role.
+### 8.9 Manager & Secondary-Manager Dashboard *(implemented — MGR-01/02)*
+- Primary or secondary manager gets a reportee-scoped **Leave dashboard** (pending/approved/rejected for their reportees only, with approve/reject actions on `PENDING_MANAGER` requests) and **Attendance dashboard** (reportee attendance only, with per-day session drilldown). Pure data-scoping on existing dashboards — no new stored role. Surfaced as the "My Team" tab on the Employee Dashboard, live-updating pending-count badge.
+
+### 8.10 Manager Nudge *(implemented — reverses earlier deferral)*
+Earlier draft of this PRD stated no in-app reminder feature was needed. That decision is reversed: HR can send a lightweight "nudge" notification directly to the reporting manager for a specific `PENDING_MANAGER` request, from the HR pending-approvals view. This does not change the request's status or approval logic — it is purely a notification (§13), low complexity, reusing existing notification infrastructure.
 
 ---
 
-## 9. Restricted Holidays
+## 9. Restricted Holidays *(implemented — LEV-16, connects two previously-separate concepts)*
 
-Restricted holidays are **not hard-coded by religion or any fixed calendar**. Model:
+Restricted holidays are **not hard-coded by religion or any fixed calendar**, and are **not** treated as a company-wide blocking day like a normal holiday. Model, connecting the `Holiday` calendar with RH leave-type eligibility:
 ```
-Restricted Holiday (defined by company, like any other leave type)
+Holiday has a type: NORMAL | RESTRICTED (default NORMAL)
        ↓
-HR determines which employees are eligible
+NORMAL → blocks leave applications that date, exactly as before
+RESTRICTED → does NOT block leave applications that date:
        ↓
-Eligible employee sees/uses their assigned RH entitlement
+   RH-eligible employee (HR-granted, per below) → may apply RH specifically for that date
+   Any other employee → may apply any of their normal leave types, same as a working day
+       ↓
+If nobody applies anything, it's a normal working day — no forced holiday, 
+no leave auto-consumed. Fully opt-in.
 ```
-- Common company-wide/public holidays remain available under the normal Holiday Management rules (§10) regardless of RH eligibility.
-- Exact eligibility data model and UX are still to be finalized — treat as `VERIFY`, not blocked, but don't over-build before the model is confirmed.
+- HR determines which employees are eligible for RH (a normal leave type, like any other).
+- Leave-type picker on a restricted-holiday date labels it `"<Holiday Name> (Restricted)"` so it's clear the date is optional, not blocking.
+- Restricted holidays are excluded from sandwich-rule bridge detection (§8.6) and from automatic attendance/absence marking (§7) — an unused restricted holiday is a genuine working day in every calculation.
+- Common company-wide/public holidays (`NORMAL` type) remain fully blocking under the normal Holiday Management rules (§10).
 
 ---
 
@@ -369,15 +382,17 @@ Manager A can approve/reject leave and view attendance only for Employees 1–3 
 
 ## 18. Reports
 - **Employee Report**: all employees in selected company, filterable by department/team/status, preview + Excel + CSV. *(Implemented, working.)*
-- **Leave Report**: dynamic per-company leave types, showing Booked + Balance per type, Paid Leaves Total, LWP, Absent Days, decimal precision preserved, preview + Excel + CSV, pending-approval warning.
-  - **Known live defect**: LWP and Absent Days currently render no data, while leave balance renders correctly. Confirmed active bug — tracked P0 in the roadmap.
+- **Leave Report**: dynamic per-company leave types, showing **Used** + **Balance** per type (renamed from "Booked" for platform-wide terminology consistency with §8.7), **Paid Leaves — Used** / **Paid Leaves — Balance** (split from a previously-ambiguous single total), **LWP**, **Absent Days**, decimal precision preserved, preview + Excel + CSV, pending-approval warning, month-stepper + custom date-range filters.
+  - **Absent Days**: fixed — now dynamically computed against the employee's actual calendar (working days minus present/leave/holiday), correctly respects `joiningDate` (no pre-employment dates counted as absent), consistent with the Attendance Dashboard's own calculation.
+  - **LWP**: logic verified correct in testing, but stays flagged `VERIFY` until a real company has actual LWP usage data to confirm against in production — do not treat as fully closed until then.
+- **Attendance Report**: new tab, monthly or custom date-range, per-employee summary (present/absent/partial/on-leave/holiday counts, attendance %), department/team/employee filters, per-day session drilldown on demand (not eagerly loaded for large ranges), Excel/CSV export — same UI pattern as Leave Report.
 
 ---
 
-## 19. Known Data-Integrity Issue — Leave Balance Mismatch
-- Confirmed employee-reported mismatches between actual and displayed leave balance.
-- Root cause **unconfirmed** — candidates: (1) logical/mathematical error in an approve/reject/cancel/delete balance-adjustment path, (2) automated agent-run tests mutating real/seeded data during development, (3) incorrect manually-fed/seeded source data.
-- **Requirement**: full logic audit of every `LeaveBalance`-mutating path per §8.2's delta/idempotency rule — not a blind reconciliation patch.
+## 19. Resolved — Leave Balance Mismatch Investigation (LEV-13)
+- Full logic audit completed across every `LeaveBalance`-mutating code path (apply/approve/reject/cancel/delete/sandwich-delete/bulk-allocate/rollover). All active paths confirmed delta-based, transaction-safe, and idempotent per §8.2.
+- The one real defect found (`runYearEndRollover` overwriting `remaining` instead of computing it from `allocated + carriedForward - used`) was dormant — never run against real data — and was fixed as part of building §8.4.1's rollover engine, not patched in isolation.
+- The specific real-data discrepancy that prompted this investigation was confirmed as manual-testing residue (a demo account with leave requests deleted before balance-restoration logic existed, later manually corrected by HR), not an ongoing calculation leak. No live production bug found.
 
 ---
 
@@ -416,9 +431,12 @@ End-to-end UAT
 - Fractional (half-day) holidays
 - Finer-grained HR permission restriction (Company Admin limiting specific HR users) — design permission checks to *allow* this later, don't build the restriction UI now
 - Payroll integration (any form)
-- Email/SMS/push notification channels
-- In-app "remind manager" button (HR reminds manager outside the system for now)
+- Email/SMS/push notification channels (in-app WebSocket notifications are implemented — see §13)
 - Self-service email password reset for end users
 - CSV/UI-based bulk employee import
-- `COMP_OFF` carry-forward rule — **VERIFY**, not yet finalized (see §8.4)
-- Restricted Holiday eligibility data model/UX — **VERIFY**, not yet finalized (see §9)
+- `COMP_OFF` carry-forward rule — **VERIFY**, not yet finalized
+- Exit-based leave encashment logging (EMP-07) — still **MISSING**, not yet built; §8.5 describes the intended design only
+- Persistent notification history beyond 90 days / read-state analytics — out of scope, flat 90-day auto-purge is the only retention behavior (§13.1)
+- LWP report column — functionally verified but flagged for retest once a real tenant has genuine LWP usage data (§18)
+
+**Reversed from earlier draft**: the "no in-app manager reminder" decision was reversed — see §8.10, now implemented.
