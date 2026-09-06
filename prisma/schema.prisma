@@ -25,6 +25,7 @@ model Company {
   holidays      Holiday[]
   leaveTypes    LeaveType[]
   leavePolicies LeavePolicy[]
+  notifications Notification[]
 
   attendanceViolations  AttendanceViolation[]
   logGeoFenceViolations Boolean               @default(false)
@@ -61,6 +62,7 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
+  notifications Notification[]
 
   @@index([companyId])
 }
@@ -617,4 +619,36 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
 }
+
+enum NotificationType {
+  LEAVE_SUBMITTED
+  LEAVE_STAGE_APPROVED
+  LEAVE_APPROVED
+  LEAVE_REJECTED
+  HOLIDAY_ADDED
+  MANAGER_NUDGE
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  companyId String
+  company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  metadata  Json?
+
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead, createdAt])
+  @@index([companyId, createdAt])
+  @@index([createdAt])
+}
+
 

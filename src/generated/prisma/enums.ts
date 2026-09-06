@@ -117,3 +117,15 @@ export const HolidayType = {
 } as const
 
 export type HolidayType = (typeof HolidayType)[keyof typeof HolidayType]
+
+
+export const NotificationType = {
+  LEAVE_SUBMITTED: 'LEAVE_SUBMITTED',
+  LEAVE_STAGE_APPROVED: 'LEAVE_STAGE_APPROVED',
+  LEAVE_APPROVED: 'LEAVE_APPROVED',
+  LEAVE_REJECTED: 'LEAVE_REJECTED',
+  HOLIDAY_ADDED: 'HOLIDAY_ADDED',
+  MANAGER_NUDGE: 'MANAGER_NUDGE'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

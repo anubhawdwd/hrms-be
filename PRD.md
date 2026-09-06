@@ -284,18 +284,40 @@ Manager A can approve/reject leave and view attendance only for Employees 1–3 
 
 ---
 
-## 13. Notifications
-- **Channel**: in-app only (no email/SMS/push this phase).
-- **Delivery**: real-time via WebSocket.
-- **Trigger points** (leave workflow only — no geo-fence violation notifications):
+## 13. Notifications & Real-Time Sync
 
-| Event | Notified |
-|---|---|
-| Employee applies for leave | Manager + HR (or HR only, if no manager) |
-| Manager approves | HR + Employee |
-| HR approves | Employee |
-| HR rejects | Employee |
-| Manager rejects | Employee |
+### 13.1 Infrastructure & Delivery
+- **Transport**: Socket.IO WebSocket connection with JWT cookie handshake authentication and tenant-scoped room routing:
+  - `user:<userId>` — targeted user notifications.
+  - `company:<companyId>` — tenant-wide broadcasts (e.g. holidays).
+  - `company:<companyId>:admins` — tenant admins & HR stakeholders.
+  - `manager:<managerProfileId>` — manager-specific actions.
+- **Persistence**: Backed by the `Notification` table (`id`, `companyId`, `userId`, `type`, `title`, `message`, `link`, `metadata`, `isRead`, `readAt`, `createdAt`).
+- **Retention**: 90-day (3-month) flat auto-purge scheduled job (`NotificationCleanupJob`).
+- **UI Presentation**:
+  - Top AppBar unread notification bell with count badge, popover panel with All/Unread tabs, deep links, mark-as-read, mark-all-read, and delete actions.
+  - Immediate toast alerts via `react-hot-toast` with `duration: Infinity` (manual dismiss only), stacking simultaneously.
+
+### 13.2 Trigger Points & Notification Events
+
+| Event | Notification Type | Recipients | Message Content |
+|---|---|---|---|
+| Employee applies for leave | `LEAVE_SUBMITTED` | Reporting Manager (Two-Step) + HR / Company Admins | "[Employee] submitted a [Duration] [LeaveType] request" |
+| Manager approves leave | `LEAVE_STAGE_APPROVED` | Employee + HR / Company Admins | "Stage 1 approved by manager, forwarded to HR" |
+| HR approves leave | `LEAVE_APPROVED` | Employee | "Your [LeaveType] request was approved" |
+| Manager or HR rejects leave | `LEAVE_REJECTED` | Employee | "Your [LeaveType] request was rejected: [Reason]" |
+| Holiday added | `HOLIDAY_ADDED` | All Company Users | "New holiday added: [Name] on [Date]" |
+| HR nudges manager | `MANAGER_NUDGE` | Reporting Manager | "Reminder: [Employee] has a pending leave request awaiting your review" |
+
+### 13.3 Live Dashboard & Badge Synchronization
+- **Transport**: Lightweight `dashboard:sync` WebSocket signal payload `{ topic: "leave" | "attendance" | "badges" | "holiday" }`.
+- **Zero-DB**: Sync events carry no database state; they trigger a seamless background refetch on active frontend screens.
+- **Subscribed Components**:
+  - `AdminDashboard`: updates pending leave approval badges immediately.
+  - `AdminLeaveDashboard`: refreshes on-leave today, pending requests, and recently approved leave lists.
+  - `AdminAttendanceDashboard`: refreshes attendance matrix and pending leave badges.
+  - `EmployeeDashboard`: refreshes manager team pending badge and active attendance logs.
+- **Reconnect Reconciliation**: On socket reconnection after network drop, active dashboard data is automatically re-synchronized.
 
 ---
 

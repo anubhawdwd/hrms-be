@@ -11,6 +11,7 @@ import reportRoutes from "../modules/report/routes.js";
 import errorLogRoutes from "../modules/error-log/routes.js";
 import superadminRoutes from "../modules/superadmin/routes.js";
 import managerRoutes from "../modules/manager/routes.js";
+import notificationRoutes from "../modules/notification/routes.js";
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -24,5 +25,6 @@ router.use("/reports", reportRoutes);
 router.use("/error-logs", errorLogRoutes);
 router.use("/superadmins", superadminRoutes);
 router.use("/manager", managerRoutes);
+router.use("/notifications", notificationRoutes);
 
 export default router;

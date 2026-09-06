@@ -305,6 +305,7 @@ export type CompanyWhereInput = {
   holidays?: Prisma.HolidayListRelationFilter
   leaveTypes?: Prisma.LeaveTypeListRelationFilter
   leavePolicies?: Prisma.LeavePolicyListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   attendanceViolations?: Prisma.AttendanceViolationListRelationFilter
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyListRelationFilter
 }
@@ -332,6 +333,7 @@ export type CompanyOrderByWithRelationInput = {
   holidays?: Prisma.HolidayOrderByRelationAggregateInput
   leaveTypes?: Prisma.LeaveTypeOrderByRelationAggregateInput
   leavePolicies?: Prisma.LeavePolicyOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
   attendanceViolations?: Prisma.AttendanceViolationOrderByRelationAggregateInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyOrderByRelationAggregateInput
 }
@@ -362,6 +364,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   holidays?: Prisma.HolidayListRelationFilter
   leaveTypes?: Prisma.LeaveTypeListRelationFilter
   leavePolicies?: Prisma.LeavePolicyListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   attendanceViolations?: Prisma.AttendanceViolationListRelationFilter
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyListRelationFilter
 }, "id" | "name">
@@ -429,6 +432,7 @@ export type CompanyCreateInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -456,6 +460,7 @@ export type CompanyUncheckedCreateInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -483,6 +488,7 @@ export type CompanyUpdateInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -510,6 +516,7 @@ export type CompanyUncheckedUpdateInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -816,6 +823,20 @@ export type CompanyUpdateOneRequiredWithoutHolidaysNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutHolidaysInput, Prisma.CompanyUpdateWithoutHolidaysInput>, Prisma.CompanyUncheckedUpdateWithoutHolidaysInput>
 }
 
+export type CompanyCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutNotificationsInput, Prisma.CompanyUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutNotificationsInput, Prisma.CompanyUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.CompanyUpsertWithoutNotificationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutNotificationsInput, Prisma.CompanyUpdateWithoutNotificationsInput>, Prisma.CompanyUncheckedUpdateWithoutNotificationsInput>
+}
+
 export type CompanyCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -838,6 +859,7 @@ export type CompanyCreateWithoutUsersInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -864,6 +886,7 @@ export type CompanyUncheckedCreateWithoutUsersInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -906,6 +929,7 @@ export type CompanyUpdateWithoutUsersInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -932,6 +956,7 @@ export type CompanyUncheckedUpdateWithoutUsersInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -958,6 +983,7 @@ export type CompanyCreateWithoutDepartmentsInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -984,6 +1010,7 @@ export type CompanyUncheckedCreateWithoutDepartmentsInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1026,6 +1053,7 @@ export type CompanyUpdateWithoutDepartmentsInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -1052,6 +1080,7 @@ export type CompanyUncheckedUpdateWithoutDepartmentsInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1078,6 +1107,7 @@ export type CompanyCreateWithoutDesignationsInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -1104,6 +1134,7 @@ export type CompanyUncheckedCreateWithoutDesignationsInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1146,6 +1177,7 @@ export type CompanyUpdateWithoutDesignationsInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -1172,6 +1204,7 @@ export type CompanyUncheckedUpdateWithoutDesignationsInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1199,6 +1232,7 @@ export type CompanyCreateWithoutDesignationAttendancePoliciesInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
 }
 
@@ -1225,6 +1259,7 @@ export type CompanyUncheckedCreateWithoutDesignationAttendancePoliciesInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1267,6 +1302,7 @@ export type CompanyUpdateWithoutDesignationAttendancePoliciesInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1293,6 +1329,7 @@ export type CompanyUncheckedUpdateWithoutDesignationAttendancePoliciesInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1318,6 +1355,7 @@ export type CompanyCreateWithoutEmployeesInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -1344,6 +1382,7 @@ export type CompanyUncheckedCreateWithoutEmployeesInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1386,6 +1425,7 @@ export type CompanyUpdateWithoutEmployeesInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -1412,6 +1452,7 @@ export type CompanyUncheckedUpdateWithoutEmployeesInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1438,6 +1479,7 @@ export type CompanyCreateWithoutAttendanceDaysInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -1464,6 +1506,7 @@ export type CompanyUncheckedCreateWithoutAttendanceDaysInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1506,6 +1549,7 @@ export type CompanyUpdateWithoutAttendanceDaysInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -1532,6 +1576,7 @@ export type CompanyUncheckedUpdateWithoutAttendanceDaysInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1559,6 +1604,7 @@ export type CompanyCreateWithoutAttendanceViolationsInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
 
@@ -1585,6 +1631,7 @@ export type CompanyUncheckedCreateWithoutAttendanceViolationsInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1627,6 +1674,7 @@ export type CompanyUpdateWithoutAttendanceViolationsInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1653,6 +1701,7 @@ export type CompanyUncheckedUpdateWithoutAttendanceViolationsInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1678,6 +1727,7 @@ export type CompanyCreateWithoutOfficeLocationsInput = {
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -1704,6 +1754,7 @@ export type CompanyUncheckedCreateWithoutOfficeLocationsInput = {
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1746,6 +1797,7 @@ export type CompanyUpdateWithoutOfficeLocationsInput = {
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -1772,6 +1824,7 @@ export type CompanyUncheckedUpdateWithoutOfficeLocationsInput = {
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1798,6 +1851,7 @@ export type CompanyCreateWithoutLeaveTypesInput = {
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -1824,6 +1878,7 @@ export type CompanyUncheckedCreateWithoutLeaveTypesInput = {
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1866,6 +1921,7 @@ export type CompanyUpdateWithoutLeaveTypesInput = {
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -1892,6 +1948,7 @@ export type CompanyUncheckedUpdateWithoutLeaveTypesInput = {
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1918,6 +1975,7 @@ export type CompanyCreateWithoutLeavePoliciesInput = {
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -1944,6 +2002,7 @@ export type CompanyUncheckedCreateWithoutLeavePoliciesInput = {
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1986,6 +2045,7 @@ export type CompanyUpdateWithoutLeavePoliciesInput = {
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -2012,6 +2072,7 @@ export type CompanyUncheckedUpdateWithoutLeavePoliciesInput = {
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -2038,6 +2099,7 @@ export type CompanyCreateWithoutHolidaysInput = {
   officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
 }
@@ -2064,6 +2126,7 @@ export type CompanyUncheckedCreateWithoutHolidaysInput = {
   officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
   leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
   leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutCompanyInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -2106,6 +2169,7 @@ export type CompanyUpdateWithoutHolidaysInput = {
   officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
 }
@@ -2132,6 +2196,131 @@ export type CompanyUncheckedUpdateWithoutHolidaysInput = {
   officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
   leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
   leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
+  users?: Prisma.UserCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationCreateNestedManyWithoutCompanyInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutCompanyInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutCompanyInput
+  leavePolicies?: Prisma.LeavePolicyCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  logGeoFenceViolations?: boolean
+  usesTeams?: boolean
+  workingMinutes?: number
+  lunchMinutes?: number
+  breakMinutes?: number
+  graceMinutes?: number
+  workWeekDays?: number
+  sandwichRuleEnabled?: boolean
+  leaveApprovalWorkflow?: $Enums.LeaveApprovalWorkflow
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
+  departments?: Prisma.DepartmentUncheckedCreateNestedManyWithoutCompanyInput
+  designations?: Prisma.DesignationUncheckedCreateNestedManyWithoutCompanyInput
+  employees?: Prisma.EmployeeProfileUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedCreateNestedManyWithoutCompanyInput
+  officeLocations?: Prisma.OfficeLocationUncheckedCreateNestedManyWithoutCompanyInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutCompanyInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutCompanyInput
+  leavePolicies?: Prisma.LeavePolicyUncheckedCreateNestedManyWithoutCompanyInput
+  attendanceViolations?: Prisma.AttendanceViolationUncheckedCreateNestedManyWithoutCompanyInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutNotificationsInput, Prisma.CompanyUncheckedCreateWithoutNotificationsInput>
+}
+
+export type CompanyUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutNotificationsInput, Prisma.CompanyUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutNotificationsInput, Prisma.CompanyUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutNotificationsInput, Prisma.CompanyUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type CompanyUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
+  users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUpdateManyWithoutCompanyNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutCompanyNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutCompanyNestedInput
+  leavePolicies?: Prisma.LeavePolicyUpdateManyWithoutCompanyNestedInput
+  attendanceViolations?: Prisma.AttendanceViolationUpdateManyWithoutCompanyNestedInput
+  designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logGeoFenceViolations?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usesTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workingMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lunchMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  graceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  workWeekDays?: Prisma.IntFieldUpdateOperationsInput | number
+  sandwichRuleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  leaveApprovalWorkflow?: Prisma.EnumLeaveApprovalWorkflowFieldUpdateOperationsInput | $Enums.LeaveApprovalWorkflow
+  users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
+  departments?: Prisma.DepartmentUncheckedUpdateManyWithoutCompanyNestedInput
+  designations?: Prisma.DesignationUncheckedUpdateManyWithoutCompanyNestedInput
+  employees?: Prisma.EmployeeProfileUncheckedUpdateManyWithoutCompanyNestedInput
+  attendanceDays?: Prisma.AttendanceDayUncheckedUpdateManyWithoutCompanyNestedInput
+  officeLocations?: Prisma.OfficeLocationUncheckedUpdateManyWithoutCompanyNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutCompanyNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutCompanyNestedInput
+  leavePolicies?: Prisma.LeavePolicyUncheckedUpdateManyWithoutCompanyNestedInput
   attendanceViolations?: Prisma.AttendanceViolationUncheckedUpdateManyWithoutCompanyNestedInput
   designationAttendancePolicies?: Prisma.DesignationAttendancePolicyUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -2151,6 +2340,7 @@ export type CompanyCountOutputType = {
   holidays: number
   leaveTypes: number
   leavePolicies: number
+  notifications: number
   attendanceViolations: number
   designationAttendancePolicies: number
 }
@@ -2165,6 +2355,7 @@ export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   holidays?: boolean | CompanyCountOutputTypeCountHolidaysArgs
   leaveTypes?: boolean | CompanyCountOutputTypeCountLeaveTypesArgs
   leavePolicies?: boolean | CompanyCountOutputTypeCountLeavePoliciesArgs
+  notifications?: boolean | CompanyCountOutputTypeCountNotificationsArgs
   attendanceViolations?: boolean | CompanyCountOutputTypeCountAttendanceViolationsArgs
   designationAttendancePolicies?: boolean | CompanyCountOutputTypeCountDesignationAttendancePoliciesArgs
 }
@@ -2245,6 +2436,13 @@ export type CompanyCountOutputTypeCountLeavePoliciesArgs<ExtArgs extends runtime
 /**
  * CompanyCountOutputType without action
  */
+export type CompanyCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
+/**
+ * CompanyCountOutputType without action
+ */
 export type CompanyCountOutputTypeCountAttendanceViolationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AttendanceViolationWhereInput
 }
@@ -2280,6 +2478,7 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   holidays?: boolean | Prisma.Company$holidaysArgs<ExtArgs>
   leaveTypes?: boolean | Prisma.Company$leaveTypesArgs<ExtArgs>
   leavePolicies?: boolean | Prisma.Company$leavePoliciesArgs<ExtArgs>
+  notifications?: boolean | Prisma.Company$notificationsArgs<ExtArgs>
   attendanceViolations?: boolean | Prisma.Company$attendanceViolationsArgs<ExtArgs>
   designationAttendancePolicies?: boolean | Prisma.Company$designationAttendancePoliciesArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -2344,6 +2543,7 @@ export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   holidays?: boolean | Prisma.Company$holidaysArgs<ExtArgs>
   leaveTypes?: boolean | Prisma.Company$leaveTypesArgs<ExtArgs>
   leavePolicies?: boolean | Prisma.Company$leavePoliciesArgs<ExtArgs>
+  notifications?: boolean | Prisma.Company$notificationsArgs<ExtArgs>
   attendanceViolations?: boolean | Prisma.Company$attendanceViolationsArgs<ExtArgs>
   designationAttendancePolicies?: boolean | Prisma.Company$designationAttendancePoliciesArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -2363,6 +2563,7 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     holidays: Prisma.$HolidayPayload<ExtArgs>[]
     leaveTypes: Prisma.$LeaveTypePayload<ExtArgs>[]
     leavePolicies: Prisma.$LeavePolicyPayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
     attendanceViolations: Prisma.$AttendanceViolationPayload<ExtArgs>[]
     designationAttendancePolicies: Prisma.$DesignationAttendancePolicyPayload<ExtArgs>[]
   }
@@ -2783,6 +2984,7 @@ export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.
   holidays<T extends Prisma.Company$holidaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$holidaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HolidayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leaveTypes<T extends Prisma.Company$leaveTypesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$leaveTypesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveTypePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leavePolicies<T extends Prisma.Company$leavePoliciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$leavePoliciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeavePolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.Company$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendanceViolations<T extends Prisma.Company$attendanceViolationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$attendanceViolationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceViolationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   designationAttendancePolicies<T extends Prisma.Company$designationAttendancePoliciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$designationAttendancePoliciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DesignationAttendancePolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -3428,6 +3630,30 @@ export type Company$leavePoliciesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.LeavePolicyScalarFieldEnum | Prisma.LeavePolicyScalarFieldEnum[]
+}
+
+/**
+ * Company.notifications
+ */
+export type Company$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

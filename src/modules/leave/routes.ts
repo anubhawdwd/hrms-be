@@ -31,7 +31,7 @@ import {
   bulkAllocateLeaveBalances,
   previewYearEndRollover,
   runYearEndRollover,
-
+  nudgeManager,
   markLeaveByAdmin,
   deleteLeaveRequest,
   deleteLeaveRequestDays,
@@ -103,6 +103,11 @@ router.patch(
   "/requests/:requestId/hr-cancel",
   requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
   hrCancelApprovedLeave
+);
+router.post(
+  "/requests/:requestId/nudge",
+  requireRole(UserRole.HR, UserRole.COMPANY_ADMIN),
+  nudgeManager
 );
 
 // HR DAY-LEVEL APPROVAL / REJECTION

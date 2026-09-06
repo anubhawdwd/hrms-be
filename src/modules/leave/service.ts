@@ -7,7 +7,10 @@ import {
   GenderRestriction,
   HolidayType,
   UserRole,
+  NotificationType,
 } from "../../generated/prisma/enums.js";
+import { NotificationService } from "../notification/service.js";
+import { emitDashboardSync } from "../../socket/index.js";
 import type {
   RolloverPreviewItem,
   RolloverPreviewResult,
@@ -239,7 +242,7 @@ export class LeaveService {
       );
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       // 1. Process retroactive adjustments on earlier requests
       if (spanResult.retroactiveAdjustments && spanResult.retroactiveAdjustments.length > 0) {
         for (const adj of spanResult.retroactiveAdjustments) {
@@ -340,6 +343,81 @@ export class LeaveService {
 
       return leaveRequest;
     });
+
+    // Asynchronously dispatch notifications and dashboard sync
+    try {
+      const notifService = new NotificationService();
+      const managerProfileId = employee.managerId || employee.secondaryManagerId;
+      let managerUserId: string | null = null;
+
+      if (managerProfileId) {
+        const managerUser = await prisma.user.findFirst({
+          where: { employee: { id: managerProfileId } },
+          select: { id: true },
+        });
+        if (managerUser) {
+          managerUserId = managerUser.id;
+          await notifService.sendNotification({
+            companyId: params.companyId,
+            userId: managerUser.id,
+            type: NotificationType.LEAVE_SUBMITTED,
+            title: "New Leave Request Submitted",
+            message: `${employee.displayName} applied for ${result.leaveType.name} leave (${params.fromDate} to ${params.toDate}).`,
+            link: "/employee/dashboard",
+            metadata: {
+              requestId: result.id,
+              employeeId: employee.id,
+              employeeName: employee.displayName,
+              leaveTypeName: result.leaveType.name,
+              fromDate: params.fromDate,
+              toDate: params.toDate,
+            },
+          });
+        }
+      }
+
+      // Notify HR / Admins
+      const hrUsers = await prisma.user.findMany({
+        where: {
+          companyId: params.companyId,
+          roles: { some: { role: { in: [UserRole.HR, UserRole.COMPANY_ADMIN] } } },
+        },
+        select: { id: true },
+      });
+
+      for (const hr of hrUsers) {
+        if (managerUserId && hr.id === managerUserId) continue;
+        await notifService.sendNotification({
+          companyId: params.companyId,
+          userId: hr.id,
+          type: NotificationType.LEAVE_SUBMITTED,
+          title: "New Leave Request Submitted",
+          message: `${employee.displayName} applied for ${result.leaveType.name} leave (${params.fromDate} to ${params.toDate}).`,
+          link: "/admin/leave-dashboard",
+          metadata: {
+            requestId: result.id,
+            employeeId: employee.id,
+            employeeName: employee.displayName,
+            leaveTypeName: result.leaveType.name,
+            fromDate: params.fromDate,
+            toDate: params.toDate,
+          },
+        });
+      }
+
+      // Live dashboard refetch triggers
+      emitDashboardSync(`company:${params.companyId}:admins`, "leave");
+      emitDashboardSync(`company:${params.companyId}:admins`, "badges");
+      if (managerProfileId) {
+        emitDashboardSync(`manager:${managerProfileId}`, "leave");
+        emitDashboardSync(`manager:${managerProfileId}`, "badges");
+      }
+      emitDashboardSync(`user:${params.userId}`, "leave");
+    } catch (e) {
+      console.error("[NOTIFICATION] Failed to send leave submission notification:", e);
+    }
+
+    return result;
   }
 
   // =================== MARK LEAVE BY ADMIN ===================
@@ -625,7 +703,7 @@ export class LeaveService {
       }
 
       // Manager approves -> transitions to PENDING_HR (ZERO balance deduction)
-      return prisma.$transaction(async (tx) => {
+      const stage1Result = await prisma.$transaction(async (tx) => {
         const updatedRequest = await tx.leaveRequest.update({
           where: { id: params.requestId },
           data: {
@@ -645,6 +723,63 @@ export class LeaveService {
 
         return updatedRequest;
       });
+
+      // Stage 1 Notification & Sync Dispatch
+      try {
+        const notifService = new NotificationService();
+        // 1. Notify Employee
+        const employeeUser = await prisma.user.findFirst({
+          where: { employee: { id: leaveRequest.employeeId } },
+          select: { id: true },
+        });
+        const companyId = leaveRequest.employee.companyId;
+        if (employeeUser) {
+          await notifService.sendNotification({
+            companyId,
+            userId: employeeUser.id,
+            type: NotificationType.LEAVE_STAGE_APPROVED,
+            title: "Leave Approved by Manager",
+            message: `Your ${leaveRequest.leaveType.name} leave request was approved by your manager and forwarded to HR.`,
+            link: "/employee/dashboard",
+            metadata: { requestId: leaveRequest.id },
+          });
+        }
+
+        // 2. Notify HR / Admins
+        const hrUsers = await prisma.user.findMany({
+          where: {
+            companyId,
+            roles: { some: { role: { in: [UserRole.HR, UserRole.COMPANY_ADMIN] } } },
+          },
+          select: { id: true },
+        });
+        for (const hr of hrUsers) {
+          await notifService.sendNotification({
+            companyId,
+            userId: hr.id,
+            type: NotificationType.LEAVE_STAGE_APPROVED,
+            title: "Leave Request Awaiting Final Approval",
+            message: `${leaveRequest.employee.displayName}'s ${leaveRequest.leaveType.name} leave request was approved by manager and is pending HR completion.`,
+            link: "/admin/leave-dashboard",
+            metadata: { requestId: leaveRequest.id },
+          });
+        }
+
+        // 3. Emit real-time sync
+        emitDashboardSync(`company:${companyId}:admins`, "leave");
+        emitDashboardSync(`company:${companyId}:admins`, "badges");
+        if (leaveRequest.employee.managerId) {
+          emitDashboardSync(`manager:${leaveRequest.employee.managerId}`, "leave");
+          emitDashboardSync(`manager:${leaveRequest.employee.managerId}`, "badges");
+        }
+        if (employeeUser) {
+          emitDashboardSync(`user:${employeeUser.id}`, "leave");
+        }
+      } catch (e) {
+        console.error("[NOTIFICATION] Failed to send stage 1 approval notification:", e);
+      }
+
+      return stage1Result;
     }
 
     // ── STAGE 2: PENDING_HR or legacy PENDING ──
@@ -687,7 +822,7 @@ export class LeaveService {
         throw new Error("Insufficient leave balance to approve this request");
       }
 
-      return prisma.$transaction(async (tx) => {
+      const stage2Result = await prisma.$transaction(async (tx) => {
         const updatedRequest = await tx.leaveRequest.update({
           where: { id: params.requestId },
           data: {
@@ -717,6 +852,43 @@ export class LeaveService {
 
         return updatedRequest;
       });
+
+      // Stage 2 Notification & Sync Dispatch
+      try {
+        const notifService = new NotificationService();
+        // Notify Employee
+        const employeeUser = await prisma.user.findFirst({
+          where: { employee: { id: leaveRequest.employeeId } },
+          select: { id: true },
+        });
+        const companyId = leaveRequest.employee.companyId;
+        if (employeeUser) {
+          await notifService.sendNotification({
+            companyId,
+            userId: employeeUser.id,
+            type: NotificationType.LEAVE_APPROVED,
+            title: "Leave Request Approved",
+            message: `Your ${leaveRequest.leaveType.name} leave request has been approved.`,
+            link: "/employee/dashboard",
+            metadata: { requestId: leaveRequest.id },
+          });
+        }
+
+        // Real-time sync
+        emitDashboardSync(`company:${companyId}:admins`, "leave");
+        emitDashboardSync(`company:${companyId}:admins`, "badges");
+        if (leaveRequest.employee.managerId) {
+          emitDashboardSync(`manager:${leaveRequest.employee.managerId}`, "leave");
+          emitDashboardSync(`manager:${leaveRequest.employee.managerId}`, "badges");
+        }
+        if (employeeUser) {
+          emitDashboardSync(`user:${employeeUser.id}`, "leave");
+        }
+      } catch (e) {
+        console.error("[NOTIFICATION] Failed to send stage 2 approval notification:", e);
+      }
+
+      return stage2Result;
     }
 
     throw new Error("Cannot approve leave in " + leaveRequest.status + " status");
@@ -798,7 +970,7 @@ export class LeaveService {
       ? "[Rejected by " + roleTag + "] " + params.reason
       : "[Rejected by " + roleTag + "]";
 
-    return prisma.$transaction(async (tx) => {
+    const rejectResult = await prisma.$transaction(async (tx) => {
       const updated = await tx.leaveRequest.update({
         where: { id: params.requestId },
         data: {
@@ -817,6 +989,42 @@ export class LeaveService {
 
       return updated;
     });
+
+    // Rejection Notification & Sync Dispatch
+    try {
+      const notifService = new NotificationService();
+      const employeeUser = await prisma.user.findFirst({
+        where: { employee: { id: leaveRequest.employeeId } },
+        select: { id: true },
+      });
+      const companyId = leaveRequest.employee.companyId;
+      if (employeeUser) {
+        await notifService.sendNotification({
+          companyId,
+          userId: employeeUser.id,
+          type: NotificationType.LEAVE_REJECTED,
+          title: "Leave Request Rejected",
+          message: `Your leave request was rejected by ${roleTag}${params.reason ? ": " + params.reason : "."}`,
+          link: "/employee/dashboard",
+          metadata: { requestId: leaveRequest.id, reason: params.reason },
+        });
+      }
+
+      // Real-time sync
+      emitDashboardSync(`company:${companyId}:admins`, "leave");
+      emitDashboardSync(`company:${companyId}:admins`, "badges");
+      if (leaveRequest.employee.managerId) {
+        emitDashboardSync(`manager:${leaveRequest.employee.managerId}`, "leave");
+        emitDashboardSync(`manager:${leaveRequest.employee.managerId}`, "badges");
+      }
+      if (employeeUser) {
+        emitDashboardSync(`user:${employeeUser.id}`, "leave");
+      }
+    } catch (e) {
+      console.error("[NOTIFICATION] Failed to send rejection notification:", e);
+    }
+
+    return rejectResult;
   }
 
   async cancelLeaveRequest(
@@ -1943,7 +2151,19 @@ export class LeaveService {
     date: Date;
     type?: HolidayType;
   }) {
-    return repo.createHoliday(params);
+    const holiday = await repo.createHoliday(params);
+    try {
+      const notifService = new NotificationService();
+      await notifService.broadcastHoliday(
+        params.companyId,
+        params.name,
+        params.date,
+        params.type || "NORMAL"
+      );
+    } catch (e) {
+      console.error("[NOTIFICATION] Failed to broadcast holiday notification:", e);
+    }
+    return holiday;
   }
 
   async listHolidays(companyId: string) {
@@ -2322,6 +2542,95 @@ export class LeaveService {
     };
   }
 
+  // =================== NUDGE MANAGER (NOTIF-02) ===================
+
+  async nudgeManager(params: {
+    requestId: string;
+    nudgedByUserId: string;
+    companyId: string;
+  }) {
+    const leaveRequest = await prisma.leaveRequest.findUnique({
+      where: { id: params.requestId },
+      include: {
+        employee: {
+          include: {
+            manager: true,
+            secondaryManager: true,
+          },
+        },
+        leaveType: true,
+      },
+    });
+
+    if (!leaveRequest) {
+      const err: any = new Error("Leave request not found");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    if (leaveRequest.status !== LeaveRequestStatus.PENDING_MANAGER) {
+      const err: any = new Error(
+        "Nudge can only be sent for leave requests pending manager approval"
+      );
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const managerProfileId =
+      leaveRequest.employee.managerId || leaveRequest.employee.secondaryManagerId;
+
+    if (!managerProfileId) {
+      const err: any = new Error(
+        "No assigned reporting manager found for this employee"
+      );
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const managerUser = await prisma.user.findFirst({
+      where: { employee: { id: managerProfileId } },
+      select: { id: true, email: true },
+    });
+
+    if (!managerUser) {
+      const err: any = new Error("Manager user account not found");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const actingUser = params.nudgedByUserId
+      ? await prisma.user.findUnique({
+          where: { id: params.nudgedByUserId },
+          include: { employee: true },
+        })
+      : null;
+    const actorName = actingUser?.employee?.displayName || "HR / Admin";
+
+    const notifService = new NotificationService();
+    const notification = await notifService.sendNotification({
+      companyId: params.companyId,
+      userId: managerUser.id,
+      type: NotificationType.MANAGER_NUDGE,
+      title: "Pending Leave Review Reminder",
+      message: `${actorName} (HR) is requesting your review on ${leaveRequest.employee.displayName}'s ${leaveRequest.leaveType.name} leave request.`,
+      link: "/employee/dashboard",
+      metadata: {
+        requestId: leaveRequest.id,
+        employeeId: leaveRequest.employeeId,
+        nudgedById: params.nudgedByUserId,
+      },
+    });
+
+    emitDashboardSync(`manager:${managerProfileId}`, "badges");
+    emitDashboardSync(`manager:${managerProfileId}`, "leave");
+
+    return {
+      success: true,
+      message: "Manager notified successfully",
+      notificationId: notification.id,
+    };
+  }
+
   // =================== PRIVATE HELPERS ===================
 
   private async resolveEmployee(userId: string, companyId: string) {
@@ -2335,3 +2644,4 @@ export class LeaveService {
 }
 
 export const leaveService = new LeaveService();
+

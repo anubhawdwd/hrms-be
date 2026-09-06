@@ -23,7 +23,7 @@ const defaultOrigins = [
   "http://192.168.1.185:5174",
 ];
 
-const allowedOrigins = Array.from(
+export const allowedOrigins = Array.from(
   new Set([...defaultOrigins, ...configuredOrigins].filter(Boolean))
 );
 

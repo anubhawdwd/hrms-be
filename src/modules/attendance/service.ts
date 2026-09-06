@@ -15,6 +15,8 @@ import type {
   DashboardAttendanceStatus,
 } from "./types.js";
 import { haversineDistanceMeters } from "../../utils/geo.js";
+import type { OfficeLocation } from "../../generated/prisma/client.js";
+import { emitDashboardSync } from "../../socket/index.js";
 import { prisma } from "../../config/prisma.js";
 import {
   todayDateUTC,
@@ -197,6 +199,13 @@ export class AttendanceService {
       "PRESENT"
     );
 
+    try {
+      emitDashboardSync(`company:${dto.companyId}:admins`, "attendance");
+      emitDashboardSync(`user:${dto.userId}`, "attendance");
+    } catch (e) {
+      console.error("[SOCKET] Failed to emit attendance check-in sync:", e);
+    }
+
     return { message: "Checked in successfully" };
   }
 
@@ -307,6 +316,13 @@ export class AttendanceService {
 
     await repo.addEvent(attendanceDay.id, "CHECK_OUT", dto.source, now);
     await repo.updateAttendanceSummary(attendanceDay.id, totalMinutes, status);
+
+    try {
+      emitDashboardSync(`company:${dto.companyId}:admins`, "attendance");
+      emitDashboardSync(`user:${dto.userId}`, "attendance");
+    } catch (e) {
+      console.error("[SOCKET] Failed to emit attendance check-out sync:", e);
+    }
 
     return { message: "Checked out successfully", totalMinutes, status };
   }

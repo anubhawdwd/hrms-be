@@ -753,3 +753,24 @@ export async function getLwpReport(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
+
+export async function nudgeManager(req: Request, res: Response) {
+  try {
+    const requestId = String(req.params.requestId);
+    if (!requestId || requestId === "undefined") {
+      return res.status(400).json({ message: "requestId parameter is required" });
+    }
+
+    const result = await service.nudgeManager({
+      requestId,
+      nudgedByUserId: req.user!.userId,
+      companyId: req.companyId!,
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    const statusCode = err.statusCode || 400;
+    res.status(statusCode).json({ message: err.message });
+  }
+}
+

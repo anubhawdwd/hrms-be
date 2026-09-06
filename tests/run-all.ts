@@ -21,6 +21,7 @@ import { runHolidayTypeTests } from "./holiday-type.test.js";
 import { runMultiRoleTests } from "./multi-role.test.js";
 import { runLeaveTwoStepApprovalTests } from "./leave-two-step-approval.test.js";
 import { runManagerSelfServiceTests } from "./manager-self-service.test.js";
+import { runNotificationTests } from "./notifications.test.js";
 
 interface DatabaseSnapshot {
   companiesCount: number;
@@ -38,6 +39,7 @@ interface DatabaseSnapshot {
   holidaysCount: number;
   errorLogsCount: number;
   auditLogsCount: number;
+  notificationsCount: number;
   leaveBalanceChecksum: string;
 }
 
@@ -58,6 +60,7 @@ async function captureDatabaseSnapshot(): Promise<DatabaseSnapshot> {
     holidaysCount,
     errorLogsCount,
     auditLogsCount,
+    notificationsCount,
     allBalances,
   ] = await Promise.all([
     prisma.company.count(),
@@ -75,6 +78,7 @@ async function captureDatabaseSnapshot(): Promise<DatabaseSnapshot> {
     prisma.holiday.count(),
     prisma.errorLog.count(),
     prisma.auditLog.count(),
+    prisma.notification.count(),
     prisma.leaveBalance.findMany({
       select: {
         id: true,
@@ -152,6 +156,7 @@ async function main() {
     await runMultiRoleTests();
     await runLeaveTwoStepApprovalTests();
     await runManagerSelfServiceTests();
+    await runNotificationTests();
 
     // 2. Post-Test Safety & Zero-Mutation Verification
     console.log("\n[SAFETY CHECK] Verifying zero-mutation on non-test organization data...");
@@ -199,6 +204,9 @@ async function main() {
     }
     if (postSnapshot.auditLogsCount !== preSnapshot.auditLogsCount) {
       diffs.push(`Audit logs count changed: ${preSnapshot.auditLogsCount} -> ${postSnapshot.auditLogsCount}`);
+    }
+    if (postSnapshot.notificationsCount !== preSnapshot.notificationsCount) {
+      diffs.push(`Notifications count changed: ${preSnapshot.notificationsCount} -> ${postSnapshot.notificationsCount}`);
     }
     if (postSnapshot.leaveBalanceChecksum !== preSnapshot.leaveBalanceChecksum) {
       diffs.push(`Leave balance values checksum mismatch (one or more existing balances were modified!)`);

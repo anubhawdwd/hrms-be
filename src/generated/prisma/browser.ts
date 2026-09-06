@@ -137,3 +137,8 @@ export type ErrorLog = Prisma.ErrorLogModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel

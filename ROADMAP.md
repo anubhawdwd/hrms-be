@@ -17,14 +17,14 @@
 | Attendance | COMPLETE | Check-in/out, geo-fencing, corrections, violations, auto-present, partial status dashboard |
 | Leave Management | PARTIAL | Core workflow, 2-step approval (`PENDING_MANAGER` / `PENDING_HR`), unlimited default LWP, per-day approve/reject status transitions, day deletion with balance restoration, sandwich policy; year-end carry-forward engine pending |
 | Manager Self-Service | COMPLETE | Reportee-scoped leave and monthly attendance dashboards with live pending notification badge |
-| Notifications | MISSING | No notification system exists at all |
+| Notifications | COMPLETE | Real-time DB-backed persistent notifications (Socket.IO + react-hot-toast manual dismiss, unread bell panel, 90-day retention purge), live dashboard/badge sync, HR manager-nudge |
 | Reports | COMPLETE | Employee Master Directory, Dynamic Leave Report, and full-featured Attendance Report with month stepper, custom date range, search, drilldown, and Excel/CSV export |
 | Error Logging | COMPLETE | Ingestion (BE/FE), 20-day retention, SuperAdmin viewer with bulk delete |
 | SuperAdmin Dashboard | COMPLETE | Multi-tenant company provisioning, admin accounts, user directory, error viewer |
-| Testing | COMPLETE | Isolated test-company infrastructure (22 test suites), `audit:leftovers` diagnostic sweep tool, zero-mutation verification |
+| Testing | COMPLETE | Isolated test-company infrastructure (24 test suites), `audit:leftovers` diagnostic sweep tool, zero-mutation verification |
 | Deployment | PARTIAL | Local/LAN hosting only; production hardening pending |
 
-**Overall**: Core HRMS workflows, atomic employee onboarding with full master-data parity, multi-role architecture, 2-step leave approval workflow, manager self-service dashboards, centralized error telemetry, and full reporting suite (Employee, Leave, Attendance) exist and function. The next phase includes year-end leave rollover engine, in-app notifications, and exit-based encashment logging.
+**Overall**: Core HRMS workflows, atomic employee onboarding with full master-data parity, multi-role architecture, 2-step leave approval workflow, manager self-service dashboards, centralized error telemetry, full reporting suite (Employee, Leave, Attendance), year-end rollover engine, and real-time persistent notifications with live dashboard sync exist and function. The next phase includes exit-based encashment logging and scheduled data retention jobs.
 
 
 
@@ -83,10 +83,12 @@
 | LEV-14 | Leave | Employee leave-policy override | PARTIAL | P2 | Backend-only, no UI. Add only if HR requests it |
 | LEV-15 | Leave | Old annual encashment concept | **SUPERSEDED** | | Replace with EMP-07 (exit-only). Do not build a yearly encashment payout flow |
 | LEV-16 | Leave | Holiday type distinction (Normal vs Restricted). Normal holidays block leave applications (unchanged). Restricted holidays do NOT block applications: RH-eligible employees (per existing LEV-10 grant) may apply RH specifically for that day; any other employee may apply their normal leave types same as a working day. Fully opt-in — if unused, employee works normally that day, no leave consumed, no forced holiday. Leave-type picker on a restricted-holiday date must label that holiday as "<Holiday Name> (Restricted)" so employees see it's optional. | COMPLETE | P0 | HolidayType enum (NORMAL \| RESTRICTED) on Holiday model; default NORMAL; NORMAL blocks leave applications; RESTRICTED allows RH and standard leave applications and does not auto-deduct or force holiday; AdminHolidays UI type selector & badge, ApplyLeaveModal & Dashboard calendar labels. |
-| NOTIF-01 | Notifications | In-app notification system (WebSocket, real-time) | MISSING | **P0** | See PRD §7 for exact trigger table |
-| NOTIF-02 | Notifications | Leave-applied → Manager + HR | MISSING | P0 | Sub-item of NOTIF-01 |
-| NOTIF-03 | Notifications | Manager-approved → HR + Employee | MISSING | P0 | Sub-item of NOTIF-01 |
-| NOTIF-04 | Notifications | HR approve/reject → Employee | MISSING | P0 | Sub-item of NOTIF-01 |
+| NOTIF-01 | Notifications | **Real-Time Persistent Notifications & Dashboard Sync Engine** | COMPLETE | **P0** | Socket.IO WebSocket server with JWT auth handshake + tenant room subscriptions; persistent `Notification` DB model (`NotificationType` enum); 90-day retention auto-purge. |
+| NOTIF-02 | Notifications | Leave-applied trigger → Manager + HR | COMPLETE | **P0** | Emits `LEAVE_SUBMITTED` notification + `dashboard:sync` (`topic: "leave"`) |
+| NOTIF-03 | Notifications | Manager-approved trigger → HR + Employee | COMPLETE | **P0** | Emits `LEAVE_STAGE_APPROVED` notification + `dashboard:sync` (`topic: "leave"`) |
+| NOTIF-04 | Notifications | HR approve/reject trigger → Employee | COMPLETE | **P0** | Emits `LEAVE_APPROVED` / `LEAVE_REJECTED` (with reason) + `dashboard:sync` |
+| NOTIF-05 | Notifications | Holiday created broadcast trigger → All Company Users | COMPLETE | **P0** | Emits `HOLIDAY_ADDED` notification to all company users |
+| NOTIF-06 | Notifications | HR Manager Nudge & Live Badge Sync | COMPLETE | **P0** | `POST /api/leave/requests/:id/nudge` sends `MANAGER_NUDGE` to manager; live dashboard sync signals refresh 4 dashboard/badge views with reconnect reconciliation. |
 | ERR-01 | Error Logging | Backend error capture (4xx/5xx) → DB | COMPLETE | **P0** | Ingestion middleware with payload sanitization |
 | ERR-02 | Error Logging | Frontend error capture (React runtime errors) → DB | COMPLETE | **P0** | ErrorBoundary + Axios error interceptor |
 | ERR-03 | Error Logging | 20-day flat auto-purge (scheduled job) | COMPLETE | **P0** | Daily 24-hour cron/interval job + manual purge endpoint |
@@ -175,10 +177,23 @@ Employee applies
 
 ## 7. Notification Contract
 
-- Channel: in-app, WebSocket, real-time.
-- No email/SMS/push in this phase.
-- No geo-fence violation notifications.
-- Trigger table: see §4.4 above (fully derived from the approval workflow).
+- **Channel**: In-app only (no external email/SMS/push in this phase).
+- **Delivery**: Real-time via Socket.IO WebSocket connection with JWT handshake authentication and room subscriptions (`user:<userId>`, `company:<companyId>`, `company:<companyId>:admins`, `manager:<managerProfileId>`).
+- **Database Persistence**: `Notification` model with `NotificationType` enum (`LEAVE_SUBMITTED`, `LEAVE_STAGE_APPROVED`, `LEAVE_APPROVED`, `LEAVE_REJECTED`, `HOLIDAY_ADDED`, `MANAGER_NUDGE`), link, metadata JSON, and unread tracking.
+- **Retention**: 90-day (3-month) flat auto-purge scheduled job (`NotificationCleanupJob`).
+- **Trigger Points**:
+  1. `createHoliday` → `HOLIDAY_ADDED` broadcast to all company users.
+  2. `applyLeave` → `LEAVE_SUBMITTED` to Reporting Manager (Two-Step) + HR/Company Admins.
+  3. `approveLeave` (Stage 1 / Manager) → `LEAVE_STAGE_APPROVED` to Employee and HR.
+  4. `approveLeave` (Stage 2 / HR Final) → `LEAVE_APPROVED` to Employee.
+  5. `rejectLeave` (Manager or HR) → `LEAVE_REJECTED` to Employee (including mandatory rejection reason).
+  6. `nudgeManager` (`POST /api/leave/requests/:id/nudge`) → `MANAGER_NUDGE` to Reporting Manager from HR.
+- **Live Dashboard Sync**:
+  - Pure refetch signal via `dashboard:sync` event (`topic: "leave" | "attendance" | "badges" | "holiday"`).
+  - Wired into `AdminDashboard`, `AdminLeaveDashboard`, `AdminAttendanceDashboard`, and `EmployeeDashboard`.
+  - Reconnect reconciliation automatically refetches active dashboard data.
+- **Toasts**:
+  - `react-hot-toast` manual dismiss only (`duration: Infinity`), stacking simultaneously.
 
 ---
 
@@ -231,7 +246,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] **LEV-03** — Build 2-step approval workflow (company-level toggle, new status states)
 - [x] **LEV-08 / DATA-02** — Build sandwich-day exception tool & day-level breakdown deletion (day-wise breakdown + hard delete via `leaveApi.deleteDays` + balance restoration + per-day status transitions)
 - [x] **LEV-12** — Build year-end treatment engine (carry-forward with cap → lapse)
-- [ ] **NOTIF-01 through 05** — Build real-time in-app notification system for the leave workflow
+- [x] **NOTIF-01 through 06** — Build real-time in-app notification system (Socket.IO + persistent DB + manual-dismiss toasts + bell panel + live dashboard sync + manager nudge)
 - [x] **ERR-01/02/03** — Build error logging capture (frontend + backend) + 20-day auto-purge
 - [x] **SA-01, SA-02 (UI)** — SuperAdmin seed script + company create/list dashboard
 - [x] **EMP-03, EMP-05** — Complete employee master schema (phone, gender, personalEmail) + atomic onboarding + explicit code assignment
@@ -289,7 +304,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] Sandwich detection (including cross-request bridge detection & retroactive adjustment)
 - [x] Sandwich-day exception tool & day-level breakdown deletion (hard delete + recalculation + balance restoration)
 - [x] Holidays
-- [ ] Year-end carry-forward/lapse engine
+- [x] Year-end carry-forward/lapse engine (LEV-12)
 - [ ] Exit-based encashment logging
 - [x] Leave balance mismatch root-caused and fixed
 - [x] "Total Allocated" removed from all UI
@@ -299,8 +314,11 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] Reportee-scoped attendance dashboard (primary + secondary)
 
 ### Notifications
-- [ ] Real-time WebSocket delivery working
-- [ ] All 5 trigger points firing correctly
+- [x] Real-time WebSocket delivery working (Socket.IO + JWT auth)
+- [x] All 6 trigger points firing correctly (holiday create, apply leave, manager approve, HR approve, reject with reason, manager nudge)
+- [x] DB persistence (`Notification` table) + 90-day retention auto-purge job
+- [x] Live dashboard & badge synchronization (`dashboard:sync` events)
+- [x] Manual-dismiss-only toasts & unread notification bell popover panel
 
 ### Error Logging
 - [x] Backend + frontend capture working
@@ -327,6 +345,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] Real-company mutation protection
 - [x] Diagnostic leftover sweep tool (`npm run audit:leftovers`)
 - [x] Confirm test runs are/aren't contributing to balance mismatch
+- [ ] Manual check: confirm no notification/socket leakage between companies in a real browser session (two tenants, two browsers) — supplement to the automated tenant-isolation test in NOTIF-01-06, for final human confirmation before considering this fully closed.
 
 ### Deployment
 - [ ] Production HTTPS
@@ -357,6 +376,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 | 2026-09-06 | Renamed Workplace Settings tab to "Leave & Attendance Policies"; resolved MUI floating label clipping bug across all stacked outlined dialogs (`ApplyLeaveModal`, `HrCancelDialog`, `AdminMarkLeaveDialog`, `AdminBulkLeaveAllocationDialog`, `AdminEditLeaveAllocationDialog`, `AdminYearEndRolloverDialog`, `ChangePasswordModal`, `ManagerTeamLeaveSection`); added live pending leave count notification badge to Leave Dashboard card on Admin main dashboard (`/admin`). |
 | 2026-09-06 | Implemented Attendance Report (`REP-04`): backend endpoints `/api/reports/attendance` and `/api/reports/attendance/export`; lightweight cell payload contract (summary properties only) with on-demand session inspection via `<DaySessionDetail>`; added 3rd "Attendance Report" tab in `AdminReports.tsx` with Month Stepper `< [Month Name] >`, custom date range pickers, department/team/search filters, company summary banner, and Excel/CSV export; updated Employee Dashboard `LeaveRequestList.tsx` and Admin leave modals to display stage-aware labels (`Pending Manager Approval`, `Pending HR Approval`). |
 | 2026-09-06 | Implemented Year-End Leave Rollover Engine (`LEV-12`): redesigned rollover logic with dry-run preview (`POST /api/leave/rollover/preview`) and atomic batch commit (`POST /api/leave/rollover`); fixed formula (`remaining = allocated + carriedForward - used`) using target year policy allocations and carry-forward caps; excludes unallocated types (LWP) and surfaces unconfigured leave types; protected by idempotency with `COMPANY_ADMIN`-only `forceOverwrite` guard, typed "OVERWRITE" confirmation in UI, and mandatory reason; persists full audit trail to `AuditLog`; simplified Leave Policies UI in `AdminOrganization.tsx` by removing LWP, removing unused Encashment/Probation columns, and fixing placeholder defaults; fixed unbounded card height in `AdminLeaveDashboard.tsx`. |
+| 2026-09-06 | Implemented Real-Time Persistent Notifications & Live Dashboard Sync (`NOTIF-01-06`): built Socket.IO WebSocket infrastructure with JWT auth handshake and tenant/user room subscriptions; added `Notification` DB model (`NotificationType` enum) with 90-day retention purge job; created notification API (`GET /api/notifications`, `PATCH /api/notifications/:id/read`, `POST /api/notifications/mark-all-read`, `DELETE /api/notifications/:id`); added `POST /api/leave/requests/:id/nudge` HR-to-manager nudge endpoint; wired 6 triggers (holiday broadcast, apply leave, manager approve, HR approve, reject with reason, manager nudge); built frontend `<NotificationBell>` with unread count and popover panel, manual-dismiss toasts (`duration: Infinity`), and live dashboard sync hooks across 4 dashboard/badge views with reconnect reconciliation. |
 
 
 
