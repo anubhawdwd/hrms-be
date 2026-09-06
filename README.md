@@ -74,17 +74,20 @@ hrms_main/
 
 ## Main Features
 
-* **Authentication & Security**: Email/password authentication, JWT access tokens with automatic rotation via HTTP-only refresh cookies, and multi-tier role permissions.
-* **Employee Management**: Employee directory, profile viewing, managerial hierarchy mapping, and two-step guided onboarding with automatic leave balance bootstrapping.
-* **Attendance Tracking**: Real-time employee check-in and check-out, geo-fence radius verification, today's attendance calculation, and weekly attendance calendar.
-* **Leave Management**: Leave policies (annual quotas, carry-forward, sandwich rules), leave applications (full-day, half-day, quarter-day, hourly), balance deduction, and HR approval/rejection workflows.
+* **Authentication & Multi-Role RBAC**: Email/password authentication, JWT access tokens with automatic rotation via HTTP-only refresh cookies, multi-role membership (`EMPLOYEE`, `HR`, `COMPANY_ADMIN`, `SUPER_ADMIN`), and context-aware view switching between Admin and Employee portals.
+* **Employee Management**: Employee directory, profile viewing, managerial hierarchy mapping (primary & secondary reporting managers), and atomic single-transaction onboarding with automatic leave balance bootstrapping.
+* **Attendance Tracking & Multi-Session Log**: Real-time employee check-in and check-out, geo-fence radius verification, today's attendance calculation, punch session intervals with on-demand drilldown, and monthly attendance calendar.
+* **Leave Management & 2-Step Approval Workflow**: Company-level approval workflow toggle (`TWO_STEP` vs `DIRECT_TO_HR`), stage-aware states (`PENDING_MANAGER`, `PENDING_HR`, `APPROVED`, `REJECTED`), unlimited default LWP, per-day approve/reject status transitions, day-level deletion with balance delta restoration, and cross-request sandwich detection with retroactive balance adjustment.
+* **Manager Self-Service Portal**: Reportee-scoped leave approvals and monthly presence matrix (`/api/manager/*`), quick approve/reject action cards with rejection reasons, and conditional "My Team" tab on the Employee Dashboard with live pending-approval notification badges.
+* **Reporting Hub & Export Engine**: Dedicated reporting center (`/admin/reports`) supporting Employee Master Directory, Dynamic Leave Reports (with pending approval safeguards), and Attendance Reports (with month stepper, custom date range pickers, employee search, on-demand session drilldown, and formatted Excel/CSV exports).
 * **Organization Management & Policy Hierarchy**: Unified administration hub (`AdminOrganization.tsx`) for departments, teams, designations, and 3-tier attendance policy assignment (Employee Override → Designation Policy → System Default) supporting auto-present and attendance exemption.
 * **Workplace & Geo-Fencing Settings**: Company-level office location setup (latitude, longitude, radius) with an instant toggle switch, plus company-wide working hours (8h), scheduled lunch (30m), break (20m), and grace period (10m) configurations.
 * **Attendance Dashboard & Day Boundaries**: Batched monthly employee × date matrix endpoint (`GET /api/attendance/dashboard?month=YYYY-MM`) with zero N+1 queries, sticky matrix grid, live search filter, strict calendar-day boundaries, same-day overtime accumulation, and automatic end-of-day checkout at 23:59:59 IST.
-* **HR Leave Dashboard & Approvals**: Card-based operational overview showing employees on leave today, actionable pending approvals (inline approve/reject), recently approved requests (`GET /api/leave/requests/recent`), and transactional HR cancellation with quota restoration.
+* **HR Leave Dashboard & Approvals**: Card-based operational overview showing employees on leave today, actionable pending approvals (inline approve/reject with live badge counts), recently approved requests (`GET /api/leave/requests/recent`), and transactional HR cancellation with quota restoration.
 * **SuperAdmin Multi-Tenant Management**: Multi-tenant workspace provisioning (`/super-admin`), atomic company and company administrator creation, company directory, and cross-company administrator password reset.
 * **Centralized Error Logging & Telemetry**: Full-stack error capture (Express 4xx/5xx responses with sensitive field sanitization + React `ErrorBoundary` and Axios client error ingestion) with 20-day auto-purge retention and interactive SuperAdmin viewer (`/super-admin/error-logs`).
-* **HR / Admin Operations**: Dedicated admin dashboards, attendance violation logs, manual attendance adjustments (by employee and date without UUID exposure), punch event additions, and holiday management.
+* **HR / Admin Operations**: Dedicated admin dashboards, attendance violation logs, manual attendance adjustments (by employee and date without UUID exposure), punch event additions, and holiday management with normal vs restricted distinction.
+
 
 ---
 

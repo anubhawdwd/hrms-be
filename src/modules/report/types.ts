@@ -108,3 +108,106 @@ export interface LeaveReportSuccessResponse {
 }
 
 export type LeaveReportResponse = LeaveReportPendingWarning | LeaveReportSuccessResponse;
+
+// =================== ATTENDANCE REPORT TYPES ===================
+
+export type DashboardAttendanceStatus =
+  | "PRESENT"
+  | "ABSENT"
+  | "PARTIAL"
+  | "ON_LEAVE"
+  | "HALF_DAY_LEAVE"
+  | "PENDING_LEAVE"
+  | "HOLIDAY"
+  | "WEEKEND"
+  | "UNRECORDED";
+
+export interface AttendanceReportFilterParams {
+  year?: number | undefined;
+  month?: string | undefined; // "YYYY-MM" or "1".."12"
+  fromDate?: string | undefined; // "YYYY-MM-DD"
+  toDate?: string | undefined; // "YYYY-MM-DD"
+  departmentId?: string | undefined;
+  teamId?: string | undefined;
+  employeeId?: string | undefined;
+  search?: string | undefined;
+}
+
+export interface AttendanceReportDayCell {
+  date: string; // "YYYY-MM-DD"
+  status: DashboardAttendanceStatus;
+  checkIn: string | null;
+  checkOut: string | null;
+  totalMinutes: number;
+  leaveType: string | null;
+  leaveDuration: "FULL_DAY" | "HALF_DAY" | "QUARTER_DAY" | "HOURLY" | null;
+  holidayName: string | null;
+  isAutoPresent: boolean;
+  isExempt: boolean;
+}
+
+export interface AttendanceReportEmployeeRow {
+  employeeId: string;
+  employeeCode: number | string;
+  displayName: string;
+  email: string;
+  department: string;
+  designation: string;
+  team: string;
+  summary: {
+    present: number;
+    absent: number;
+    partial: number;
+    onLeave: number;
+    pendingLeave: number;
+    holiday: number;
+    weekend: number;
+    unrecorded: number;
+    totalWorkingDays: number;
+    totalPresentDays: number;
+    attendancePercentage: number;
+  };
+  days: Record<string, AttendanceReportDayCell>;
+}
+
+export interface AttendanceReportHeaderDay {
+  date: string; // "YYYY-MM-DD"
+  dayOfWeek: string; // "Mon", "Tue", etc.
+  dayNumber: number; // 1..31
+  isWeekend: boolean;
+  holidayName: string | null;
+}
+
+export interface AttendanceReportResponse {
+  reportType: "ATTENDANCE";
+  companyName: string;
+  periodLabel: string;
+  dateRangeLabel: string;
+  startDate: string;
+  endDate: string;
+  departmentLabel: string;
+  teamLabel: string;
+  generatedAt: string;
+  totalDays: number;
+  daysHeader: AttendanceReportHeaderDay[];
+  totalEmployees: number;
+  companySummary: {
+    totalEmployees: number;
+    totalWorkingDays: number;
+    avgAttendancePercentage: number;
+  };
+  dailySummary: Record<
+    string,
+    {
+      present: number;
+      absent: number;
+      partial: number;
+      onLeave: number;
+      pendingLeave: number;
+      holiday: number;
+      weekend: number;
+      unrecorded: number;
+    }
+  >;
+  data: AttendanceReportEmployeeRow[];
+}

@@ -562,9 +562,79 @@ export async function runReportsTests() {
     assert(leaveCsv.includes("102,Bob Subordinate"), "Leave CSV contains Bob record");
     assert(leaveCsv.includes("6,1,2,2"), "Leave CSV preserves exact aggregate totals for Bob (6 balance, 1 paid leaves used, 2 LWP total, 2 absent days)");
 
-    console.log("    ✔ All Employee and Leave Report scenarios passed!");
+    // ==========================================
+    // 6. ATTENDANCE REPORT GENERATION & EXPORT
+    // ==========================================
+    const attMonthReport = await reportService.getAttendanceReport(companyIdA, {
+      year: 2026,
+      month: "06",
+    });
+
+    assert(attMonthReport.reportType === "ATTENDANCE", "Attendance report has correct reportType");
+    assert(attMonthReport.startDate === "2026-06-01" && attMonthReport.endDate === "2026-06-30", "Month mode sets exact start and end of June 2026");
+    assert(attMonthReport.totalDays === 30, "June 2026 has exactly 30 days");
+    assert(attMonthReport.daysHeader.length === 30, "daysHeader contains 30 day definitions");
+    assert(attMonthReport.totalEmployees >= 3, "Attendance report includes all active employees");
+
+    // Check header info for holiday & weekend
+    const friHolidayHeader = attMonthReport.daysHeader.find((d: any) => d.date === "2026-06-19");
+    assert(friHolidayHeader?.holidayName === "Test Friday Holiday", "Header marks June 19 as Test Friday Holiday");
+
+    const satHeader = attMonthReport.daysHeader.find((d: any) => d.date === "2026-06-20");
+    assert(satHeader?.isWeekend === true, "Header marks June 20 as weekend");
+
+    // Check Bob's row and lightweight cells
+    const bobAtt = attMonthReport.data.find((r: any) => r.employeeCode === 102)!;
+    assert(!!bobAtt, "Bob row found in attendance report");
+    assert(bobAtt.summary.totalWorkingDays > 0, `Bob totalWorkingDays calculated (${bobAtt.summary.totalWorkingDays})`);
+    
+    // Check cell lightweight structure (no nested session array)
+    const bobJune15Cell = bobAtt.days["2026-06-15"];
+    assert(!!bobJune15Cell, "Bob June 15 cell exists");
+    assert((bobJune15Cell as any).sessions === undefined, "Cell does NOT eagerly load sessions array (remains lightweight for drilldown)");
+    assert(bobJune15Cell.status === "ABSENT", `Bob June 15 status is ABSENT (found ${bobJune15Cell.status})`);
+
+    const bobJune19Cell = bobAtt.days["2026-06-19"];
+    assert(bobJune19Cell.status === "HOLIDAY", `Bob June 19 status is HOLIDAY (found ${bobJune19Cell.status})`);
+
+    const bobJune20Cell = bobAtt.days["2026-06-20"];
+    assert(bobJune20Cell.status === "ON_LEAVE", `Bob June 20 status is ON_LEAVE due to approved weekend LWP (found ${bobJune20Cell.status})`);
+
+    const bobJune27Cell = bobAtt.days["2026-06-27"];
+    assert(bobJune27Cell.status === "WEEKEND", `Bob June 27 status is WEEKEND (found ${bobJune27Cell.status})`);
+
+
+    // Custom Date Range mode
+    const attRangeReport = await reportService.getAttendanceReport(companyIdA, {
+      fromDate: "2026-06-15",
+      toDate: "2026-06-21",
+    });
+    assert(attRangeReport.totalDays === 7, "Custom range 2026-06-15 to 2026-06-21 has 7 days");
+    assert(attRangeReport.daysHeader.length === 7, "daysHeader has 7 days for range");
+
+    // Search filter
+    const attSearchReport = await reportService.getAttendanceReport(companyIdA, {
+      fromDate: "2026-06-15",
+      toDate: "2026-06-21",
+      search: "Bob",
+    });
+    assert(attSearchReport.data.length === 1 && attSearchReport.data[0].displayName.includes("Bob"), "Search filter 'Bob' isolates Bob's row");
+
+    // Attendance Excel Export
+    const attExcelBuffer = await reportService.generateAttendanceExcel(attMonthReport);
+    assert(attExcelBuffer instanceof Buffer && attExcelBuffer.length > 1000, `Attendance Excel workbook generated (${attExcelBuffer.length} bytes)`);
+
+    // Attendance CSV Export
+    const attCsv = reportService.generateAttendanceCsv(attMonthReport);
+    assert(attCsv.includes("Employee ID,Employee Name,Work Email"), "Attendance CSV has proper headers");
+    assert(attCsv.includes("102,Bob Subordinate"), "Attendance CSV contains Bob's summary row");
+    assert(attCsv.includes("2026-06-19 (Fri)"), "Attendance CSV includes timeline day columns");
+
+
+    console.log("    ✔ All Employee, Leave, and Attendance Report scenarios passed!");
   } finally {
     if (ctxA) await ctxA.cleanup();
     if (ctxB) await ctxB.cleanup();
   }
 }
+

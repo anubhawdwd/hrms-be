@@ -222,6 +222,9 @@ export async function runSuperAdminAndErrorLogTests() {
       });
     }
     if (createdCompanyIds.length > 0) {
+      await prisma.leaveType.deleteMany({
+        where: { companyId: { in: createdCompanyIds } },
+      });
       await prisma.company.deleteMany({
         where: { id: { in: createdCompanyIds } },
       });

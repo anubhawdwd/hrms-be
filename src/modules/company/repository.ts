@@ -7,15 +7,26 @@ import { AuthProvider, UserRole } from "../../generated/prisma/enums.js";
 export class CompanyRepository {
   async createCompany(name: string, adminEmail?: string, adminPassword?: string) {
     if (!adminEmail) {
-      const company = await prisma.company.create({
-        data: {
-          name,
-        },
+      return prisma.$transaction(async (tx) => {
+        const company = await tx.company.create({
+          data: {
+            name,
+          },
+        });
+        await tx.leaveType.create({
+          data: {
+            companyId: company.id,
+            name: "Leave Without Pay",
+            code: "LWP",
+            isPaid: false,
+            isActive: true,
+          },
+        });
+        return {
+          ...company,
+          admins: [],
+        };
       });
-      return {
-        ...company,
-        admins: [],
-      };
     }
 
     let rawPassword = adminPassword?.trim();
@@ -37,6 +48,16 @@ export class CompanyRepository {
       const company = await tx.company.create({
         data: {
           name,
+        },
+      });
+
+      await tx.leaveType.create({
+        data: {
+          companyId: company.id,
+          name: "Leave Without Pay",
+          code: "LWP",
+          isPaid: false,
+          isActive: true,
         },
       });
 

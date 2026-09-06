@@ -66,7 +66,42 @@ export class LeaveService {
     return repo.updateLeaveType(params);
   }
 
+  async ensureLwpLeaveType(companyId: string, tx?: any) {
+    const client = tx || prisma;
+    const existing = await client.leaveType.findFirst({
+      where: {
+        companyId,
+        OR: [
+          { code: "LWP" },
+          { name: { equals: "Leave Without Pay", mode: "insensitive" } },
+        ],
+      },
+    });
+
+    if (!existing) {
+      return client.leaveType.create({
+        data: {
+          companyId,
+          name: "Leave Without Pay",
+          code: "LWP",
+          isPaid: false,
+          isActive: true,
+        },
+      });
+    }
+
+    if (existing.isPaid || existing.code !== "LWP" || !existing.isActive) {
+      return client.leaveType.update({
+        where: { id: existing.id },
+        data: { code: "LWP", isPaid: false, isActive: true },
+      });
+    }
+
+    return existing;
+  }
+
   async listLeaveTypes(companyId: string) {
+    await this.ensureLwpLeaveType(companyId);
     return repo.listLeaveTypes(companyId);
   }
 

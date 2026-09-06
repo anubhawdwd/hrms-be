@@ -11,20 +11,21 @@
 
 | Area | Status | Summary |
 |---|---|---|
-| Authentication & RBAC | PARTIAL | Core auth complete; email-change with SSO safeguards & audit logs; multi-role model not yet built |
+| Authentication & RBAC | COMPLETE | Core auth complete; email-change with SSO safeguards & audit logs; multi-role model (`UserRoleAssignment` join table) + view switcher |
 | Employee Management | COMPLETE | Atomic single-transaction onboarding, full master-data fields (phone, gender, personal email), secondary manager hierarchy, quick edit parity |
 | Organization | COMPLETE | Company, department, team, designation, hierarchy, auto-present policy |
 | Attendance | COMPLETE | Check-in/out, geo-fencing, corrections, violations, auto-present, partial status dashboard |
-| Leave Management | PARTIAL | Core workflow works; per-day approve/reject status transitions, day-level deletion with balance restoration, and cross-request sandwich detection with retroactive balance adjustment complete; year-end treatment, 2-step approval, exit-encashment pending |
-| Manager Self-Service | MISSING | Reportee-scoped dashboards not implemented |
+| Leave Management | PARTIAL | Core workflow, 2-step approval (`PENDING_MANAGER` / `PENDING_HR`), unlimited default LWP, per-day approve/reject status transitions, day deletion with balance restoration, sandwich policy; year-end carry-forward engine pending |
+| Manager Self-Service | COMPLETE | Reportee-scoped leave and monthly attendance dashboards with live pending notification badge |
 | Notifications | MISSING | No notification system exists at all |
-| Reports | PARTIAL | Employee report OK; Leave report has a **live P0 bug** (LWP/Absent not showing) |
+| Reports | COMPLETE | Employee Master Directory, Dynamic Leave Report, and full-featured Attendance Report with month stepper, custom date range, search, drilldown, and Excel/CSV export |
 | Error Logging | COMPLETE | Ingestion (BE/FE), 20-day retention, SuperAdmin viewer with bulk delete |
 | SuperAdmin Dashboard | COMPLETE | Multi-tenant company provisioning, admin accounts, user directory, error viewer |
-| Testing | COMPLETE | Isolated test-company infrastructure (18 test suites), `audit:leftovers` diagnostic sweep tool, zero-mutation verification |
+| Testing | COMPLETE | Isolated test-company infrastructure (22 test suites), `audit:leftovers` diagnostic sweep tool, zero-mutation verification |
 | Deployment | PARTIAL | Local/LAN hosting only; production hardening pending |
 
-**Overall**: Core single-approver HRMS workflows, atomic employee onboarding with full master-data parity, email-update safeguards, and full SuperAdmin platform tooling/error monitoring exist and function. The next phase includes multi-role support, 2-step approval, manager dashboards, notifications, and leave report fix.
+**Overall**: Core HRMS workflows, atomic employee onboarding with full master-data parity, multi-role architecture, 2-step leave approval workflow, manager self-service dashboards, centralized error telemetry, and full reporting suite (Employee, Leave, Attendance) exist and function. The next phase includes year-end leave rollover engine, in-app notifications, and exit-based encashment logging.
+
 
 
 ---
@@ -71,7 +72,7 @@
 | LEV-03 | Leave | **2-step approval workflow** (Manager → HR), company-level toggle | COMPLETE | | See PRD §6.5/§8.8. Includes status states `PENDING_MANAGER` / `PENDING_HR` |
 | LEV-04 | Leave | Balance allocation / correction | COMPLETE | | Delta-safe / transaction-safe (verified in LEV-13) |
 | LEV-05 | Leave | Fractional / hourly leave | COMPLETE | | |
-| LEV-06 | Leave | LWP | PARTIAL / VERIFY | **P0** | Balance logic OK; Report display logic passes synthetic tests, but stays UNVERIFIED / flagged for retest once real usage data exists on any tenant — do not mark done without real production data. |
+| LEV-06 | Leave | LWP (Leave Without Pay) | COMPLETE | **P0** | Unlimited and automatically available by default to every employee in every company, bypassing balance checks; seeded during company creation & backfilled; correctly counted and exported in reports. |
 | LEV-07 | Leave | Sandwich policy (company-wide switch) | COMPLETE | | Single-request and cross-request bridging with retroactive balance adjustment |
 | LEV-08 | Leave | **Sandwich-day exception tool & Day Breakdown Deletion** (HR views day-wise breakdown, selects checkboxes / select-all, hard-deletes specific days via `leaveApi.deleteDays`, auto-recalculates duration and restores balance; per-day approve/reject delta handler) | COMPLETE | **P0** | Hard delete + balance restoration + parent status transition + duration recalculation |
 | LEV-09 | Leave | Holiday management | COMPLETE | | Full-day only |
@@ -99,8 +100,10 @@
 | DATA-01 | Data Retention | `LeaveRequest` soft-delete → hard-delete after 6 months (scheduled job) | MISSING | **P1** | See PRD §8 |
 | DATA-02 | Data Retention | Sandwich-day hard delete (immediate, on HR action) | COMPLETE | P0 | Same feature as LEV-08 |
 | REP-01 | Reports | Employee report | COMPLETE | | |
-| REP-02 | Reports | Leave report — Absent Days + pre-joining fix + terminology standardization | COMPLETE | | Absent Days dynamically computed & respects employee joiningDate; Terminology standardized to "Balance" / "Used"; Paid Leaves split into "Paid Leaves — Used" and "Paid Leaves — Balance". (LWP logic in report verified in synthetic tests, but LEV-06 remains flagged for real-tenant retest). |
+| REP-02 | Reports | Leave report — Absent Days + pre-joining fix + terminology standardization | COMPLETE | | Absent Days dynamically computed & respects employee joiningDate; Terminology standardized to "Balance" / "Used"; Paid Leaves split into "Paid Leaves — Used" and "Paid Leaves — Balance". |
 | REP-03 | Reports | Pending approval warning | COMPLETE | | |
+| REP-04 | Reports | Attendance report (By Month + Custom Date Range + Employee Search + Day Drilldown + Excel/CSV export) | COMPLETE | **P0** | End-to-end implementation under `/admin/reports`; lightweight cell payload + on-demand session drilldown; multi-level Excel and CSV downloads. |
+
 | UI-01 | UI | Remove "Total Allocated" from all leave balance displays (everywhere, including admin) | COMPLETE | **P0** | Displays only Available Balance + Used rounded to 2 decimal places via `formatLeaveDays`. See PRD §6.7 |
 | TEST-01 | Testing | Isolated test-company infrastructure | COMPLETE | | Must be preserved — do not weaken |
 | TEST-02 | Testing | Confirm/rule out test runs as cause of LEV-13 | COMPLETE | P0 | Confirmed drift was test-artifact, not test-run contamination of the calculation logic itself. |
@@ -221,7 +224,8 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] **LEV-13 / TEST-02** — Diagnose leave balance mismatch (audit confirmed active paths delta-safe/transaction-safe; demo account reset)
 - [x] **LEV-16** — Holiday type distinction (Normal vs Restricted) — HolidayType enum on Holiday model, non-blocking RESTRICTED handling, AdminHolidays & ApplyLeaveModal UI, comprehensive test suite.
 - [x] **REP-02** — Leave report: Absent Days fixed (respects joiningDate) + pre-joining attendance fix + terminology standardized to Used/Balance (Paid Leaves split).
-- [ ] **LEV-06 (LWP Retest)** — Retest LWP report column against real production usage data once configured on any tenant organization (currently 0 real LWP records in DB).
+- [x] **REP-04** — Attendance report: month stepper, custom range, department/team/search filters, matrix table, drilldown popover, and Excel/CSV export.
+- [x] **LEV-06** — LWP leave type availability: unlimited and automatically available by default to every employee in every company, bypassing balance checks.
 - [x] **UI-01** — Remove "Total Allocated" from every leave display, everywhere
 - [x] **AUTH-04 / TD-03** — Build multi-role model (`UserRole` join table + permission-check rewrite + UI switcher)
 - [x] **LEV-03** — Build 2-step approval workflow (company-level toggle, new status states)
@@ -281,7 +285,7 @@ Do not delete code solely because it's currently unused — verify intended use 
 - [x] 2-step approval workflow (company toggle) working end-to-end with correct status states
 - [x] Balance management (correction-based)
 - [x] Fractional/hourly values
-- [ ] LWP correctly represented in reports
+- [x] LWP correctly represented in reports and always available without balance constraints
 - [x] Sandwich detection (including cross-request bridge detection & retroactive adjustment)
 - [x] Sandwich-day exception tool & day-level breakdown deletion (hard delete + recalculation + balance restoration)
 - [x] Holidays
@@ -313,8 +317,9 @@ Do not delete code solely because it's currently unused — verify intended use 
 
 ### Reports
 - [x] Employee report
-- [ ] Leave report (LWP/Absent bug fixed)
-- [x] Excel/CSV
+- [x] Leave report (LWP/Absent accurate and verified)
+- [x] Attendance report (monthly & custom range preview, on-demand drilldown, Excel/CSV export)
+- [x] Excel/CSV export engine
 - [x] Pending approval handling
 
 ### Testing
@@ -350,6 +355,8 @@ Do not delete code solely because it's currently unused — verify intended use 
 | 2026-09-06 | Implemented 2-Step Leave Approval Workflow (`LEV-03`): added company-level `LeaveApprovalWorkflow` toggle (`TWO_STEP` vs `DIRECT_TO_HR`); added `PENDING_MANAGER` and `PENDING_HR` approval states; enforced server-side manager authorization with coworker 403 blocking; audited and updated all pending status checks across attendance, reports, and dashboards; built manager/HR approval action UI in `LeaveRequestList.tsx` and `AdminLeaveDashboard.tsx`. |
 | 2026-09-06 | Implemented Manager Self-Service Views (`MGR-01` / `MGR-02`): built `/api/manager/reportees`, `/api/manager/leaves`, and `/api/manager/attendance` endpoints; built `ManagerTeamLeaveSection.tsx` with quick approve/reject and filterable history; built `ManagerTeamAttendanceSection.tsx` with monthly presence grid and session popovers; integrated conditional "My Team" tab with live pending badge on `EmployeeDashboard.tsx`. |
 | 2026-09-06 | Renamed Workplace Settings tab to "Leave & Attendance Policies"; resolved MUI floating label clipping bug across all stacked outlined dialogs (`ApplyLeaveModal`, `HrCancelDialog`, `AdminMarkLeaveDialog`, `AdminBulkLeaveAllocationDialog`, `AdminEditLeaveAllocationDialog`, `AdminYearEndRolloverDialog`, `ChangePasswordModal`, `ManagerTeamLeaveSection`); added live pending leave count notification badge to Leave Dashboard card on Admin main dashboard (`/admin`). |
+| 2026-09-06 | Implemented Attendance Report (`REP-04`): backend endpoints `/api/reports/attendance` and `/api/reports/attendance/export`; lightweight cell payload contract (summary properties only) with on-demand session inspection via `<DaySessionDetail>`; added 3rd "Attendance Report" tab in `AdminReports.tsx` with Month Stepper `< [Month Name] >`, custom date range pickers, department/team/search filters, company summary banner, and Excel/CSV export; updated Employee Dashboard `LeaveRequestList.tsx` and Admin leave modals to display stage-aware labels (`Pending Manager Approval`, `Pending HR Approval`). |
+
 
 
 

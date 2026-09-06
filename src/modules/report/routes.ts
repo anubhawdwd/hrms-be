@@ -9,6 +9,8 @@ import {
   exportEmployeeReport,
   getLeaveReport,
   exportLeaveReport,
+  getAttendanceReport,
+  exportAttendanceReport,
 } from "./controller.js";
 
 const router = Router();
@@ -24,4 +26,9 @@ router.get("/employee/export", exportEmployeeReport);
 router.get("/leave", getLeaveReport);
 router.get("/leave/export", exportLeaveReport);
 
+// Attendance Report
+router.get("/attendance", getAttendanceReport);
+router.get("/attendance/export", exportAttendanceReport);
+
 export default router;
+

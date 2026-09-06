@@ -179,6 +179,69 @@ export async function runLeaveTests() {
       },
     });
     assert(overrideLog !== null && overrideLog.reason?.includes("Allocated by HR"), "Audit override record created with '[Allocated by HR: ...]'");
+
+    // Test 11: LWP Universal Availability & Zero-Balance Application Verification
+    const lwpType = ctx.leaveTypes["LWP"] || (await leaveService.ensureLwpLeaveType(companyId));
+    assert(lwpType !== null && lwpType.code === "LWP" && lwpType.isPaid === false, "LWP leave type is active, code=LWP, and isPaid=false");
+
+    // Verify employee has ZERO leave balance record for LWP
+    const lwpBalBefore = await prisma.leaveBalance.findUnique({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId: empProfile.id,
+          leaveTypeId: lwpType.id,
+          year: 2026,
+        },
+      },
+    });
+    assert(lwpBalBefore === null, "Confirmed employee has ZERO LeaveBalance records for LWP");
+
+    // Employee applies for 3 days of LWP with NO balance record
+    const appliedLwp = await leaveService.applyLeave({
+      userId: empUser.id,
+      companyId,
+      leaveTypeId: lwpType.id,
+      fromDate: "2026-11-10",
+      toDate: "2026-11-12",
+      durationType: LeaveDurationType.FULL_DAY,
+      reason: "Unpaid leave for personal travel",
+    });
+    assert(appliedLwp.id !== undefined, "LWP applied successfully without any balance record or constraint");
+    assert(appliedLwp.durationValue === 3, "LWP duration calculated as 3 days");
+    assert(appliedLwp.status === LeaveRequestStatus.PENDING, "LWP request created in PENDING status");
+
+    // HR approves the LWP request
+    const approvedLwp = await leaveService.approveLeave({
+      requestId: appliedLwp.id,
+      approverUserId: ctx.adminUser.id,
+      companyId,
+    });
+    assert(approvedLwp.status === LeaveRequestStatus.APPROVED, "LWP request successfully APPROVED by HR");
+
+    // Verify still ZERO balance record exists or mutated for LWP
+    const lwpBalAfter = await prisma.leaveBalance.findUnique({
+      where: {
+        employeeId_leaveTypeId_year: {
+          employeeId: empProfile.id,
+          leaveTypeId: lwpType.id,
+          year: 2026,
+        },
+      },
+    });
+    assert(lwpBalAfter === null, "Confirmed no LeaveBalance record created or corrupted for LWP after approval");
+
+    // Admin marks LWP leave for employee directly without balance
+    const adminMarkedLwp = await leaveService.markLeaveByAdmin({
+      employeeId: empProfile.id,
+      adminUserId: ctx.adminUser.id,
+      companyId,
+      leaveTypeId: lwpType.id,
+      fromDate: "2026-11-20",
+      toDate: "2026-11-20",
+      durationType: LeaveDurationType.FULL_DAY,
+      reason: "Emergency unpaid leave",
+    });
+    assert(adminMarkedLwp.status === LeaveRequestStatus.APPROVED, "Admin successfully marked LWP leave directly as APPROVED with no balance constraint");
   } finally {
     await ctx.cleanup();
     console.log("    ✔ Cleaned up isolated leave test company");

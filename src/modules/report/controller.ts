@@ -145,3 +145,83 @@ export async function exportLeaveReport(req: Request, res: Response) {
     res.status(400).json({ message: err.message || "Failed to export leave report" });
   }
 }
+
+export async function getAttendanceReport(req: Request, res: Response) {
+  try {
+    const companyId = req.companyId!;
+    const { year, month, fromDate, toDate, departmentId, teamId, employeeId, search } =
+      req.query;
+
+    const report = await reportService.getAttendanceReport(companyId, {
+      year: year ? parseInt(String(year), 10) : undefined,
+      month: typeof month === "string" ? month : undefined,
+      fromDate: typeof fromDate === "string" ? fromDate : undefined,
+      toDate: typeof toDate === "string" ? toDate : undefined,
+      departmentId: typeof departmentId === "string" ? departmentId : undefined,
+      teamId: typeof teamId === "string" ? teamId : undefined,
+      employeeId: typeof employeeId === "string" ? employeeId : undefined,
+      search: typeof search === "string" ? search : undefined,
+    });
+
+    res.json(report);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message || "Failed to generate attendance report" });
+  }
+}
+
+export async function exportAttendanceReport(req: Request, res: Response) {
+  try {
+    const companyId = req.companyId!;
+    const {
+      year,
+      month,
+      fromDate,
+      toDate,
+      departmentId,
+      teamId,
+      employeeId,
+      search,
+      format,
+    } = req.query;
+
+    const report = await reportService.getAttendanceReport(companyId, {
+      year: year ? parseInt(String(year), 10) : undefined,
+      month: typeof month === "string" ? month : undefined,
+      fromDate: typeof fromDate === "string" ? fromDate : undefined,
+      toDate: typeof toDate === "string" ? toDate : undefined,
+      departmentId: typeof departmentId === "string" ? departmentId : undefined,
+      teamId: typeof teamId === "string" ? teamId : undefined,
+      employeeId: typeof employeeId === "string" ? employeeId : undefined,
+      search: typeof search === "string" ? search : undefined,
+    });
+
+    const isCsv = format === "csv";
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const sanitizedCompanyName = report.companyName.replace(/[^a-zA-Z0-9]/g, "_");
+    const periodStr = report.periodLabel.replace(/[^a-zA-Z0-9]/g, "_");
+
+    if (isCsv) {
+      const csv = reportService.generateAttendanceCsv(report);
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${sanitizedCompanyName}_Attendance_Report_${periodStr}_${dateStr}.csv"`
+      );
+      return res.send(csv);
+    } else {
+      const buffer = await reportService.generateAttendanceExcel(report);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${sanitizedCompanyName}_Attendance_Report_${periodStr}_${dateStr}.xlsx"`
+      );
+      return res.send(buffer);
+    }
+  } catch (err: any) {
+    res.status(400).json({ message: err.message || "Failed to export attendance report" });
+  }
+}
+
